@@ -13,17 +13,21 @@ body {
 }
 p {
   margin: 0 0 10px;
+  line-height: 18px;
 }
 h1 {
-  margin: 0 0 6px;
+  margin: 0 0 16px;
   font-size: 16px;
 }
 h2 {
-  margin: 0 0 4px;
+  margin: 0 0 14px;
   font-size: 14px;
 }
 img {
   border: none;
+}
+a {
+  text-decoration: none;
 }
 input[type=checkbox] {
   margin: 0;
@@ -38,6 +42,7 @@ form .item label {
   text-align: right;
   margin-right: 10px;
   vertical-align: middle;
+  line-height: 22px;
 }
 form .item input[type=text] {
   float: left;
@@ -86,7 +91,6 @@ form .item input[type=checkbox] {
   padding: 4px 10px;
   margin-top: 2px;
   margin-right: 14px;
-  text-decoration: none;
   color: #A7B2BF;
   background: #1C1430;
 }
@@ -95,12 +99,34 @@ form .item input[type=checkbox] {
   border-top: 1px solid #164D74;
   background: #123D5C;
 }
-
+form.login {
+  margin-bottom: 20px;
+}
 form.login .item label {
   width: 100px;
-  line-height: 22px;
 }
 form.login input[type=submit] {
   margin-left: 108px;
 }
-
+form.reset_password .item label {
+  width: 40px;
+}
+form.reset_password input[type=submit] {
+  margin-left: 48px;
+}
+p.reset_password {
+  width: 500px;
+}
+.user_info {
+  margin: 78px 18px 0 0;
+  color: #40A0CF;
+}
+.user_info a {
+  color: #9FDFFF;
+}
+.user_info a:hover {
+  color: #FFF;
+}
+.user_info span {
+  margin-left: 20px;
+}

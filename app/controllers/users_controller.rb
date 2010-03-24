@@ -1,5 +1,4 @@
 class UsersController < ApplicationController
-  # render new.rhtml
   def new
     @user = User.new
   end
@@ -23,5 +22,13 @@ class UsersController < ApplicationController
       flash[:error]  = "We couldn't set up that account, sorry.  Please try again, or contact an admin (link is above)."
       render :action => 'new'
     end
+  end
+  
+  def request_password
+  end
+  
+  def do_request_password
+    rp = params[:reset_password]
+    
   end
 end
