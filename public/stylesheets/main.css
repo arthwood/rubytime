@@ -1,0 +1,106 @@
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+body {
+  margin: 0;
+  color: black;
+  font-family: Verdana;
+  font-size: 12px;
+}
+p {
+  margin: 0 0 10px;
+}
+h1 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+h2 {
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+img {
+  border: none;
+}
+input[type=checkbox] {
+  margin: 0;
+  vertical-align: middle;
+}
+form .item.last {
+  margin-bottom: 0;
+}
+form .item label {
+  float: left;
+  width: 140px;
+  text-align: right;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+form .item input[type=text] {
+  float: left;
+  width: 200px;
+}
+form .item input[type=checkbox] {
+  margin: 5px 0;
+}
+#main {
+  width: 820px;
+  margin: 0 auto;
+  border: 1px solid #171025;
+}
+#header {
+  background: url('/images/header_bg.png');
+}
+#header a.logo {
+  display: block;
+  float: left;
+  height: 100px;
+}
+#header a.logo img {
+  margin: 54px 30px 0;
+}
+#header .user_info {
+  float: right;
+}
+#footer {
+  text-align: center;
+  margin: 4px 0;
+}
+#content {
+  padding: 20px;
+  margin-bottom: 10px;
+}
+#menu {
+  height: 32px;
+  border-top: 1px solid #172D4C;
+  background: url('/images/menu_bg.png');
+  padding: 0 10px;
+}
+#menu a {
+  display: block;
+  float: left;
+  cursor: pointer;
+  padding: 4px 10px;
+  margin-top: 2px;
+  margin-right: 14px;
+  text-decoration: none;
+  color: #A7B2BF;
+  background: #1C1430;
+}
+#submenu {
+  height: 24px;
+  border-top: 1px solid #164D74;
+  background: #123D5C;
+}
+
+form.login .item label {
+  width: 100px;
+  line-height: 22px;
+}
+form.login input[type=submit] {
+  margin-left: 108px;
+}
+
