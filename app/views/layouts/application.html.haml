@@ -23,3 +23,5 @@
         = yield
       #footer
         = render :partial => 'layouts/footer'
+      #flash{:style => 'display: none'}
+        = render :partial => 'layouts/flash', :object => flash 

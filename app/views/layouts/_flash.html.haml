@@ -1,0 +1,8 @@
+- keys = %w(info error warning)
+
+- key = keys.find {|i| !flash[i.to_sym].nil?}
+
+- if key
+  = image_tag "#{key}.png"
+  %span
+    = flash[key.to_sym]

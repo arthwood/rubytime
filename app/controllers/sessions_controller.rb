@@ -1,5 +1,9 @@
 # This controller handles the login/logout function of the site.  
 class SessionsController < ApplicationController
+  def new
+    flash[:info] = 'Hey!'
+  end
+  
   def create
     s = params[:session]
     @login = s[:login]

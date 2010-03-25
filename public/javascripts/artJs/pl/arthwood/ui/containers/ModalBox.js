@@ -33,10 +33,7 @@ ArtJs.ModalBox.prototype.onDataLoad = function(ajax) {
 };
 
 ArtJs.ModalBox.prototype.onResize = function() {
-  ArtJs.ElementUtils.setPosition(this.node, new ArtJs.Point(
-    (window.document.height - this.size.y) / 2,
-    (window.document.width - this.size.x) / 2
-  ));
+  ArtJs.ElementUtils.center(this.node, this.size);
 };
 
 ArtJs.ModalBox.prototype.setDraggable = function(draggable) {

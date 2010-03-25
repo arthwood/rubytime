@@ -24,11 +24,32 @@ class UsersController < ApplicationController
     end
   end
   
-  def request_password
+  def do_request_password
+    data = params[:reset_password]
+    email = data[:email]
+    @user = User.find_by_email(email)
+    
+    if @user.nil?
+      flash[:error] = "I could not find a user with the email address '#{email}'. Did you type it correctly?"
+      
+      redirect_to login_url
+    else
+      @user.reset_login_key!
+      UserMailer.deliver_reset(@user)
+      flash[:notice] =  'Password reset email sent.'
+    end
   end
   
-  def do_request_password
-    rp = params[:reset_password]
+  def reset
+    @key = params[:key]
+    @user = User.find_by_login_key(@key)
     
+    if @user
+      self.current_user = @user
+      redirect_to root_url
+    else
+      flash[:notice] = "Provided key in the URL is wrong: #{@key}"
+      redirect_to login_url
+    end
   end
 end

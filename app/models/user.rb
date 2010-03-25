@@ -42,4 +42,8 @@ class User < ActiveRecord::Base
   def email=(value)
     write_attribute :email, (value ? value.downcase : nil)
   end
+  
+  def reset_login_key!
+    update_attribute(:login_key, Digest::SHA1.hexdigest(Time.now.to_s + crypted_password.to_s + rand(123456789).to_s))
+  end
 end

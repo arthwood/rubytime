@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100321221250) do
+ActiveRecord::Schema.define(:version => 20100325151534) do
 
   create_table "activities", :force => true do |t|
     t.text     "comments",                                  :null => false
@@ -121,6 +121,7 @@ ActiveRecord::Schema.define(:version => 20100321221250) do
     t.boolean  "admin"
     t.integer  "role_id"
     t.integer  "client_id"
+    t.string   "login_key"
   end
 
   add_index "users", ["login"], :name => "index_users_on_login", :unique => true

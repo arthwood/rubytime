@@ -10,6 +10,7 @@ body {
   color: black;
   font-family: Verdana;
   font-size: 12px;
+  background: #0C325F;
 }
 p {
   margin: 0 0 10px;
@@ -55,6 +56,7 @@ form .item input[type=checkbox] {
   width: 820px;
   margin: 0 auto;
   border: 1px solid #171025;
+  background: #C3D5DF;
 }
 #header {
   background: url('/images/header_bg.png');
@@ -98,6 +100,13 @@ form .item input[type=checkbox] {
   height: 24px;
   border-top: 1px solid #164D74;
   background: #123D5C;
+}
+#flash {
+  position: absolute;
+  top: 200px;
+  background: white;
+  border: 1px solid #EEE;
+  padding: 20px;
 }
 form.login {
   margin-bottom: 20px;
