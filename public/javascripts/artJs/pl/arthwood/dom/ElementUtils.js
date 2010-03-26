@@ -116,11 +116,13 @@ ArtJs.ElementUtils = pl.arthwood.net.ElementUtils = {
   },
   
   centerH: function(e) {
-    var pos = this.getCenteredPosition(this.getSize(e));
-    //p(pos);
-    pos.y = e.style.top;
+    var size = this.getSize(e);
+    var pos = this.getCenteredPosition(size);
+    var value = e.style.top.match(/\d+/) || ['0'];
     
-    this.setPosition(e, pos);
+    //pos.y = parseInt(ArtJs.ArrayUtils.first(value));
+    
+    //this.setPosition(e, pos);
   },
   
   centerV: function(e) {
@@ -132,13 +134,7 @@ ArtJs.ElementUtils = pl.arthwood.net.ElementUtils = {
   },
   
   getCenteredPosition: function(size) {
-    p(this.getDocumentSize());
-    
-    var result = this.getDocumentSize();
-    
-    p(result);
-    //p(this.getDocumentSize().sub(size).times(0.5).transpose());
-    return result;
+    return this.getDocumentSize().sub(size).times(0.5);
   },
   
   getDocumentSize: function() {
@@ -148,8 +144,8 @@ ArtJs.ElementUtils = pl.arthwood.net.ElementUtils = {
   },
   
   setPosition: function(e, p) {
-    e.style.top = p.x + 'px';
-    e.style.left = p.y + 'px';
+    e.style.top = p.y + 'px';
+    e.style.left = p.x + 'px';
   },
   
   doInjection: function() {

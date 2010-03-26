@@ -59,3 +59,6 @@ ArtJs.Point.prototype.times = function(k) {
   return new ArtJs.Point(k * this.x, k * this.y);
 };
 
+ArtJs.Point.prototype.toString = function() {
+  return '[' + this.x + ', ' + this.y + ']';
+};
