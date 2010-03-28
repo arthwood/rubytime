@@ -2,7 +2,8 @@ var Application = function() {
   ArtJs.globalize();
   ArtJs.doInjection();
   
-  this.initFlash();
+  //this.initFlash();
+  this.datePicker = new DatePicker();
 };
 
 Application.prototype = {

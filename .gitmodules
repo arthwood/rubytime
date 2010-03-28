@@ -1,3 +1,6 @@
 [submodule "public\\javascripts\\artJs"]
 	path = public\\javascripts\\artJs
 	url = git@github.com:arthwood/artJs.git
+[submodule "vendor\\plugins\\unobtrusive_date_picker"]
+	path = vendor\\plugins\\unobtrusive_date_picker
+	url = git://github.com/brianjlandau/unobtrusive_date_picker.git

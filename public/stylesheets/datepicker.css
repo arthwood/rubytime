@@ -1,0 +1,26 @@
+.datepicker input {
+  width: 100px;
+  margin-right: 4px;
+}
+.datepicker_calendar {
+  background: white;
+  padding: 8px 4px;
+  border: 1px solid #DDD;
+  width: 200px;
+  text-align: center;
+  position: absolute;
+}
+.datepicker_calendar .nav {
+  margin: 0 auto;
+}
+.datepicker_calendar table {
+  margin: 0 auto;
+}
+.datepicker_calendar table tr th {
+  width: 24px;
+}
+.datepicker_calendar table tr td {
+  border: 1px solid #DDD;
+  font-size: 10px;
+  cursor: pointer;
+}
