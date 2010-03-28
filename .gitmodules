@@ -1,3 +1,3 @@
-[submodule "public\\javascripts\\artJs"]
-	path = public\\javascripts\\artJs
+[submodule "public/javascripts/artJs"]
+	path = public/javascripts/artJs
 	url = git@github.com:arthwood/artJs.git
