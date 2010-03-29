@@ -47,7 +47,7 @@ form .item.last {
 form .item > label,
 form .item > .label {
   float: left;
-  width: 140px;
+  width: 100px;
   text-align: right;
   margin-right: 6px;
   line-height: 22px;
@@ -60,21 +60,35 @@ form .item > .radiogroup .radio {
   margin-bottom: 4px;
 }
 form .item > input[type=text],
-form .item > input[type=password] {
+form .item > input[type=password],
+form .item > textarea {
   float: left;
-  width: 200px;
+  width: 154px;
+}
+form .item > textarea {
+  height: 100px;
 }
 form .item > input[type=checkbox] {
   margin: 5px 0;
 }
 form .item > input[type=submit] {
-  margin-left: 146px;
+  margin-left: 106px;
 }
 form .item > select {
   width: 160px;
 }
-form .item.datepicker > input {
-  width: 154px;
+form .item > .note {
+  clear: both;
+  margin-left: 106px;
+  color: #66A;
+  font-style: italic;
+  width: 160px;
+}
+.left {
+  float: left;
+}
+.right {
+  float: right;
 }
 #main {
   width: 820px;
@@ -114,11 +128,17 @@ form .item.datepicker > input {
   display: block;
   float: left;
   cursor: pointer;
-  padding: 3px 10px;
+  padding: 4px 10px;
   margin-top: 4px;
-  margin-right: 14px;
+  margin-right: 8px;
   color: #A7B2BF;
   background: #1C1430;
+}
+#menu .add_activity {
+  background: #1C1430 url('/images/add_activity.png') no-repeat 8px 5px;
+  padding: 6px 10px 6px 30px;
+  margin-top: 2px;
+  margin-right: 0px;
 }
 #submenu {
   height: 24px;
@@ -186,4 +206,14 @@ p.reset_password {
 }
 .activities {
   float: left;
+}
+
+#new_activity {
+  position: absolute;
+  background: #171026;
+  padding: 10px;
+  color: #A7B2BF;
+}
+#new_activity form .item > .note {
+  color: #8E9DAF;
 }

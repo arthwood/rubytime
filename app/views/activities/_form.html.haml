@@ -1,0 +1,23 @@
+- form_remote_for :activity, :url => activities_url do |i|
+  .item.clearspring
+    = i.label :user_id, 'User'
+    = i.select :user_id, options_from_collection_for_select(User.all, :id, :name)
+  .item.clearfix.datepicker
+    = i.label :date
+    = i.text_field :date
+    = image_tag 'datepicker/cal.gif'
+  .item.clearfix
+    = i.label :project_id, 'Project'
+    = i.select :project_id, options_from_collection_for_select(Project.all, :id, :name)
+  .item.clearfix
+    = i.label :time_spent
+    = i.text_field :time_spent
+    .note
+      e.g. 7:30, 7.5, or 7.5h for seven hours and thirty minutes; 0.5, .5h or 30m for half an hour
+  .item.clearfix
+    = i.label :comments
+    = i.text_area :comments
+  .item.last
+    = i.submit 'Add'
+    or
+    = link_to 'Cancel', '#'

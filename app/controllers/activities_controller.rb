@@ -9,10 +9,6 @@ class ActivitiesController < ApplicationController
     @activity = Activity.find(params[:id])
   end
 
-  def new
-    @activity = Activity.new
-  end
-
   def edit
     @activity = Activity.find(params[:id])
   end
@@ -24,7 +20,7 @@ class ActivitiesController < ApplicationController
       flash[:notice] = 'Activity was successfully created.'
       redirect_to(@activity)
     else
-      render :action => :new
+      render :action => :_form
     end
   end
 
