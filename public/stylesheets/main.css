@@ -45,7 +45,8 @@ form .item label {
   vertical-align: middle;
   line-height: 22px;
 }
-form .item input[type=text] {
+form .item input[type=text],
+form .item input[type=password] {
   float: left;
   width: 200px;
 }
@@ -105,8 +106,16 @@ form .item input[type=checkbox] {
   position: absolute;
   top: 200px;
   background: white;
-  border: 1px solid #EEE;
+  border: 1px solid #999;
   padding: 20px;
+  width: 400px;
+}
+#flash img {
+  vertical-align: middle;
+  margin-right: 10px;
+}
+#flash span {
+  vertical-align: middle;
 }
 form.login {
   margin-bottom: 20px;

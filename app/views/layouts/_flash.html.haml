@@ -2,7 +2,6 @@
 
 - key = keys.find {|i| !flash[i.to_sym].nil?}
 
-- if key
-  = image_tag "#{key}.png"
-  %span
-    = flash[key.to_sym]
+= image_tag "#{key || keys.first}.png"
+%span
+  = key && flash[key.to_sym]

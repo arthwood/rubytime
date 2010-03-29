@@ -1,7 +1,7 @@
 # This controller handles the login/logout function of the site.  
 class SessionsController < ApplicationController
   def new
-    flash[:info] = 'Hey!'
+    flash[:info] = 'Hello! :)'
   end
   
   def create
@@ -18,7 +18,7 @@ class SessionsController < ApplicationController
       new_cookie_flag = (@remember_me.to_i == 1)
       handle_remember_cookie! new_cookie_flag
       redirect_back_or_default(root_url)
-      flash[:notice] = 'Logged in successfully'
+      flash[:info] = 'Logged in successfully'
     else
       note_failed_signin
       render :action => :new
@@ -27,7 +27,7 @@ class SessionsController < ApplicationController
 
   def destroy
     logout_killing_session!
-    flash[:notice] = 'You have been logged out.'
+    flash[:info] = 'You have been logged out.'
     redirect_back_or_default(root_url)
   end
 
