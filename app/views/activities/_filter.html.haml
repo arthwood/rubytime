@@ -1,0 +1,21 @@
+- form_for :filter, :url => activities_url, :html => {:method => :get} do |i|
+  %p.item.clearfix
+    = i.label :client
+    = i.select :client, options_from_collection_for_select(Client.all, :id, :name)
+  %p.item.clearfix
+    = i.label :project
+    = i.select :project, options_from_collection_for_select(Project.all, :id, :name)
+  %p.item.clearfix
+    = i.label :role
+    = i.select :role, options_from_collection_for_select(Role.all, :id, :name)
+  %p.item.clearfix
+    = i.label :user
+    = i.select :user, options_from_collection_for_select(User.all, :id, :name)
+  %p.item.clearfix.datepicker
+    = i.label :from
+    = i.text_field :date_from
+    = image_tag 'datepicker/cal.gif'
+  %p.item.clearfix.datepicker
+    = i.label :to
+    = i.text_field :date_to
+    = image_tag 'datepicker/cal.gif'

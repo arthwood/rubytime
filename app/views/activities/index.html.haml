@@ -1,0 +1,11 @@
+.clearfix
+  .filter
+    = render :partial => 'filter'
+  .activities
+    %h1
+      List of activities
+  
+    - if @activities.empty?
+      %p
+        No activities found for selected critieria.
+    - else
