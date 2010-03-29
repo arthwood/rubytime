@@ -30,28 +30,51 @@ img {
 a {
   text-decoration: none;
 }
-input[type=checkbox] {
+input[type=checkbox],
+input[type=radio] {
   margin: 0;
   vertical-align: middle;
+}
+label {
+  vertical-align: middle;
+}
+form .item {
+  margin-bottom: 10px;
 }
 form .item.last {
   margin-bottom: 0;
 }
-form .item label {
+form .item > label,
+form .item > .label {
   float: left;
   width: 140px;
   text-align: right;
   margin-right: 6px;
-  vertical-align: middle;
   line-height: 22px;
 }
-form .item input[type=text],
-form .item input[type=password] {
+form .item > .radiogroup {
+  float: left;
+  margin: 3px;
+}
+form .item > .radiogroup .radio {
+  margin-bottom: 4px;
+}
+form .item > input[type=text],
+form .item > input[type=password] {
   float: left;
   width: 200px;
 }
-form .item input[type=checkbox] {
+form .item > input[type=checkbox] {
   margin: 5px 0;
+}
+form .item > input[type=submit] {
+  margin-left: 146px;
+}
+form .item > select {
+  width: 160px;
+}
+form .item.datepicker > input {
+  width: 154px;
 }
 #main {
   width: 820px;
@@ -120,17 +143,17 @@ form .item input[type=checkbox] {
 form.login {
   margin-bottom: 20px;
 }
-form.login .item label {
+form.login .item > label {
   width: 100px;
 }
-form.login input[type=submit] {
-  margin-left: 108px;
+form.login .item input[type=submit] {
+  margin-left: 106px;
 }
-form.reset_password .item label {
+form.reset_password .item > label {
   width: 40px;
 }
-form.reset_password input[type=submit] {
-  margin-left: 48px;
+form.reset_password .item input[type=submit] {
+  margin-left: 46px;
 }
 p.reset_password {
   width: 500px;
@@ -154,11 +177,12 @@ p.reset_password {
   background: #eee;
   padding: 10px;
 }
-.filter form .item label {
-  width: 60px; 
+.filter form .item > label,
+.filter form .item > .label {
+  width: 80px; 
 }
-.filter form .item.datepicker input {
-  width: 70px;
+.filter form .item > input[type=submit] {
+  margin-left: 86px;
 }
 .activities {
   float: left;

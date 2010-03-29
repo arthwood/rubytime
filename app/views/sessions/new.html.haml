@@ -2,19 +2,19 @@
   Welcome to Rubytime, please sign in:
   
 - form_for :session, :url => sessions_path, :html => {:class => :login} do |i|
-  %p.item.clearfix
+  .item.clearfix
     = i.label :login
     = i.text_field :login
 
-  %p.item.clearfix
+  .item.clearfix
     = i.label :password
     = i.password_field :password
 
-  %p.item.clearfix
+  .item.clearfix
     = i.check_box :remember_me
     = i.label :remember_me
 
-  %p
+  .item
     = i.submit 'Log in'
 
 %p

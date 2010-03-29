@@ -11,7 +11,7 @@
   position: absolute;
 }
 .datepicker_calendar .nav {
-  margin: 0 auto;
+  margin-bottom: 4px;
 }
 .datepicker_calendar table {
   margin: 0 auto;

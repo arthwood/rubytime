@@ -1,9 +1,9 @@
 .datepicker_calendar{:style => 'display: none'}
   .nav
-    = image_tag 'datepicker/arrow_left.gif'
+    = link_to image_tag('datepicker/arrow_left.gif'), '#'
     = select_month Time.now
     = select_year Time.now
-    = image_tag 'datepicker/arrow_right.gif'
+    = link_to image_tag('datepicker/arrow_right.gif'), '#'
   %table
     %tr
       - 1.upto(7) do |j|
