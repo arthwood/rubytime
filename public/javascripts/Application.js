@@ -16,12 +16,20 @@ Application.prototype = {
   
     if (this.newActivityContainer) {
       this.addNewActivity = $$('.add_activity').first();
+      this.cancelNewActivity = this.newActivityContainer.down('.item.last a').first();
       this.addNewActivity.onclick = $DC(this, this.onAddNewActivity);
+      this.cancelNewActivity.onclick = $DC(this, this.onCancelNewActivity);
     }
   },
   
   onAddNewActivity: function(e) {
     this.newActivityContainer.toggle();
+    
+    return false;
+  },
+  
+  onCancelNewActivity: function(e) {
+    this.newActivityContainer.hide();
     
     return false;
   }

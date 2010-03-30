@@ -135,6 +135,9 @@ form .item > .note {
   color: #A7B2BF;
   background: #1C1430;
 }
+#menu a.selected, #menu a:hover {
+  background-color: #110C1F;
+}
 #menu .add_activity {
   background: #1C1430 url('/images/add_activity.png') no-repeat 8px 5px;
   padding: 6px 10px 6px 30px;
@@ -145,6 +148,20 @@ form .item > .note {
   height: 24px;
   border-top: 1px solid #164D74;
   background: #123D5C;
+  padding: 0 10px;
+}
+#submenu a {
+  display: block;
+  float: left;
+  cursor: pointer;
+  padding: 3px 12px;
+  margin-top: 4px;
+  margin-right: 8px;
+  color: #A7B2BF;
+  background: #0A334F;
+}
+#submenu a.selected, #submenu a:hover {
+  background-color: #04273F;
 }
 #flash {
   position: absolute;
@@ -186,17 +203,17 @@ p.reset_password {
 .user_info span {
   margin-left: 20px;
 }
-.filter {
+.sideForm {
   float: right;
   width: 300px;
   background: #eee;
   padding: 10px;
 }
-.filter form .item > label,
-.filter form .item > .label {
+.sideForm form .item > label,
+.sideForm form .item > .label {
   width: 80px; 
 }
-.filter form .item > .noLabel {
+.sideForm form .item > .noLabel {
   margin-left: 86px;
 }
 .activities {
@@ -208,6 +225,9 @@ p.reset_password {
   background: #171026;
   padding: 10px 20px;
   color: #A7B2BF;
+}
+#new_activity a {
+  color: #8E9DAF;
 }
 #new_activity form .item > .note {
   color: #8E9DAF;

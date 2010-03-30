@@ -1,0 +1,18 @@
+.clearfix
+  .sideForm
+    = render :partial => 'form'
+  .activities
+    %h1
+      List of clients
+  
+    - if @clients.empty?
+      %p
+        No clients found.
+    - else
+      %table
+        %tr
+          %th Name
+          %th Email
+          %th Active
+          %th &nbsp;
+        = render :partial => 'client_row', :collection => @clients, :as => :client

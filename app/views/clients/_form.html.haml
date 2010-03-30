@@ -1,0 +1,34 @@
+%h2
+  Add new client
+
+- form_for :client, :url => clients_url do |i|
+  .item.clearfix
+    = i.label :name
+    = i.text_field :name
+  .item.clearfix
+    = i.label :email
+    = i.text_field :email
+  .item.clearfix
+    = i.label :description
+    = i.text_area :description
+  %p
+    Default user for client: 
+  - i.fields_for :user do |j|
+    .item.clearfix
+      = j.label :name
+      = j.text_field :name
+    .item.clearfix
+      = j.label :login
+      = j.text_field :login
+    .item.clearfix
+      = j.label :email
+      = j.text_field :email
+    .item.clearfix
+      = j.label :password
+      = j.password_field :password
+    .item.clearfix
+      = j.label :password_confirmation
+      = j.password_field :password_confirmation
+  
+  .item.last
+    = i.submit 'Create'

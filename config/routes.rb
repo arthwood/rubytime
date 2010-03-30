@@ -10,6 +10,12 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :sessions
 
   map.resources :activities
+  map.resources :projects
+  map.resources :invoices
+  map.resources :clients
+  map.resources :roles
+  map.resources :currencies
+  map.resources :settings
 
   map.root :controller => :activities
 

@@ -1,0 +1,7 @@
+%tr
+  %td= client.name
+  %td= client.email
+  %td= verbalize(client.active)
+  %td
+    = link_to image_tag('pencil.png'), '#'
+    = link_to image_tag('cross.png'), '#'
