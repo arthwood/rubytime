@@ -12,12 +12,12 @@
   .item.clearfix
     = i.label :time_spent
     = i.text_field :time_spent
-    .note
+    .note.noLabel
       e.g. 7:30, 7.5, or 7.5h for seven hours and thirty minutes; 0.5, .5h or 30m for half an hour
   .item.clearfix
     = i.label :comments
     = i.text_area :comments
   .item.last
-    = i.submit 'Add'
+    = i.submit 'Add', :class => :noLabel
     or
     = link_to 'Cancel', '#'

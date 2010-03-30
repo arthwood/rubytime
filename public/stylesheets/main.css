@@ -71,7 +71,7 @@ form .item > textarea {
 form .item > input[type=checkbox] {
   margin: 5px 0;
 }
-form .item > input[type=submit] {
+form .item > .noLabel {
   margin-left: 106px;
 }
 form .item > select {
@@ -79,10 +79,11 @@ form .item > select {
 }
 form .item > .note {
   clear: both;
-  margin-left: 106px;
   color: #66A;
   font-style: italic;
+  font-size: 11px;
   width: 160px;
+  padding-top: 4px;
 }
 .left {
   float: left;
@@ -163,16 +164,10 @@ form .item > .note {
 form.login {
   margin-bottom: 20px;
 }
-form.login .item > label {
-  width: 100px;
-}
-form.login .item input[type=submit] {
-  margin-left: 106px;
-}
 form.reset_password .item > label {
   width: 40px;
 }
-form.reset_password .item input[type=submit] {
+form.reset_password .item .noLabel {
   margin-left: 46px;
 }
 p.reset_password {
@@ -201,7 +196,7 @@ p.reset_password {
 .filter form .item > .label {
   width: 80px; 
 }
-.filter form .item > input[type=submit] {
+.filter form .item > .noLabel {
   margin-left: 86px;
 }
 .activities {
@@ -211,9 +206,16 @@ p.reset_password {
 #new_activity {
   position: absolute;
   background: #171026;
-  padding: 10px;
+  padding: 10px 20px;
   color: #A7B2BF;
 }
 #new_activity form .item > .note {
   color: #8E9DAF;
+}
+#new_activity form .item > label,
+#new_activity form .item > .label {
+  width: 80px; 
+}
+#new_activity form .item > .noLabel {
+  margin-left: 86px;
 }
