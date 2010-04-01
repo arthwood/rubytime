@@ -1,40 +1,25 @@
 var Application = function() {
-  ArtJs.globalize();
-  ArtJs.doInjection();
-  
   this.flash = new Flash();
   this.datePicker = new DatePicker();
-  this.layout = new Layout();
-  
-  this.initUI();
+
+  this.onResize = new Event('Application.onResize');
+
+  window.onresize = $DC(this, this._onResize);
 };
 
 Application.prototype = {
-  initUI: function() {
-    // available only when logged in 
-    this.newActivityContainer = $('new_activity');
-  
-    if (this.newActivityContainer) {
-      this.addNewActivity = $$('.add_activity').first();
-      this.cancelNewActivity = this.newActivityContainer.down('.item.last a').first();
-      this.addNewActivity.onclick = $DC(this, this.onAddNewActivity);
-      this.cancelNewActivity.onclick = $DC(this, this.onCancelNewActivity);
-    }
-  },
-  
-  onAddNewActivity: function(e) {
-    this.newActivityContainer.toggle();
-    
-    return false;
-  },
-  
-  onCancelNewActivity: function(e) {
-    this.newActivityContainer.hide();
-    
-    return false;
+  _onResize: function(e) {
+    this.onResize.fire(e);
   }
 };
- 
+
+ArtJs.globalize();
+ArtJs.doInjection();
+
+Application.onLoad = new Event('Application:onLoad');
+
 window.onload = function() {
   this.app = new Application();
+  
+  Application.onLoad.fire();
 };
