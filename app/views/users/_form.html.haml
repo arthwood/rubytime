@@ -6,15 +6,15 @@
     .label
       = i.label :type
     .input
-      = i.select :type, [['Employee', 'User'], ["Client's User", 'ClientUser']]
+      = i.select :type, [['Employee', 0], ["Client's User", 1]]
       = error_field(i, :type)
-  .item.clearfix
+  .item.clearfix{:style => 'display: none'}
     .label
-      = i.label :role
+      = i.label :role_id, 'Role'
     .input
-      = i.select :role, Role::ROLES
-      = error_field(i, :role)
-  .item.clearfix
+      = i.select :role_id, options_from_collection_for_select(Role.all, :id, :name)
+      = error_field(i, :role_id)
+  .item.clearfix{:style => 'display: none'}
     .label
       = i.label :client_id, 'Client'
     .input
