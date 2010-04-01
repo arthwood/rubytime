@@ -222,15 +222,31 @@ p.reset_password {
   width: 300px;
   background: #eee;
   padding: 10px;
+  border: 1px solid #CCCCCC;
 }
 .listing {
-  float: left;
+  margin-bottom: 30px;
+}
+.listing h1 {
+  margin-bottom: 4px;
 }
 .listing table {
-  width: 420px;
+  width: 440px;
+  background: #EEE;
+  border: 1px solid #CCC;
+}
+.listing table tr th {
+  background: #86CFEF;
+}
+.listing table tr th,
+.listing table tr td {
+  padding: 2px 4px;
 }
 .listing table td.actions {
   text-align: right;
+}
+.listing table td.active {
+  text-align: center;
 }
 #new_activity {
   position: absolute;

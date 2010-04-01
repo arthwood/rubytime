@@ -1,0 +1,7 @@
+%tr
+  %td= user.name
+  %td= user.role
+  %td.active= verbalize(user.active)
+  %td.actions
+    = link_to image_tag('pencil.png'), '#'
+    = link_to image_tag('cross.png'), '#'

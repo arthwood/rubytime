@@ -1,0 +1,54 @@
+%h2
+  Add new user
+
+- form_for :user, :url => users_url do |i|
+  .item.clearfix
+    .label
+      = i.label :type
+    .input
+      = i.select :type, [['Employee', 'User'], ["Client's User", 'ClientUser']]
+      = error_field(i, :type)
+  .item.clearfix
+    .label
+      = i.label :role
+    .input
+      = i.select :role, Role::ROLES
+      = error_field(i, :role)
+  .item.clearfix
+    .label
+      = i.label :client_id, 'Client'
+    .input
+      = i.select :client_id, options_from_collection_for_select(Client.all, :id, :name)
+      = error_field(i, :client_id)
+  .item.clearfix
+    .label
+      = i.label :name
+    .input
+      = i.text_field :name
+      = error_field(i, :name)
+  .item.clearfix
+    .label
+      = i.label :login
+    .input
+      = i.text_field :login
+      = error_field(i, :login)
+  .item.clearfix
+    .label
+      = i.label :email
+    .input
+      = i.text_field :email
+      = error_field(i, :email)
+  .item.clearfix
+    .label
+      = i.label :password
+    .input
+      = i.password_field :password
+      = error_field(i, :password)
+  .item.clearfix
+    .label
+      = i.label :password_confirmation
+    .input
+      = i.password_field :password_confirmation
+      = error_field(i, :password_confirmation)
+  .item.last
+    = submit_tag 'Create', :class => :no_label

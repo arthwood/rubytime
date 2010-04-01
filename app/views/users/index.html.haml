@@ -1,0 +1,35 @@
+.clearfix
+  .sideForm
+    = render :partial => 'form'
+  .left
+    .listing
+      %h1
+        List of employees
+    
+      - if @employees.empty?
+        %p
+          No employees found.
+      - else
+        %table
+          %tr
+            %th Name
+            %th Role
+            %th Active
+            %th.actions &nbsp;
+          = render :partial => 'employee_row', :collection => @employees, :as => :user
+  
+    .listing
+      %h1
+        List of clients' users
+    
+      - if @clients_users.empty?
+        %p
+          No client users found.
+      - else
+        %table
+          %tr
+            %th Name
+            %th Client
+            %th Active
+            %th.actions &nbsp;
+          = render :partial => 'client_user_row', :collection => @clients_users, :as => :user
