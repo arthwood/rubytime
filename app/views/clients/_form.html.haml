@@ -1,34 +1,62 @@
 %h2
   Add new client
 
-- form_for :client, :url => clients_url do |i|
-  .item.clearfix
-    = i.label :name
-    = i.text_field :name
-  .item.clearfix
-    = i.label :email
-    = i.text_field :email
-  .item.clearfix
-    = i.label :description
-    = i.text_area :description
+- form_tag clients_url do
+  - fields_for :client do |i|
+    .item.clearfix
+      .label
+        = i.label :name
+      .input
+        = i.text_field :name
+        = error_field(i, :name)
+    .item.clearfix
+      .label
+        = i.label :email
+      .input
+        = i.text_field :email
+    .item.clearfix
+      .label
+        = i.label :description
+      .input
+        = i.text_area :description
+    .item.clearfix
+      .label
+        = i.label :active
+      .input
+        = i.check_box :active
   %p
-    Default user for client: 
-  - i.fields_for :user do |j|
+    Default user for client:
+  - fields_for :user do |i|
     .item.clearfix
-      = j.label :name
-      = j.text_field :name
+      .label
+        = i.label :name
+      .input
+        = i.text_field :name
+        = error_field(i, :name)
     .item.clearfix
-      = j.label :login
-      = j.text_field :login
+      .label
+        = i.label :login
+      .input
+        = i.text_field :login
+        = error_field(i, :login)
     .item.clearfix
-      = j.label :email
-      = j.text_field :email
+      .label
+        = i.label :email
+      .input
+        = i.text_field :email
+        = error_field(i, :email)
     .item.clearfix
-      = j.label :password
-      = j.password_field :password
+      .label
+        = i.label :password
+      .input
+        = i.password_field :password
+        = error_field(i, :password)
     .item.clearfix
-      = j.label :password_confirmation
-      = j.password_field :password_confirmation
+      .label
+        = i.label :password_confirmation
+      .input
+        = i.password_field :password_confirmation
+        = error_field(i, :password_confirmation)
   
   .item.last
-    = i.submit 'Create'
+    = submit_tag 'Create', :class => :no_label

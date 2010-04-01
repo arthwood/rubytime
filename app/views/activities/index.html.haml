@@ -1,7 +1,7 @@
 .clearfix
   .sideForm
     = render :partial => 'filter'
-  .activities
+  .listing
     %h1
       List of activities
   
@@ -9,3 +9,11 @@
       %p
         No activities found for selected critieria.
     - else
+      %table
+        %tr
+          %th Date
+          %th User
+          %th Project
+          %th Time
+          %th.actions &nbsp;
+        = render :partial => 'activity_row', :collection => @activities, :as => :activity

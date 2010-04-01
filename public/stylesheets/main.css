@@ -30,6 +30,9 @@ img {
 a {
   text-decoration: none;
 }
+input.invalid, select.invalid, textarea.invalid {
+  border: 1px solid #F00;
+}
 input[type=checkbox],
 input[type=radio] {
   margin: 0;
@@ -44,46 +47,57 @@ form .item {
 form .item.last {
   margin-bottom: 0;
 }
-form .item > label,
-form .item > .label {
+form .item .label {
   float: left;
+  margin-right: 6px;
   width: 100px;
   text-align: right;
-  margin-right: 6px;
-  line-height: 22px;
 }
-form .item > .radiogroup {
+form .item .label label {
+  line-height: 20px;
+}
+form .item .radiogroup {
   float: left;
-  margin: 3px;
 }
-form .item > .radiogroup .radio {
+form .item .radiogroup .radio {
   margin-bottom: 4px;
 }
-form .item > input[type=text],
-form .item > input[type=password],
-form .item > textarea {
+form .item .input {
   float: left;
+}
+form .item input[type=text],
+form .item input[type=password],
+form .item textarea,
+form .item .error {
   width: 154px;
 }
-form .item > textarea {
+form .item textarea {
   height: 100px;
+  font-family: Verdana;
+  font-size: 12px;
 }
-form .item > input[type=checkbox] {
-  margin: 5px 0;
-}
-form .item > .noLabel {
-  margin-left: 106px;
-}
-form .item > select {
+form .item select {
   width: 160px;
 }
-form .item > .note {
+form .item input[type=checkbox] {
+  margin: 5px 0;
+}
+form .item .no_label {
+  margin-left: 106px;
+  clear: both;
+}
+form .item .note {
   clear: both;
   color: #66A;
   font-style: italic;
   font-size: 11px;
   width: 160px;
   padding-top: 4px;
+}
+form .error {
+  padding-top: 2px;
+  font-size: 10px;
+  color: #F00;
 }
 .left {
   float: left;
@@ -184,7 +198,7 @@ form.login {
 form.reset_password .item > label {
   width: 40px;
 }
-form.reset_password .item .noLabel {
+form.reset_password .item .no_label {
   margin-left: 46px;
 }
 p.reset_password {
@@ -209,17 +223,15 @@ p.reset_password {
   background: #eee;
   padding: 10px;
 }
-.sideForm form .item > label,
-.sideForm form .item > .label {
-  width: 80px; 
-}
-.sideForm form .item > .noLabel {
-  margin-left: 86px;
-}
-.activities {
+.listing {
   float: left;
 }
-
+.listing table {
+  width: 420px;
+}
+.listing table td.actions {
+  text-align: right;
+}
 #new_activity {
   position: absolute;
   background: #171026;
@@ -229,13 +241,12 @@ p.reset_password {
 #new_activity a {
   color: #8E9DAF;
 }
-#new_activity form .item > .note {
+#new_activity form .item .note {
   color: #8E9DAF;
 }
-#new_activity form .item > label,
-#new_activity form .item > .label {
+#new_activity form .item .label {
   width: 80px; 
 }
-#new_activity form .item > .noLabel {
+#new_activity form .item .no_label {
   margin-left: 86px;
 }

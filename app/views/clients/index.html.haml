@@ -1,7 +1,7 @@
 .clearfix
   .sideForm
     = render :partial => 'form'
-  .activities
+  .listing
     %h1
       List of clients
   
@@ -14,5 +14,5 @@
           %th Name
           %th Email
           %th Active
-          %th &nbsp;
+          %th.actions &nbsp;
         = render :partial => 'client_row', :collection => @clients, :as => :client

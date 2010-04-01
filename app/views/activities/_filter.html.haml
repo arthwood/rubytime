@@ -3,25 +3,37 @@
 
 - form_for :filter, :url => activities_url, :html => {:method => :get} do |i|
   .item.clearfix
-    = i.label :client
-    = i.select :client, options_from_collection_for_select(Client.all, :id, :name)
+    .label
+      = i.label :client
+    .input
+      = i.select :client, options_from_collection_for_select(Client.all, :id, :name)
   .item.clearfix
-    = i.label :project
-    = i.select :project, options_from_collection_for_select(Project.all, :id, :name)
+    .label
+      = i.label :project
+    .input
+      = i.select :project, options_from_collection_for_select(Project.all, :id, :name)
   .item.clearfix
-    = i.label :role
-    = i.select :role, options_from_collection_for_select(Role.all, :id, :name)
+    .label
+      = i.label :role
+    .input
+      = i.select :role, options_from_collection_for_select(Role.all, :id, :name)
   .item.clearfix
-    = i.label :user
-    = i.select :user, options_from_collection_for_select(User.all, :id, :name)
+    .label
+      = i.label :user
+    .input
+      = i.select :user, options_from_collection_for_select(User.all, :id, :name)
   .item.clearfix.datepicker
-    = i.label :from
-    = i.text_field :date_from
-    = image_tag 'datepicker/cal.gif'
+    .label
+      = i.label :from
+    .input
+      = i.text_field :date_from
+      = image_tag 'datepicker/cal.gif'
   .item.clearfix.datepicker
-    = i.label :to
-    = i.text_field :date_to
-    = image_tag 'datepicker/cal.gif'
+    .label
+      = i.label :to
+    .input
+      = i.text_field :date_to
+      = image_tag 'datepicker/cal.gif'
   .item.clearfix
     .label
       Include
@@ -36,4 +48,4 @@
         = i.radio_button :include, :not_invoiced
         = i.label :include_not_invoiced, 'Not invoiced'
   .item.last
-    = i.submit 'Submit'
+    = i.submit 'Submit', :class => :no_label

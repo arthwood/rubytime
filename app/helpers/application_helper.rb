@@ -17,6 +17,13 @@ module ApplicationHelper
   
   def menu_link(label, url)
     options = {}
+    options[:class] = :selected if section.to_s == label
+    
+    link_to label, url, options
+  end
+  
+  def submenu_link(label, url)
+    options = {}
     options[:class] = :selected if url_for(params.merge(:only_path => false)) == url
     
     link_to label, url, options
@@ -24,5 +31,9 @@ module ApplicationHelper
   
   def verbalize(yes)
     yes ? 'yes' : 'no'
+  end
+  
+  def error_field(form, attr)
+    error_message_on(form.object_name, attr, :css_class => :error)
   end
 end

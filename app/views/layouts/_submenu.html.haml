@@ -2,19 +2,19 @@
   - if current_user.admin
     - case section
       - when :activities
-        = menu_link 'List', activities_url
-        = menu_link 'Calendar', activities_url(:calendar => 1)
+        = submenu_link 'List', activities_url
+        = submenu_link 'Calendar', activities_url(:calendar => 1)
       - when :invoices
-        = menu_link 'All', invoices_url
-        = menu_link 'Issued', invoices_url(:filter => :issued)
-        = menu_link 'Pending', invoices_url(:filter => :pending)
+        = submenu_link 'All', invoices_url
+        = submenu_link 'Issued', invoices_url(:filter => :issued)
+        = submenu_link 'Pending', invoices_url(:filter => :pending)
       - when :manage
-        = menu_link 'Users', users_url
-        = menu_link 'Clients', clients_url
-        = menu_link 'Projects', projects_url
-        = menu_link 'Roles', roles_url
-        = menu_link 'Currencies', currencies_url
-        = menu_link 'Settings', settings_url
+        = submenu_link 'Users', users_url
+        = submenu_link 'Clients', clients_url
+        = submenu_link 'Projects', projects_url
+        = submenu_link 'Roles', roles_url
+        = submenu_link 'Currencies', currencies_url
+        = submenu_link 'Settings', settings_url
   - else
-    = menu_link 'List', activities_url
-    = menu_link 'Calendar', activities_url(:calendar => 1)
+    = submenu_link 'List', activities_url
+    = submenu_link 'Calendar', activities_url(:calendar => 1)

@@ -3,19 +3,24 @@
   
 - form_for :session, :url => sessions_path, :html => {:class => :login} do |i|
   .item.clearfix
-    = i.label :login
-    = i.text_field :login
-
+    .label
+      = i.label :login
+    .input
+      = i.text_field :login
   .item.clearfix
-    = i.label :password
-    = i.password_field :password
-
+    .label
+      = i.label :password
+    .input
+      = i.password_field :password
   .item.clearfix
-    = i.check_box :remember_me
-    = i.label :remember_me
+    .label
+      = i.label :remember_me
+    .input
+      = i.check_box :remember_me
+      
 
   .item
-    = i.submit 'Log in', :class => :noLabel
+    = i.submit 'Log in', :class => :no_label
 
 %p
   Forgot your password?

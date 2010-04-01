@@ -1,5 +1,5 @@
 class Activity < ActiveRecord::Base
-  validates_presence_of :minutes
+  validates_presence_of :comments, :date, :project_id, :user_id, :minutes
   validates_numericality_of :minutes
   
   def time_spent
