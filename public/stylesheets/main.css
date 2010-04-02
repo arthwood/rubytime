@@ -54,7 +54,7 @@ form .item .label {
   text-align: right;
 }
 form .item .label label {
-  line-height: 20px;
+  line-height: 22px;
 }
 form .item .radiogroup {
   float: left;
@@ -80,7 +80,7 @@ form .item select {
   width: 160px;
 }
 form .item input[type=checkbox] {
-  margin: 5px 0;
+  margin: 4px 0 5px;
 }
 form .item .no_label {
   margin-left: 106px;
@@ -232,15 +232,17 @@ p.reset_password {
 }
 .listing table {
   width: 440px;
-  background: #EEE;
   border: 1px solid #CCC;
 }
 .listing table tr th {
   background: #86CFEF;
 }
-.listing table tr th,
-.listing table tr td {
+.listing table th,
+.listing table td {
   padding: 2px 4px;
+}
+.listing table tr.odd {
+  background: #eee;
 }
 .listing table td.actions {
   text-align: right;

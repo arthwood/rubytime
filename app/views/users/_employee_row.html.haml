@@ -1,6 +1,6 @@
-%tr
+%tr{:class => row_class(employee_row_counter)}
   %td= user.name
-  %td= user.role
+  %td= (role = user.role) && role.name
   %td.active= verbalize(user.active)
   %td.actions
     = link_to image_tag('pencil.png'), '#'

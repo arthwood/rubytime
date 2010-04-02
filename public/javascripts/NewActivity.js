@@ -38,4 +38,4 @@ NewActivity.prototype = {
 
 Application.onLoad.add($D(null, function() {
   this.newActivity = new NewActivity();
-}))
+}));

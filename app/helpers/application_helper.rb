@@ -36,4 +36,10 @@ module ApplicationHelper
   def error_field(form, attr)
     error_message_on(form.object_name, attr, :css_class => :error)
   end
+  
+  ROW_CLASSES = %w(odd even)
+  
+  def row_class(i)
+    ROW_CLASSES[i % 2]
+  end
 end

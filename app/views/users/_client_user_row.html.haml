@@ -1,4 +1,4 @@
-%tr
+%tr{:class => row_class(client_user_row_counter)}
   %td= user.name
   %td= user.client.name
   %td.active= verbalize(user.active)

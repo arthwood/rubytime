@@ -4,9 +4,9 @@
 - form_for :user, :url => users_url do |i|
   .item.clearfix
     .label
-      = i.label :type
+      = i.label :group, 'Type'
     .input
-      = i.select :type, [['Employee', 0], ["Client's User", 1]]
+      = i.select :group, [['Employee', 0], ["Client's User", 1]]
       = error_field(i, :type)
   .item.clearfix{:style => 'display: none'}
     .label
@@ -50,5 +50,11 @@
     .input
       = i.password_field :password_confirmation
       = error_field(i, :password_confirmation)
+  .item.clearfix
+    .label
+      = i.label :active
+    .input
+      = i.check_box :active
+      = error_field(i, :active)
   .item.last
     = submit_tag 'Create', :class => :no_label
