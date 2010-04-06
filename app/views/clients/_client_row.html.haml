@@ -1,7 +1,7 @@
-%tr
+%tr{:class => row_class(client_row_counter)}
   %td= client.name
   %td= client.email
   %td= verbalize(client.active)
   %td.actions
-    = link_to image_tag('pencil.png'), '#'
-    = link_to image_tag('cross.png'), '#'
+    = link_to image_tag('pencil.png'), edit_client_url(client)
+    = link_to image_tag('cross.png'), client_url(client)

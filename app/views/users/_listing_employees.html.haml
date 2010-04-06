@@ -1,0 +1,14 @@
+%h1
+  List of employees
+
+- if @employees.empty?
+  %p
+    No employees found.
+- else
+  %table
+    %tr
+      %th Name
+      %th Role
+      %th Active
+      %th.actions &nbsp;
+    = render :partial => 'employee_row', :collection => @employees, :as => :user

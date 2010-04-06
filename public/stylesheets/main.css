@@ -217,7 +217,7 @@ p.reset_password {
 .user_info span {
   margin-left: 20px;
 }
-.sideForm {
+.side_form {
   float: right;
   width: 300px;
   background: #eee;
@@ -241,7 +241,7 @@ p.reset_password {
 .listing table td {
   padding: 2px 4px;
 }
-.listing table tr.odd {
+.listing table tr.even {
   background: #eee;
 }
 .listing table td.actions {

@@ -1,7 +1,9 @@
-%h2
-  Add new client
+- create_mode = @client.new_record?
 
-- form_tag clients_url do
+%h2
+  = create_mode ? 'Add new client' : 'Edit client'
+
+- form_tag clients_url, :method => (create_mode ? :post : :put) do
   - fields_for :client do |i|
     .item.clearfix
       .label
@@ -59,4 +61,4 @@
         = error_field(i, :password_confirmation)
   
   .item.last
-    = submit_tag 'Create', :class => :no_label
+    = submit_tag((create_mode ? 'Create' : 'Save'), :class => :no_label)
