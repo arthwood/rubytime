@@ -11,7 +11,7 @@ class InitialSchema < ActiveRecord::Migration
       t.string :name, :limit => 40, :null => false
       t.text :description
       t.string :email, :limit => 100
-      t.boolean :active, :null => false
+      t.boolean :active, :null => false, :default => true
     end
 
     create_table :users, :force => true do |t|
@@ -24,7 +24,7 @@ class InitialSchema < ActiveRecord::Migration
       t.datetime :updated_at
       t.string :remember_token, :limit => 40
       t.datetime :remember_token_expires_at
-      t.boolean :active
+      t.boolean :active, :null => false, :default => true
       t.boolean :admin
       t.references :role
       t.references :client

@@ -25,10 +25,10 @@ ActiveRecord::Schema.define(:version => 20100325151534) do
   end
 
   create_table "clients", :force => true do |t|
-    t.string  "name",        :limit => 40,  :null => false
+    t.string  "name",        :limit => 40,                    :null => false
     t.text    "description"
     t.string  "email",       :limit => 100
-    t.boolean "active",                     :null => false
+    t.boolean "active",                     :default => true, :null => false
   end
 
   create_table "currencies", :force => true do |t|
@@ -108,16 +108,16 @@ ActiveRecord::Schema.define(:version => 20100325151534) do
   end
 
   create_table "users", :force => true do |t|
-    t.string   "login",                     :limit => 40,  :null => false
-    t.string   "name",                      :limit => 100, :null => false
-    t.string   "email",                     :limit => 100, :null => false
-    t.string   "crypted_password",          :limit => 40,  :null => false
-    t.string   "salt",                      :limit => 40,  :null => false
+    t.string   "login",                     :limit => 40,                    :null => false
+    t.string   "name",                      :limit => 100,                   :null => false
+    t.string   "email",                     :limit => 100,                   :null => false
+    t.string   "crypted_password",          :limit => 40,                    :null => false
+    t.string   "salt",                      :limit => 40,                    :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "remember_token",            :limit => 40
     t.datetime "remember_token_expires_at"
-    t.boolean  "active"
+    t.boolean  "active",                                   :default => true, :null => false
     t.boolean  "admin"
     t.integer  "role_id"
     t.integer  "client_id"
