@@ -1,7 +1,9 @@
-%h2
-  Add new user
+- create_mode = @user.new_record?
 
-- form_for :user, :url => users_url do |i|
+%h2
+  = create_mode ? 'Add new user' : 'Edit user'
+
+- form_for :user, :url => (create_mode ? users_url : user_url(@user)), :html => {:method => (create_mode ? :post : :put)} do |i|
   .item.clearfix
     .label
       = i.label :group, 'Type'
@@ -57,4 +59,4 @@
       = i.check_box :active
       = error_field(i, :active)
   .item.last
-    = submit_tag 'Create', :class => :no_label
+    = submit_tag((create_mode ? 'Create' : 'Save'), :class => :no_label)

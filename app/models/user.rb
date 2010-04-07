@@ -44,6 +44,14 @@ class User < ActiveRecord::Base
   end
   
   def group
-    client_id.nil? ? 0 : 1
+    employee? ? 0 : 1
+  end
+  
+  def employee?
+    client_id.nil?
+  end
+  
+  def client?
+    !client_id.nil?
   end
 end

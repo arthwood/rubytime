@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
   def index
-    @user = User.new(:active => true)
+    @user = User.new
     @users = User.all
-    @employees, @clients_users = @users.partition {|i| i.client.nil?}
+    @employees, @clients_users = @users.partition {|i| i.employee?}
   end
   
   def create
@@ -24,6 +24,38 @@ class UsersController < ApplicationController
     end
   end
   
+  def edit
+    @user = User.find(params[:id])
+    
+    render :partial => 'form'
+  end
+  
+  def update
+    @user = User.find(params[:id])
+    
+    @success = @user.update_attributes(params[:user]) 
+    
+    if @success
+      flash[:info] = 'Succesfully updated User!'
+      redirect_to users_url
+    else
+      flash[:error] = "User couldn't be updated"
+      
+      @users = User.all
+      
+      render :action => :index
+    end
+  end
+  
+  def destroy
+    @user = User.find(params[:id])
+    @user.destroy
+    
+    @users = User.all
+    
+    render :partial => @user.employee? ? 'listing_employees' : 'listing_clients_users' 
+  end
+
   def do_request_password
     data = params[:reset_password]
     email = data[:email]
