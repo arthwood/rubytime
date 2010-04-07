@@ -64,6 +64,7 @@ module AuthenticatedSystem
     def access_denied
       respond_to do |format|
         format.html do
+          flash[:warning] = 'You need to login to perform this action'
           store_location
           redirect_to new_sessions_path
         end

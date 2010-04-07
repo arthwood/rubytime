@@ -10,7 +10,7 @@ body {
   color: black;
   font-family: Verdana;
   font-size: 12px;
-  background: #0C325F;
+  background: #EFEFEF;
 }
 p {
   margin: 0 0 10px;
@@ -108,7 +108,7 @@ form .error {
 #main {
   width: 820px;
   margin: 0 auto;
-  border: 1px solid #171025;
+  border: 1px solid #123D5C;
   background: white;
 }
 #header {

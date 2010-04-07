@@ -9,4 +9,6 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
   
   include AuthenticatedSystem
+  
+  before_filter :login_required
 end
