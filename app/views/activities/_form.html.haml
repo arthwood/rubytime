@@ -24,7 +24,7 @@
     .input
       = i.text_field :time_spent
       = error_field(i, :minutes)
-    .note.noLabel
+    .note.no_label
       e.g. 7:30, 7.5, or 7.5h for seven hours and thirty minutes; 0.5, .5h or 30m for half an hour
   .item.clearfix
     .label
@@ -33,6 +33,6 @@
       = i.text_area :comments
       = error_field(i, :comments)
   .item.last
-    = i.submit 'Add', :class => :noLabel
+    = i.submit 'Add', :class => :no_label
     or
     = link_to 'Cancel', '#'

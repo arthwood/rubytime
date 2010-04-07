@@ -69,7 +69,7 @@ form .item input[type=text],
 form .item input[type=password],
 form .item textarea,
 form .item .error {
-  width: 154px;
+  width: 156px;
 }
 form .item textarea {
   height: 100px;
@@ -253,17 +253,20 @@ p.reset_password {
 #new_activity {
   position: absolute;
   background: #171026;
-  padding: 10px 20px;
+  padding: 14px;
   color: #A7B2BF;
 }
 #new_activity a {
   color: #8E9DAF;
 }
+#new_activity form .item textarea {
+  width: 180px;
+}
 #new_activity form .item .note {
   color: #8E9DAF;
 }
 #new_activity form .item .label {
-  width: 80px; 
+  width: 70px; 
 }
 #new_activity form .item .no_label {
   margin-left: 86px;

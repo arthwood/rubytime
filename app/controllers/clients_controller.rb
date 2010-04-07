@@ -1,7 +1,8 @@
 class ClientsController < ApplicationController
   def index
     @clients = Client.all
-    @client = Client.new(:active => true)
+    @client = Client.new
+    @user = User.new
   end
   
   def create
@@ -31,7 +32,7 @@ class ClientsController < ApplicationController
   end
   
   def update
-    @client = Client.new(params[:id])
+    @client = Client.find(params[:id])
     @user = @client.users.first
     
     @success = @user.update_attributes(params[:user]) && @client.update_attributes(params[:client]) 
