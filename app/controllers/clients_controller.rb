@@ -38,10 +38,10 @@ class ClientsController < ApplicationController
     @success = @user.update_attributes(params[:user]) && @client.update_attributes(params[:client]) 
     
     if @success
-      flash[:info] = 'Succesfully updated Client and its User!'
+      flash[:info] = 'Succesfully updated Client!'
       redirect_to clients_url
     else
-      flash[:error] = "Client and its User couldn't be updated"
+      flash[:error] = "Client couldn't be updated"
       
       @clients = Client.all
       
