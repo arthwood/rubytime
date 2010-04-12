@@ -1,5 +1,9 @@
 class ActivitiesController < ApplicationController
+  skip_before_filter :login_required, :only => :index
+  
   def index
+    redirect_to login_url and return unless logged_in?
+    
     @activities = Activity.all
   end
 
