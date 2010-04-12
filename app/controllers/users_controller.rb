@@ -18,8 +18,10 @@ class UsersController < ApplicationController
       
       redirect_to users_url
     else
-      flash[:error] = "User couldn't be created"
-      index
+      flash.now[:error] = "User couldn't be created"
+      @users = User.all
+      @employees, @clients_users = @users.partition {|i| i.employee?}
+      
       render :action => :index
     end
   end
@@ -33,15 +35,21 @@ class UsersController < ApplicationController
   def update
     @user = User.find(params[:id])
     
-    @success = @user.update_attributes(params[:user]) 
+    data = params[:user]
+    
+    @user.client = nil if data[:client_id].blank?
+    @user.role = nil if data[:role_id].blank?
+    
+    @success = @user.update_attributes(data) 
     
     if @success
       flash[:info] = 'Succesfully updated User!'
       redirect_to users_url
     else
-      flash[:error] = "User couldn't be updated"
+      flash.now[:error] = "User couldn't be updated"
       
       @users = User.all
+      @employees, @clients_users = @users.partition {|i| i.employee?}
       
       render :action => :index
     end

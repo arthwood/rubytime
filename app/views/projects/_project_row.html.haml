@@ -1,0 +1,8 @@
+%tr{:class => row_class(project_row_counter)}
+  %td= project.name
+  %td= project.description
+  %td= project.client.name
+  %td.active= verbalize(project.active)
+  %td.actions
+    = link_to image_tag('pencil.png'), edit_project_url(project)
+    = link_to image_tag('cross.png'), project_url(project)

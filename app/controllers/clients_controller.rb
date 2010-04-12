@@ -16,7 +16,7 @@ class ClientsController < ApplicationController
       flash[:info] = 'Succesfully created Client and its User!'
       redirect_to clients_url
     else
-      flash[:error] = "Client and its User couldn't be created"
+      flash.now[:error] = "Client and its User couldn't be created"
       
       @clients = Client.all
       
@@ -41,7 +41,7 @@ class ClientsController < ApplicationController
       flash[:info] = 'Succesfully updated Client!'
       redirect_to clients_url
     else
-      flash[:error] = "Client couldn't be updated"
+      flash.now[:error] = "Client couldn't be updated"
       
       @clients = Client.all
       

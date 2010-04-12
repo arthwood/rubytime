@@ -1,0 +1,31 @@
+- create_mode = @project.new_record?
+
+%h2
+  = create_mode ? 'Add new project' : 'Edit project'
+
+- form_for :project, :url => (create_mode ? projects_url : project_url(@project)), :html => {:method => (create_mode ? :post : :put)} do |i|
+  .item.clearfix
+    .label
+      = i.label :name
+    .input
+      = i.text_field :name
+      = error_field(i, :name)
+  .item.clearfix
+    .label
+      = i.label :description
+    .input
+      = i.text_field :description
+      = error_field(i, :description)
+  .item.clearfix
+    .label
+      = i.label :client_id, 'Client'
+    .input
+      = i.select :client_id, options_from_collection_for_select(Client.all, :id, :name, @project.client_id)
+      = error_field(i, :client_id)
+  .item.clearfix
+    .label
+      = i.label :active
+    .input
+      = i.check_box :active
+  .item.last
+    = submit_tag((create_mode ? 'Create' : 'Save'), :class => :no_label)

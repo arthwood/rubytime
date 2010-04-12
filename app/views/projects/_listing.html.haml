@@ -1,0 +1,15 @@
+%h1
+  List of projects
+
+- if @projects.empty?
+  %p
+    No projects found.
+- else
+  %table
+    %tr
+      %th Name
+      %th Description
+      %th Client
+      %th Active
+      %th.actions &nbsp;
+    = render :partial => 'project_row', :collection => @projects, :as => :project
