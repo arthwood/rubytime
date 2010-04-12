@@ -1,0 +1,36 @@
+- create_mode = @currency.new_record?
+
+%h2
+  = create_mode ? 'Add new currency' : 'Edit currency'
+
+- form_for :currency, :url => (create_mode ? currencies_url : currency_url(@currency)), :html => {:method => (create_mode ? :post : :put)} do |i|
+  .item.clearfix
+    .label
+      = i.label :name
+    .input
+      = i.text_field :name
+      = error_field(i, :name)
+  .item.clearfix
+    .label
+      = i.label :plural
+    .input
+      = i.text_field :plural
+      = error_field(i, :plural)
+  .item.clearfix
+    .label
+      = i.label :symbol
+    .input
+      = i.text_field :symbol
+      = error_field(i, :symbol)
+  .item.clearfix.example
+    .label
+      Example
+    .input
+      = currency_example(@currency)
+  .item.clearfix
+    .label
+      = i.label :prefix, 'Prefix?'
+    .input
+      = i.check_box :prefix
+  .item.last
+    = submit_tag((create_mode ? 'Create' : 'Save'), :class => :no_label)

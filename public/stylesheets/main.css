@@ -247,7 +247,7 @@ p.reset_password {
 .listing table td.actions {
   text-align: right;
 }
-.listing table td.active {
+.listing table td.centered {
   text-align: center;
 }
 #new_activity {

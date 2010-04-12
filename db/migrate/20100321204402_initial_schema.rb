@@ -33,13 +33,15 @@ class InitialSchema < ActiveRecord::Migration
     add_index :users, :login, :unique => true
     
     create_table :currencies do |t|
-      t.string :singular_name, :null => false
-      t.string :plural_name, :null => false
-      t.string :prefix
-      t.string :suffix
+      t.string :name, :null => false
+      t.string :plural, :null => false
+      t.string :symbol, :null => false
+      t.boolean :prefix, :null => false
     end
     
-    add_index :currencies, :singular_name, :unique => true
+    add_index :currencies, :name, :unique => true
+    add_index :currencies, :plural, :unique => true
+    add_index :currencies, :symbol, :unique => true
     
     create_table :invoices do |t|
       t.string :name, :null => false

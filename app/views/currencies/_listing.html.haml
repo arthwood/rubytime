@@ -1,0 +1,16 @@
+%h1
+  List of currencies
+
+- if @currencies.empty?
+  %p
+    No currencies found.
+- else
+  %table
+    %tr
+      %th Name
+      %th Prular
+      %th Symbol
+      %th Prefix?
+      %th Example
+      %th.actions &nbsp;
+    = render :partial => 'currency_row', :collection => @currencies, :as => :currency

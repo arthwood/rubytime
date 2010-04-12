@@ -32,13 +32,15 @@ ActiveRecord::Schema.define(:version => 20100325151534) do
   end
 
   create_table "currencies", :force => true do |t|
-    t.string "singular_name", :null => false
-    t.string "plural_name",   :null => false
-    t.string "prefix"
-    t.string "suffix"
+    t.string  "name",   :null => false
+    t.string  "plural", :null => false
+    t.string  "symbol", :null => false
+    t.boolean "prefix", :null => false
   end
 
-  add_index "currencies", ["singular_name"], :name => "index_currencies_on_singular_name", :unique => true
+  add_index "currencies", ["name"], :name => "index_currencies_on_name", :unique => true
+  add_index "currencies", ["plural"], :name => "index_currencies_on_plural", :unique => true
+  add_index "currencies", ["symbol"], :name => "index_currencies_on_symbol", :unique => true
 
   create_table "free_days", :force => true do |t|
     t.date    "date",    :null => false
