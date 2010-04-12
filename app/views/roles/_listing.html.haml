@@ -1,0 +1,13 @@
+%h1
+  List of roles
+
+- if @roles.empty?
+  %p
+    No roles found.
+- else
+  %table
+    %tr
+      %th Name
+      %th Can manage financial data?
+      %th.actions &nbsp;
+    = render :partial => 'role_row', :collection => @roles, :as => :role

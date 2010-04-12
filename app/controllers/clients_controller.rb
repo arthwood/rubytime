@@ -52,7 +52,6 @@ class ClientsController < ApplicationController
   def destroy
     @client = Client.find(params[:id])
     @client.destroy
-    
     @clients = Client.all
     
     render :partial => 'listing' 

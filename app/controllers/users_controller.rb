@@ -58,10 +58,9 @@ class UsersController < ApplicationController
   def destroy
     @user = User.find(params[:id])
     @user.destroy
-    
     @users = User.all
     
-    render :partial => @user.employee? ? 'listing_employees' : 'listing_clients_users' 
+    render :partial => @user.employee? ? 'listing_employees' : 'listing_clients_users'
   end
 
   def do_request_password

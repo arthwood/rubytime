@@ -1,4 +1,4 @@
-var Clients = function() {
+var Roles = function() {
   this.onEditDC = $DC(this, this.onEdit);
   this.onRemoveDC = $DC(this, this.onRemove);
   this.onEditSuccessD = $D(this, this.onEditSuccess);
@@ -8,7 +8,7 @@ var Clients = function() {
   $$('.listing td.actions').each($DC(this, this.initActions));
 }
 
-Clients.prototype = {
+Roles.prototype = {
   initActions: function(i) {
     var elements = i.elements();
     var edit = elements.first();
@@ -25,7 +25,7 @@ Clients.prototype = {
   },
   
   onRemove: function(e) {
-    if (confirm('Really remove this client?')) {
+    if (confirm('Really remove this role?')) {
       $del(e.currentTarget.href, null, this.onDeleteSuccessD);
     }
     
@@ -38,9 +38,11 @@ Clients.prototype = {
   
   onDeleteSuccess: function(ajax) {
     this.listing.innerHTML = ajax.getResponseText();
+    
+    app.flash.show('info', 'Role successfully deleted!');
   }
 };
 
 Application.onLoad.add($D(null, function() {
-  this.clients = new Clients();
+  this.roles = new Roles();
 }));

@@ -71,6 +71,8 @@ Users.prototype = {
   
   onDeleteSuccess: function(ajax) {
     this.editedListing.innerHTML = ajax.getResponseText();
+    
+    app.flash.show('info', 'User successfully deleted!');
   }
 };
 

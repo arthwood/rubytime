@@ -1,0 +1,19 @@
+- create_mode = @role.new_record?
+
+%h2
+  = create_mode ? 'Add new role' : 'Edit role'
+
+- form_for :role, :url => (create_mode ? roles_url : role_url(@role)), :html => {:method => (create_mode ? :post : :put)} do |i|
+  .item.clearfix
+    .label
+      = i.label :name
+    .input
+      = i.text_field :name
+      = error_field(i, :name)
+  .item.clearfix
+    .label
+      = i.label :can_manage_financial_data, 'Can manage financial data?'
+    .input
+      = i.check_box :can_manage_financial_data
+  .item.last
+    = submit_tag((create_mode ? 'Create' : 'Save'), :class => :no_label)

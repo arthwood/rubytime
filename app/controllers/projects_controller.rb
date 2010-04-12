@@ -42,7 +42,8 @@ class ProjectsController < ApplicationController
   def destroy
     @project = Project.find(params[:id])
     @project.destroy
-
-    redirect_to projects_url
+    @projects = Project.all
+    
+    render :partial => 'listing'
   end
 end
