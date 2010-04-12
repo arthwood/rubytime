@@ -5,6 +5,7 @@ class ActivitiesController < ApplicationController
     redirect_to login_url and return unless logged_in?
     
     @activities = Activity.all
+    @activity = Activity.new
   end
 
   def show
@@ -20,9 +21,14 @@ class ActivitiesController < ApplicationController
 
     if @activity.save
       flash[:notice] = 'Activity was successfully created.'
-      redirect_to(@activity)
+      
+      redirect_to :action => :index
     else
-      render :action => :_form
+      @activities = Activity.all
+      
+      flash.now[:error] = "Activity couldn't be created"
+      
+      render :action => :index
     end
   end
 

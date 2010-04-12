@@ -9,6 +9,10 @@ var NewActivity = function() {
   app.onResize.add($D(this, this.onResize));
 
   this.updateLayout();
+  
+  if (!this.container.down('.item .error').empty()) {
+    this.container.show();
+  }
 }
 
 NewActivity.prototype = {

@@ -63,7 +63,7 @@ class InitialSchema < ActiveRecord::Migration
     create_table :activities do |t|
       t.text :comments, :null => false
       t.date :date, :null => false
-      t.integer :minutes, :size => 5, :null => false
+      t.integer :minutes, :size => 5, :null => false, :default => 0
       t.references :project, :null => false
       t.references :user, :null => false
       t.references :invoice

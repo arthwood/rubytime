@@ -1,14 +1,23 @@
 class Activity < ActiveRecord::Base
   validates_presence_of :comments, :date, :project_id, :user_id, :minutes
-  validates_numericality_of :minutes
+  
+  TIME_SPENT_RE = /^\d{1,2}:\d{2}$/
   
   def time_spent
-    minutes && "#{minutes / 60}:#{minutes % 60}"
+    @time_spent || "#{minutes / 60}:#{(minutes % 60).to_s.rjust(2, '0')}"
   end
   
   def time_spent=(v)
-    arr = v.split(':')
+    @time_spent = v
     
-    self.minutes = 60 * arr.first.to_i + arr.last.to_i
+    if v =~ TIME_SPENT_RE
+      p 1
+      arr = v.split(':')
+      self.minutes = 60 * arr.first.to_i + arr.last.to_i  
+    else
+      p 2
+      errors.add(:minutes, 'has invalid format')
+      p errors.full_messages
+    end
   end
 end
