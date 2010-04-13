@@ -25,7 +25,7 @@ class InitialSchema < ActiveRecord::Migration
       t.string :remember_token, :limit => 40
       t.datetime :remember_token_expires_at
       t.boolean :active, :null => false, :default => true
-      t.boolean :admin
+      t.boolean :admin, :null => false, :default => false
       t.references :role
       t.references :client
     end

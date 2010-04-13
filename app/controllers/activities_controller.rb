@@ -17,8 +17,12 @@ class ActivitiesController < ApplicationController
   end
 
   def create
-    @activity = Activity.new(params[:activity])
-
+    data = params[:activity]
+    
+    data.user_id = current_user.id unless current_user.admin
+    
+    @activity = Activity.new(data)
+    
     if @activity.save
       flash[:notice] = 'Activity was successfully created.'
       
