@@ -4,18 +4,28 @@ class ActivitiesController < ApplicationController
   def index
     redirect_to login_url and return unless logged_in?
     
-    @activities = Activity.all
+    @filter = params[:filter] || {:date => {:from => nil, :to => nil}}
+    
+    a = current_user.admin
+    b = @filter[:user_id].blank?
+    c = (@filter[:user_id] == current_user.id)
+    
+    @filter[:user_id] = current_user.id if a && b || !a && (b || !c)
+    
+    @user = User.find(@filter[:user_id])
     @activity = Activity.new
+    @activities = Activity.search(@filter)
+    @users = User.employees
   end
-
+  
   def show
     @activity = Activity.find(params[:id])
   end
-
+  
   def edit
     @activity = Activity.find(params[:id])
   end
-
+  
   def create
     data = params[:activity]
     
@@ -35,7 +45,7 @@ class ActivitiesController < ApplicationController
       render :action => :index
     end
   end
-
+  
   def update
     @activity = Activity.find(params[:id])
 

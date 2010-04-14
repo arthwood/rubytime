@@ -5,7 +5,12 @@ var Activities = function() {
   this.onDeleteSuccessD = $D(this, this.onDeleteSuccess);
   this.listing = $$('.listing').first();
   $$('.listing td.actions').each($DC(this, this.initActions));
-}
+  this.filterUserSelect = $('filter_user_id');
+  this.filterUserSelect.onchange = $DC(this, this.onUserSelect);
+  this.onProjectsSuccessD = $D(this, this.onProjectsSuccess);
+  this.filterProject = $('filter_project_id');
+  this.projectToOptionDC = $DC(this, this.projectToOption);
+};
 
 Activities.prototype = {
   initActions: function(i) {
@@ -38,6 +43,22 @@ Activities.prototype = {
     this.listing.innerHTML = ajax.getResponseText();
     
     app.flash.show('info', 'Activity successfully deleted!');
+  },
+  
+  onUserSelect: function(e) {
+    $get('projects.json', {user_id: e.currentTarget.value}, this.onProjectsSuccessD);
+  },
+  
+  onProjectsSuccess: function(ajax) {
+    this.filterProject.innerHTML = this.buildProjectOptions(eval(ajax.getResponseText()));
+  },
+  
+  buildProjectOptions: function(data) {
+    return data.map(this.projectToOptionDC).join('');
+  },
+  
+  projectToOption: function(i, idx) {
+    return $B('option', {value: i.id}, i.name);
   }
 };
 

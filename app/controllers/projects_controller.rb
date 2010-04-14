@@ -1,7 +1,15 @@
 class ProjectsController < ApplicationController
   def index
-    @projects = Project.all
-    @project = Project.new
+    respond_to do |format|
+      format.html do
+        @projects = Project.all
+        @project = Project.new
+      end
+      
+      format.json do
+        render :json => User.find(params[:user_id]).projects.to_json
+      end
+    end
   end
 
   def create

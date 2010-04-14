@@ -1,10 +1,17 @@
-- form_remote_for :activity, :url => activities_url do |i|
+- form_for :activity, :url => activities_url do |i|
+  - if admin?
+    .item.clearfix
+      .label
+        = i.label :user_id, 'User'
+      .input
+        = i.select :user_id, options_from_collection_for_select(User.all, :id, :name)
+        = error_field(i, :user_id)
   .item.clearfix
     .label
-      = i.label :user_id, 'User'
+      = i.label :project_id, 'Project'
     .input
-      = i.select :user_id, options_from_collection_for_select(User.all, :id, :name)
-      = error_field(i, :user_id)
+      = i.select :project_id, options_from_collection_for_select(Project.all, :id, :name)
+      = error_field(i, :project_id)
   .item.clearfix.datepicker
     .label
       = i.label :date
@@ -12,12 +19,6 @@
       = i.text_field :date
       = image_tag 'datepicker/cal.gif'
       = error_field(i, :date)
-  .item.clearfix
-    .label
-      = i.label :project_id, 'Project'
-    .input
-      = i.select :project_id, options_from_collection_for_select(Project.all, :id, :name)
-      = error_field(i, :project_id)
   .item.clearfix
     .label
       = i.label :time_spent

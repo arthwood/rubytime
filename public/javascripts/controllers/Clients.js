@@ -3,6 +3,8 @@ var Clients = function() {
   this.onRemoveDC = $DC(this, this.onRemove);
   this.onEditSuccessD = $D(this, this.onEditSuccess);
   this.onDeleteSuccessD = $D(this, this.onDeleteSuccess);
+  this.onAddNewDC = $DC(this, this.onAddNew);
+  this.onAddNewSuccessD = $D(this, this.onAddNewSuccess);
   this.listing = $$('.listing').first();
   this.sideForm = $$('.side_form').first();
   $$('.listing td.actions').each($DC(this, this.initActions));
@@ -34,12 +36,27 @@ Clients.prototype = {
   
   onEditSuccess: function(ajax) {
     this.sideForm.innerHTML = ajax.getResponseText();
+    this.initAddNewLink();
   },
   
   onDeleteSuccess: function(ajax) {
     this.listing.innerHTML = ajax.getResponseText();
     
     app.flash.show('info', 'Client successfully deleted!');
+  },
+  
+  initAddNewLink: function() {
+    this.sideForm.down('h2 span a').first().onclick = this.onAddNewDC;
+  },
+  
+  onAddNew: function(e) {
+    $get(e.currentTarget.href, this.onAddNewSuccessD);
+    
+    return false;
+  },
+  
+  onAddNewSuccess: function(ajax) {
+    this.sideForm.innerHTML = ajax.getResponseText();
   }
 };
 

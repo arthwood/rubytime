@@ -1,51 +1,41 @@
 %h2
   Filter
 
-- form_for :filter, :url => activities_url, :html => {:method => :get} do |i|
+- form_tag activities_url, :method => :get do
   .item.clearfix
     .label
-      = i.label :client
+      = label_tag 'filter[user_id]', 'User'
     .input
-      = i.select :client, options_from_collection_for_select(Client.all, :id, :name)
+      = select_tag 'filter[user_id]', options_from_collection_for_select(@users, :id, :name, @filter[:user_id].to_i)
   .item.clearfix
     .label
-      = i.label :project
+      = label_tag 'filter[project_id]', 'Project'
     .input
-      = i.select :project, options_from_collection_for_select(Project.all, :id, :name)
-  .item.clearfix
-    .label
-      = i.label :role
-    .input
-      = i.select :role, options_from_collection_for_select(Role.all, :id, :name)
-  .item.clearfix
-    .label
-      = i.label :user
-    .input
-      = i.select :user, options_from_collection_for_select(User.all, :id, :name)
+      = select_tag 'filter[project_id]', options_from_collection_for_select(@user.projects, :id, :name, @filter[:project_id].to_i)
   .item.clearfix.datepicker
     .label
-      = i.label :from
+      = label_tag 'filter[date][from]', 'from'
     .input
-      = i.text_field :date_from
+      = text_field_tag 'filter[date][from]', @filter[:date][:from]
       = image_tag 'datepicker/cal.gif'
   .item.clearfix.datepicker
     .label
-      = i.label :to
+      = label_tag 'filter[date][to]', 'to'
     .input
-      = i.text_field :date_to
+      = text_field_tag 'filter[date][to]', @filter[:date][:to]
       = image_tag 'datepicker/cal.gif'
   .item.clearfix
     .label
       Include
     .radiogroup
       .radio
-        = i.radio_button :include, :all
-        = i.label :include_all, 'All'
+        = radio_button_tag 'filter[include]', :all
+        = label_tag 'filter[include][all]', 'All'
       .radio
-        = i.radio_button :include, :invoiced
-        = i.label :include_invoiced, 'Invoiced'
+        = radio_button_tag 'filter[include]', :invoiced
+        = label_tag 'filter[include][invoiced]', 'Invoiced'
       .radio
-        = i.radio_button :include, :not_invoiced
-        = i.label :include_not_invoiced, 'Not invoiced'
+        = radio_button_tag 'filter[include]', :not_invoiced
+        = label_tag 'filter[include][not_invoiced]', 'Not invoiced'
   .item.last
-    = i.submit 'Submit', :class => :no_label
+    = submit_tag 'Submit', :class => :no_label

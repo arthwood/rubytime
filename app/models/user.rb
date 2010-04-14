@@ -25,6 +25,11 @@ class User < ActiveRecord::Base
   belongs_to :client
   belongs_to :role
   
+  has_many :activities
+  has_many :projects, :through => :activities
+  
+  named_scope :employees, :conditions => 'client_id IS NULL'
+  
   def self.authenticate(login, password)
     return nil if login.blank? || password.blank?
     u = find_by_login(login.downcase)

@@ -54,7 +54,7 @@ form .item .label {
   text-align: right;
 }
 form .item .label label {
-  line-height: 22px;
+  line-height: 20px;
 }
 form .item .radiogroup {
   float: left;
@@ -224,14 +224,19 @@ p.reset_password {
   padding: 10px;
   border: 1px solid #CCCCCC;
 }
+.side_form h2 span {
+  font-size: 11px;
+}
 .listing {
+  float: left;
+  width: 520px;
   margin-bottom: 30px;
 }
 .listing h1 {
   margin-bottom: 4px;
 }
 .listing table {
-  width: 520px;
+  width: 100%;
   border: 1px solid #CCC;
 }
 .listing table tr th {

@@ -42,4 +42,15 @@ module ApplicationHelper
   def row_class(i)
     ROW_CLASSES[i % 2]
   end
+  
+  def admin?
+    current_user.admin
+  end
+  
+  def form_header(object)
+    create_mode = object.new_record?
+    name = object.class.name.downcase
+    
+    create_mode ? "Add new #{name}" : "Edit #{name} " + content_tag(:span, "(or #{link_to('add new', polymorphic_path(object, :action => :new))})")
+  end
 end

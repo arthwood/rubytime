@@ -1,7 +1,7 @@
 - create_mode = @client.new_record?
 
 %h2
-  = create_mode ? 'Add new client' : 'Edit client'
+  = form_header(@client) 
 
 - form_tag (create_mode ? clients_url : client_url(@client)), :method => (create_mode ? :post : :put) do
   - fields_for :client do |i|

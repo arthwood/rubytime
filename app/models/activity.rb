@@ -13,6 +13,15 @@ class Activity < ActiveRecord::Base
     @time_spent = v
   end
   
+  # filter {:project_id => 2, :date => {:from => '06-04-2010', :to => '21-04-2010'}, :include => 'all', :user_id => 3}}
+  def self.search(filter)
+    conditions = {:project_id => filter[:project_id], :user_id => filter[:user_id]}
+    date = filter[:date]
+    from, to = date[:from], date[:to]
+    conditions[:date] = Range.new(from, to) unless from.blank? && to.blank?
+    all(:conditions => conditions)
+  end
+  
   protected
   
   def after_validation

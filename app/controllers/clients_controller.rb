@@ -5,6 +5,12 @@ class ClientsController < ApplicationController
     @user = User.new
   end
   
+  def new
+    @client = Client.new
+    
+    render :partial => 'form'
+  end
+  
   def create
     @client = Client.new(params[:client])
     @user = User.new(params[:user])
