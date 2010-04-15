@@ -4,7 +4,8 @@ class ActivitiesController < ApplicationController
   def index
     redirect_to login_url and return unless logged_in?
     
-    @filter = params[:filter] || {:date => {:from => nil, :to => nil}}
+    @params_filter = params[:filter]
+    @filter = @params_filter || {:date => {:from => nil, :to => nil}}
     
     a = current_user.admin
     b = @filter[:user_id].blank?

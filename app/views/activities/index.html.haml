@@ -2,5 +2,11 @@
   .side_form.filter
     = render :partial => 'filter'
   .left
-    .listing
-      = render :partial => 'listing'
+    - if @params_filter.nil?
+      %h1
+        Welcome!
+      %h3
+        Use filter form on the right to search activities
+    - else
+      .listing
+        = render :partial => 'listing'
