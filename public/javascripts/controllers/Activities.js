@@ -7,9 +7,8 @@ var Activities = function() {
   $$('.listing td.actions').each($DC(this, this.initActions));
   this.filterUserSelect = $('filter_user_id');
   this.filterUserSelect.onchange = $DC(this, this.onUserSelect);
-  this.onProjectsSuccessD = $D(this, this.onProjectsSuccess);
   this.filterProject = $('filter_project_id');
-  this.projectToOptionDC = $DC(this, this.projectToOption);
+  this.onProjectsD = $D(this, this.onProjects);
 };
 
 Activities.prototype = {
@@ -23,7 +22,7 @@ Activities.prototype = {
   },
   
   onEdit: function(e) {
-    $get(e.currentTarget.href, this.onEditSuccessD);
+    $get(e.currentTarget.href, null, this.onEditSuccessD);
     
     return false;
   },
@@ -37,6 +36,7 @@ Activities.prototype = {
   },
   
   onEditSuccess: function(ajax) {
+    newActivity.onEdit($P(ajax.getResponseText()));
   },
   
   onDeleteSuccess: function(ajax) {
@@ -46,19 +46,13 @@ Activities.prototype = {
   },
   
   onUserSelect: function(e) {
-    $get('projects.json', {user_id: e.currentTarget.value}, this.onProjectsSuccessD);
+    app.helper.onProjectsLoad.add(this.onProjectsD);
+    app.helper.getProjects(e.currentTarget.value);
   },
   
-  onProjectsSuccess: function(ajax) {
-    this.filterProject.innerHTML = this.buildProjectOptions(eval(ajax.getResponseText()));
-  },
-  
-  buildProjectOptions: function(data) {
-    return data.map(this.projectToOptionDC).join('');
-  },
-  
-  projectToOption: function(i, idx) {
-    return $B('option', {value: i.id}, i.name);
+  onProjects: function(projects) {
+    this.filterProject.innerHTML = projects;
+    app.helper.onProjectsLoad.remove(this.onProjectsD);
   }
 };
 

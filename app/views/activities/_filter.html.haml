@@ -6,7 +6,7 @@
     .label
       = label_tag 'filter[user_id]', 'User'
     .input
-      = select_tag 'filter[user_id]', options_from_collection_for_select(@users, :id, :name, @filter[:user_id].to_i)
+      = select_tag 'filter[user_id]', options_from_collection_for_select(User.employees, :id, :name, @filter[:user_id].to_i)
   .item.clearfix
     .label
       = label_tag 'filter[project_id]', 'Project'
@@ -16,13 +16,13 @@
     .label
       = label_tag 'filter[date][from]', 'from'
     .input
-      = text_field_tag 'filter[date][from]', @filter[:date][:from]
+      = text_field_tag 'filter[date][from]', @filter[:date][:from], :readOnly => true
       = image_tag 'datepicker/cal.gif'
   .item.clearfix.datepicker
     .label
       = label_tag 'filter[date][to]', 'to'
     .input
-      = text_field_tag 'filter[date][to]', @filter[:date][:to]
+      = text_field_tag 'filter[date][to]', @filter[:date][:to], :readOnly => true
       = image_tag 'datepicker/cal.gif'
   .item.clearfix
     .label

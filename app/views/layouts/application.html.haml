@@ -18,7 +18,7 @@
       #menu.clearfix
         = render :partial => 'layouts/menu'
       - if logged_in?
-        #new_activity{:style => 'display: none'}
+        #activity{:style => 'display: none'}
           = render :partial => 'activities/form'
       #submenu
         = render :partial => 'layouts/submenu'

@@ -18,7 +18,12 @@ class Activity < ActiveRecord::Base
     conditions = {:project_id => filter[:project_id], :user_id => filter[:user_id]}
     date = filter[:date]
     from, to = date[:from], date[:to]
-    conditions[:date] = Range.new(from, to) unless from.blank? && to.blank?
+    
+    from = from.blank? ? nil : Date.parse(from)
+    to = to.blank? ? nil : Date.parse(to)
+    
+    conditions[:date] = Range.new(from, to) if from || to
+    
     all(:conditions => conditions)
   end
   

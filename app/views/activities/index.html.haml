@@ -1,12 +1,6 @@
 .clearfix
   .side_form.filter
     = render :partial => 'filter'
-  .listing
-    %h1
-      List of activities
-    
-    - if @activities.empty?
-      %p
-        No activities found for selected criteria.
-    - else
-      = render :partial => (params[:calendar] ? 'calendar' : 'list')
+  .left
+    .listing
+      = render :partial => 'listing'

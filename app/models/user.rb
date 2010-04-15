@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
   belongs_to :role
   
   has_many :activities
-  has_many :projects, :through => :activities
+  has_many :projects, :through => :activities, :uniq => true
   
   named_scope :employees, :conditions => 'client_id IS NULL'
   

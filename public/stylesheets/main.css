@@ -228,7 +228,6 @@ p.reset_password {
   font-size: 11px;
 }
 .listing {
-  float: left;
   width: 520px;
   margin-bottom: 30px;
 }
@@ -255,24 +254,24 @@ p.reset_password {
 .listing table td.centered {
   text-align: center;
 }
-#new_activity {
+#activity {
   position: absolute;
   background: #171026;
   padding: 14px;
   color: #A7B2BF;
 }
-#new_activity a {
+#activity a {
   color: #8E9DAF;
 }
-#new_activity form .item textarea {
+#activity form .item textarea {
   width: 180px;
 }
-#new_activity form .item .note {
+#activity form .item .note {
   color: #8E9DAF;
 }
-#new_activity form .item .label {
+#activity form .item .label {
   width: 70px; 
 }
-#new_activity form .item .no_label {
+#activity form .item .no_label {
   margin-left: 76px;
 }

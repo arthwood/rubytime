@@ -13,9 +13,7 @@ class ActivitiesController < ApplicationController
     @filter[:user_id] = current_user.id if a && b || !a && (b || !c)
     
     @user = User.find(@filter[:user_id])
-    @activity = Activity.new
     @activities = Activity.search(@filter)
-    @users = User.employees
   end
   
   def show
@@ -24,6 +22,8 @@ class ActivitiesController < ApplicationController
   
   def edit
     @activity = Activity.find(params[:id])
+    
+    render :partial => 'form'
   end
   
   def create
@@ -34,15 +34,9 @@ class ActivitiesController < ApplicationController
     @activity = Activity.new(data)
     
     if @activity.save
-      flash[:notice] = 'Activity was successfully created.'
-      
-      redirect_to :action => :index
+      render :nothing => true
     else
-      @activities = Activity.all
-      
-      flash.now[:error] = "Activity couldn't be created"
-      
-      render :action => :index
+      render :partial => 'form'
     end
   end
   
@@ -50,10 +44,9 @@ class ActivitiesController < ApplicationController
     @activity = Activity.find(params[:id])
 
     if @activity.update_attributes(params[:activity])
-      flash[:notice] = 'Activity was successfully updated.'
-      redirect_to @activity
+      render :nothing => true
     else
-      render :action => :edit
+      render :partial => 'form'
     end
   end
 

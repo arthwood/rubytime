@@ -1,16 +1,18 @@
-- form_for :activity, :url => activities_url do |i|
+- create_mode = @activity.new_record?
+
+- form_for :activity, :url => (create_mode ? activities_url : activity_url(@activity)), :html => {:method => (create_mode ? :post : :put)} do |i|
   - if admin?
     .item.clearfix
       .label
         = i.label :user_id, 'User'
       .input
-        = i.select :user_id, options_from_collection_for_select(User.all, :id, :name)
+        = i.select :user_id, options_from_collection_for_select(User.employees, :id, :name, @activity.user_id)
         = error_field(i, :user_id)
   .item.clearfix
     .label
       = i.label :project_id, 'Project'
     .input
-      = i.select :project_id, options_from_collection_for_select(Project.all, :id, :name)
+      = i.select :project_id, options_from_collection_for_select(Project.all, :id, :name, @activity.project_id)
       = error_field(i, :project_id)
   .item.clearfix.datepicker
     .label
@@ -34,6 +36,6 @@
       = i.text_area :comments
       = error_field(i, :comments)
   .item.last
-    = i.submit 'Add', :class => :no_label
+    = i.submit((create_mode ? 'Add' : 'Save'), :class => :no_label)
     or
     = link_to 'Cancel', '#'
