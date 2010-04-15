@@ -12,6 +12,11 @@
       = label_tag 'filter[project_id]', 'Project'
     .input
       = select_tag 'filter[project_id]', options_from_collection_for_select(@user.projects, :id, :name, @filter[:project_id].to_i)
+  .item.clearfix
+    .label
+      = label_tag 'period', 'Select period'
+    .input
+      = select_tag 'period', daterange_options
   .item.clearfix.datepicker
     .label
       = label_tag 'filter[date][from]', 'from'

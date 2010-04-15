@@ -1,14 +1,18 @@
 var Activities = function() {
-  this.onEditDC = $DC(this, this.onEdit);
-  this.onRemoveDC = $DC(this, this.onRemove);
+  this.onEditDC = this.onEdit.bind(this);
+  this.onRemoveDC = this.onRemove.bind(this);
   this.onEditSuccessD = $D(this, this.onEditSuccess);
   this.onDeleteSuccessD = $D(this, this.onDeleteSuccess);
   this.listing = $$('.listing').first();
-  $$('.listing td.actions').each($DC(this, this.initActions));
+  $$('.listing td.actions').each(this.initActions.bind(this));
   this.filterUserSelect = $('filter_user_id');
-  this.filterUserSelect.onchange = $DC(this, this.onUserSelect);
+  this.filterUserSelect.onchange = this.onUserSelect.bind(this);
   this.filterProject = $('filter_project_id');
   this.onProjectsD = $D(this, this.onProjects);
+  this.filterDateFrom = $('filter_date_from');
+  this.filterDateTo = $('filter_date_to');
+  this.period = $('period');
+  this.period.onchange = this.onPeriod.bind(this);
 };
 
 Activities.prototype = {
@@ -53,6 +57,17 @@ Activities.prototype = {
   onProjects: function(projects) {
     this.filterProject.innerHTML = projects;
     app.helper.onProjectsLoad.remove(this.onProjectsD);
+  },
+  
+  onPeriod: function(e) {
+    var select = e.currentTarget;
+    
+    if (select.selectedIndex > 0) {
+      var arr = select.value.split('/');
+    
+      this.filterDateFrom.value = arr.first();
+      this.filterDateTo.value = arr.second();
+    }
   }
 };
 

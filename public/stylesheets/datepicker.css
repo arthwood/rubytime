@@ -1,6 +1,9 @@
 .datepicker input {
   width: 100px;
 }
+.datepicker img {
+  vertical-align: middle;
+}
 .datepicker_calendar {
   background: white;
   padding: 8px 4px;

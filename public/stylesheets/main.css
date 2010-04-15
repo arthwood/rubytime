@@ -30,6 +30,13 @@ img {
 a {
   text-decoration: none;
 }
+input[type=text], input[type=password], select {
+  font-family: Verdana;
+  font-size: 11px;
+  background-color: #FFFBCF;
+  border-width: 1px;
+  vertical-align: middle;
+}
 input.invalid, select.invalid, textarea.invalid {
   border: 1px solid #F00;
 }
@@ -54,7 +61,6 @@ form .item .label {
   text-align: right;
 }
 form .item .label label {
-  line-height: 20px;
 }
 form .item .radiogroup {
   float: left;

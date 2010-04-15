@@ -53,4 +53,23 @@ module ApplicationHelper
     
     create_mode ? "Add new #{name}" : "Edit #{name} " + content_tag(:span, "(or #{link_to('add new', polymorphic_path(object, :action => :new))})")
   end
+  
+  def daterange_options
+    now = Date.current
+    options_for_select [
+      ['Select...', nil],
+      daterange('Today', now, now),
+      daterange('Yesterday', now.yesterday, now.yesterday),
+      daterange('This Week', now.beginning_of_week, now.end_of_week),
+      daterange('Last Week', 1.week.ago.beginning_of_week, 1.week.ago.end_of_week),
+      daterange('This Month', now.beginning_of_month, now.end_of_month),
+      daterange('Last Month', 1.month.ago.beginning_of_month, 1.month.ago.end_of_month)
+    ]
+  end
+  
+  def daterange(label, from, to)
+    ["#{label} (#{from.strftime('%d/%m/%Y')} - #{to.strftime('%d/%m/%Y')})", 
+     "#{from.strftime('%d-%m-%Y')}/#{to.strftime('%d-%m-%Y')}"
+    ]
+  end
 end
