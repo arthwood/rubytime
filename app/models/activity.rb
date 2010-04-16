@@ -6,7 +6,7 @@ class Activity < ActiveRecord::Base
   validates_format_of :time_spent, :with => /^\d{1,2}:\d{2}$/
   
   def time_spent
-    @time_spent || "#{minutes / 60}:#{(minutes % 60).to_s.rjust(2, '0')}"
+    @time_spent || "#{minutes.to_i / 60}:#{(minutes.to_i % 60).to_s.rjust(2, '0')}"
   end
   
   def time_spent=(v)
