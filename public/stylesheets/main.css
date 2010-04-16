@@ -24,18 +24,25 @@ h2 {
   margin: 0 0 14px;
   font-size: 14px;
 }
+h3 {
+  margin: 0 0 12px;
+}
 img {
   border: none;
 }
 a {
   text-decoration: none;
 }
-input[type=text], input[type=password], select {
+input[type=text], input[type=password], select, textarea {
   font-family: Verdana;
   font-size: 11px;
-  background-color: #FFF79F;
+  background-color: #FEFFAF;
   border-width: 1px;
   vertical-align: middle;
+}
+input[type=text]:focus, input[type=password]:focus, select:focus, textarea:focus {
+  background-color: #FFFFCF;
+  color: black;
 }
 input.invalid, select.invalid, textarea.invalid {
   border: 1px solid #F00;
@@ -79,8 +86,6 @@ form .item .error {
 }
 form .item textarea {
   height: 100px;
-  font-family: Verdana;
-  font-size: 12px;
 }
 form .item select {
   width: 160px;
@@ -239,6 +244,7 @@ p.reset_password {
 }
 .listing h1 {
   margin-bottom: 4px;
+  margin-left: 3px;
 }
 .listing table {
   width: 100%;

@@ -1,7 +1,7 @@
 - create_mode = @currency.new_record?
 
 %h2
-  = create_mode ? 'Add new currency' : 'Edit currency'
+  = form_header(@currency)
 
 - form_for :currency, :url => (create_mode ? currencies_url : currency_url(@currency)), :html => {:method => (create_mode ? :post : :put)} do |i|
   .item.clearfix

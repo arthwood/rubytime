@@ -3,6 +3,12 @@ class CurrenciesController < ApplicationController
     @currencies = Currency.all
     @currency = Currency.new
   end
+  
+  def new
+    @currency = Currency.new
+    
+    render :partial => 'form'
+  end
 
   def create
     @currency = Currency.new(params[:currency])

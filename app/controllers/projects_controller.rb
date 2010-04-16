@@ -14,7 +14,13 @@ class ProjectsController < ApplicationController
       end
     end
   end
-
+  
+  def new
+    @project = Project.new
+    
+    render :partial => 'form'
+  end
+  
   def create
     @project = Project.new(params[:project])
 

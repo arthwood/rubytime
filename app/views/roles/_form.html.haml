@@ -1,7 +1,7 @@
 - create_mode = @role.new_record?
 
 %h2
-  = create_mode ? 'Add new role' : 'Edit role'
+  = form_header(@role)
 
 - form_for :role, :url => (create_mode ? roles_url : role_url(@role)), :html => {:method => (create_mode ? :post : :put)} do |i|
   .item.clearfix

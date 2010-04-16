@@ -1,17 +1,9 @@
-var Users = function() {
-  this.onEditDC = $DC(this, this.onEdit);
-  this.onRemoveDC = $DC(this, this.onRemove);
-  this.onEditSuccessD = $D(this, this.onEditSuccess);
-  this.onDeleteSuccessD = $D(this, this.onDeleteSuccess);
-  this.editedListing = null;
-  this.sideForm = $$('.side_form').first();
+var Users = $E(Resources, function() {
+  arguments.callee.super('user');
+  
   this.initForm();
   this.updateSelect();
-  
-  $$('.listing td.actions').each($DC(this, this.initActions));
-}
-
-Users.prototype = {
+}, {
   initForm: function() {
     this.userType = $('user_group');
     this.userRole = $('user_role_id');
@@ -21,7 +13,7 @@ Users.prototype = {
   
     this.selects = [{item: this.userRoleItem, input: this.userRole}, {item: this.clientItem, input: this.client}];
 
-    this.userType.onchange = $DC(this, this.onUserTypeChange);
+    this.userType.onchange = this.onUserTypeChange.bind(this);
   },
   
   onUserTypeChange: function(e) {
@@ -39,42 +31,19 @@ Users.prototype = {
     showSelect.item.show();
   },
   
-  initActions: function(i) {
-    var elements = i.elements();
-    var edit = elements.first();
-    var remove = elements.second();
+  doRemove: function(e) {
+    this.listing = e.currentTarget.up('.listing');
     
-    edit.onclick = this.onEditDC;
-    remove.onclick = this.onRemoveDC;
-  },
-  
-  onEdit: function(e) {
-    $get(e.currentTarget.href, null, this.onEditSuccessD);
-    
-    return false;
-  },
-  
-  onRemove: function(e) {
-    if (confirm('Really remove this user?')) {
-      this.editedListing = e.currentTarget.up('.listing');
-      $del(e.currentTarget.href, null, this.onDeleteSuccessD);
-    }
-    
-    return false;
+    $del(e.currentTarget.href, null, this.onDeleteSuccessD);
   },
   
   onEditSuccess: function(ajax) {
-    this.sideForm.innerHTML = ajax.getResponseText();
+    arguments.callee.super(ajax);
+    
     this.initForm();
     this.updateSelect();
-  },
-  
-  onDeleteSuccess: function(ajax) {
-    this.editedListing.innerHTML = ajax.getResponseText();
-    
-    app.flash.show('info', 'User successfully deleted!');
   }
-};
+});
 
 Application.onLoad.add($D(null, function() {
   this.users = new Users();

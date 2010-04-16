@@ -5,6 +5,12 @@ class UsersController < ApplicationController
     @employees, @clients_users = @users.partition {|i| i.employee?}
   end
   
+  def new
+    @user = User.new
+    
+    render :partial => 'form'
+  end
+  
   def create
     data = params[:user]
     data.delete(:group)

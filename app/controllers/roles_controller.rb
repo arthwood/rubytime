@@ -4,6 +4,12 @@ class RolesController < ApplicationController
     @role = Role.new
   end
 
+  def new
+    @role = Role.new
+    
+    render :partial => 'form'
+  end
+  
   def create
     @role = Role.new(params[:role])
 

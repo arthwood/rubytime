@@ -1,7 +1,7 @@
 - create_mode = @project.new_record?
 
 %h2
-  = create_mode ? 'Add new project' : 'Edit project'
+  = form_header(@project)
 
 - form_for :project, :url => (create_mode ? projects_url : project_url(@project)), :html => {:method => (create_mode ? :post : :put)} do |i|
   .item.clearfix
