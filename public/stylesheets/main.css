@@ -33,7 +33,7 @@ a {
 input[type=text], input[type=password], select {
   font-family: Verdana;
   font-size: 11px;
-  background-color: #FFFBCF;
+  background-color: #FFF79F;
   border-width: 1px;
   vertical-align: middle;
 }

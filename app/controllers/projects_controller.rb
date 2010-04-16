@@ -7,7 +7,10 @@ class ProjectsController < ApplicationController
       end
       
       format.json do
-        render :json => User.find(params[:user_id]).projects.to_json
+        user_id = params[:user_id]
+        @projects = user_id.blank? ? Project.all : User.find(user_id).projects
+        
+        render :json => @projects.to_json
       end
     end
   end

@@ -15,10 +15,12 @@ class Activity < ActiveRecord::Base
   
   # filter {:project_id => 2, :date => {:from => '06-04-2010', :to => '21-04-2010'}, :include => 'all', :user_id => 3}}
   def self.search(filter)
-    conditions = {:project_id => filter[:project_id], :user_id => filter[:user_id]}
-    date = filter[:date]
-    from, to = date[:from], date[:to]
-    
+    project_id = filter.project_id
+    user_id = filter.user_id
+    conditions = {}
+    conditions[:project_id] = project_id unless project_id.blank?
+    conditions[:user_id] = user_id unless user_id.blank?
+    from, to = filter.from, filter.to
     from = from.blank? ? nil : Date.parse(from)
     to = to.blank? ? nil : Date.parse(to)
     

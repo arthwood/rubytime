@@ -22,7 +22,7 @@ Currencies.prototype = {
   },
   
   onEdit: function(e) {
-    $get(e.currentTarget.href, this.onEditSuccessD);
+    $get(e.currentTarget.href, null, this.onEditSuccessD);
     
     return false;
   },

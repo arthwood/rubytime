@@ -4,16 +4,19 @@ class ActivitiesController < ApplicationController
   def index
     redirect_to login_url and return unless logged_in?
     
-    @params_filter = params[:filter]
-    @filter = @params_filter || {:date => {:from => nil, :to => nil}}
+    @params_filter = params[:activity_filter]
+    @filter = ActivityFilter.new(@params_filter || {:from => nil, :to => nil})
     
-    a = current_user.admin
-    b = @filter[:user_id].blank?
-    c = (@filter[:user_id] == current_user.id)
+    @users = User.employees
     
-    @filter[:user_id] = current_user.id if a && b || !a && (b || !c)
+    if current_user.admin
+      user = (user_id = @filter.user_id).blank? ? nil : User.find(user_id)
+      @projects = user ? user.projects : Project.all
+    else
+      @filter.user_id = current_user.id
+      @projects = current_user.projects
+    end
     
-    @user = User.find(@filter[:user_id])
     @activities = Activity.search(@filter)
   end
   

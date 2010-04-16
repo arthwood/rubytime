@@ -57,7 +57,6 @@ module ApplicationHelper
   def daterange_options(selected = nil)
     now = Date.current
     options_for_select [
-      ['Select...', nil],
       daterange('Today', now, now),
       daterange('Yesterday', now.yesterday, now.yesterday),
       daterange('This Week', now.beginning_of_week, now.end_of_week),
