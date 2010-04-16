@@ -11,7 +11,7 @@ var Activities = function() {
   this.onProjectsD = $D(this, this.onProjects);
   this.filterDateFrom = $('filter_date_from');
   this.filterDateTo = $('filter_date_to');
-  this.period = $('period');
+  this.period = $('filter_period');
   this.period.onchange = this.onPeriod.bind(this);
 };
 
