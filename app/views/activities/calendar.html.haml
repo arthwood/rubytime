@@ -1,0 +1,27 @@
+.clearfix
+  - form_tag calendar_activities_path, :class => :right do
+    = select_tag :user_id, options_from_collection_for_select(User.employees, :id, :name, @user.id)
+    = submit_tag :ok
+  %h1.left
+    Calendar view
+ 
+%table.calendar{:cellspacing => 1}
+  %caption
+    = link_to '<< Previous', calendar_activities_path(:current => @current.last_month)
+    %span= @current
+    = link_to 'Next >>', calendar_activities_path(:current => @current.next_month)
+  %tr
+    %th Mon
+    %th Tue
+    %th Wed
+    %th Thu
+    %th Fri
+    %th Sat
+    %th Sun
+  - 0.upto(@rows) do |i|
+    %tr
+    - 0.upto(6) do |j|
+      - day = @first_day.advance(:days => i * 7 + j + 1 - @first_day.wday)
+      
+      %td{:class => (@first_day.month == day.month) ? nil : :disabled}
+        = day.mday

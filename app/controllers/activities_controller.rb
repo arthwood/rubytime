@@ -20,6 +20,18 @@ class ActivitiesController < ApplicationController
     @activities = Activity.search(@filter)
   end
   
+  def calendar
+    if current_user.admin
+      @user = (user_id = params[:user_id]).blank? ? current_user : User.find(user_id)
+    else
+      @user = current_user
+    end
+    
+    @current = (current = params[:current]).blank? ? Date.current : Date.parse(current)
+    @first_day = @current.at_beginning_of_month
+    @rows = (@first_day.wday + @current.end_of_month.mday - 1) / 7
+  end
+  
   def show
     @activity = Activity.find(params[:id])
   end

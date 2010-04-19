@@ -17,15 +17,15 @@ p {
   line-height: 18px;
 }
 h1 {
-  margin: 0 0 16px;
+  margin: 0 0 10px;
   font-size: 16px;
 }
 h2 {
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   font-size: 14px;
 }
 h3 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
 }
 img {
   border: none;
@@ -38,6 +38,11 @@ input[type=text], input[type=password], select, textarea {
   font-size: 11px;
   background-color: #FEFFAF;
   border-width: 1px;
+  vertical-align: middle;
+}
+input[type=submit] {
+  font-family: Verdana;
+  font-size: 11px;
   vertical-align: middle;
 }
 input[type=text]:focus, input[type=password]:focus, select:focus, textarea:focus {
@@ -262,6 +267,33 @@ p.reset_password {
 }
 .listing table td.centered {
   text-align: center;
+}
+table.calendar {
+  border: 1px solid #CCC;
+}
+table.calendar caption {
+  padding: 6px 0;
+  font-size: 11px;
+  background: #EEE;
+  border: 1px solid #CCC;
+  border-bottom-color: #DDD;
+}
+table.calendar caption span {
+  margin: 0 20px;
+  font-weight: bold;
+}
+table.calendar th {
+  background: #86CFEF;
+  width: 120px;
+}
+table.calendar td {
+  height: 80px;
+  vertical-align: top;
+  padding: 2px;
+  border: 1px solid #EEE;
+}
+table.calendar td.disabled {
+  color: #DDD;
 }
 #activity {
   position: absolute;

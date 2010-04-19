@@ -11,7 +11,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resource :sessions
 
-  map.resources :activities
+  map.resources :activities, :collection => {:calendar => :get}
   map.resources :projects
   map.resources :invoices
   map.resources :clients

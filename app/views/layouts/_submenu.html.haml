@@ -3,7 +3,7 @@
     - case section
       - when :activities
         = submenu_link 'List', activities_url
-        = submenu_link 'Calendar', activities_url(:calendar => 1)
+        = submenu_link 'Calendar', calendar_activities_url
       - when :invoices
         = submenu_link 'All', invoices_url
         = submenu_link 'Issued', invoices_url(:filter => :issued)
