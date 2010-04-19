@@ -2,7 +2,7 @@ class InitialSchema < ActiveRecord::Migration
   def self.up
     create_table :roles do |t|
       t.string :name, :limit => 40, :null => false
-      t.boolean :can_manage_financial_data, :null => false
+      t.boolean :can_manage_financial_data, :null => false, :default => false
     end
     
     add_index :roles, :name, :unique => true
@@ -56,7 +56,7 @@ class InitialSchema < ActiveRecord::Migration
       t.string :name, :null => false
       t.text :description
       t.references :client, :null => false
-      t.boolean :active, :null => false
+      t.boolean :active, :null => false, :default => true
       t.datetime :created_at
     end
     

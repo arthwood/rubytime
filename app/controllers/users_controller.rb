@@ -1,8 +1,9 @@
 class UsersController < ApplicationController
   def index
     @user = User.new
-    @users = User.all(:order => :name)
-    @employees, @clients_users = @users.partition {|i| i.employee?}
+    @admins = User.admins
+    @employees = User.employees.not_admins
+    @clients_users = User.clients.not_admins
   end
   
   def new

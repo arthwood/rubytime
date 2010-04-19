@@ -1,0 +1,14 @@
+%h1
+  List of admins
+
+- if @admins.empty?
+  %p
+    No admins found.
+- else
+  %table
+    %tr
+      %th Name
+      %th Role
+      %th Active
+      %th.actions &nbsp;
+    = render :partial => 'admin_row', :collection => @admins, :as => :user

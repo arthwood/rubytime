@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
   
   validates_inclusion_of :active, :in => [true, false]
   
-  attr_accessible :login, :email, :name, :password, :password_confirmation, :active, :role_id, :client_id
+  attr_accessible :login, :email, :name, :password, :password_confirmation, :active, :admin, :role_id, :client_id
   
   belongs_to :client
   belongs_to :role
@@ -29,6 +29,9 @@ class User < ActiveRecord::Base
   has_many :projects, :through => :activities, :uniq => true
   
   named_scope :employees, :conditions => 'client_id IS NULL'
+  named_scope :clients, :conditions => 'client_id IS NOT NULL'
+  named_scope :not_admins, :conditions => 'admin = 0'
+  named_scope :admins, :conditions => 'admin = 1'
   
   def self.authenticate(login, password)
     return nil if login.blank? || password.blank?

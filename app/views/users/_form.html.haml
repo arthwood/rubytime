@@ -58,5 +58,11 @@
     .input
       = i.check_box :active
       = error_field(i, :active)
+  .item.clearfix
+    .label
+      = i.label :admin
+    .input
+      = i.check_box :admin
+      = error_field(i, :admin)
   .item.last
     = submit_tag((create_mode ? 'Create' : 'Save'), :class => :no_label)

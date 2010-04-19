@@ -90,9 +90,6 @@ form .item textarea {
 form .item select {
   width: 160px;
 }
-form .item input[type=checkbox] {
-  margin: 4px 0 5px;
-}
 form .item .no_label {
   margin-left: 106px;
   clear: both;
