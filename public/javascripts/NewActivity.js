@@ -122,15 +122,17 @@ NewActivity.prototype = {
   },
   
   onEditActivitySuccess: function(ajax) {
-    var body = ajax.getResponseText();
+    var json = ajax.getResponseText().toJson();
     
-    if (body.empty()) {
+    if (json.success) {
       this.restoreForm();
       
       app.flash.show('info', 'Activity successfully updated!');
+      
+      window.activitiesCalendar.onEditActivitySuccess(json.activity);
     }
     else {
-      this.editForm.replace($P(body));
+      this.editForm.replace($P(json.html));
       this.initEditForm();
       app.flash.show('error', 'There were errors while updating the activity');
     }

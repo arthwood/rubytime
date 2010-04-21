@@ -8,7 +8,7 @@
 %table.calendar{:cellspacing => 1}
   %caption
     = link_to '<< Previous', calendar_activities_path(:current => @current.last_month)
-    %span= @current
+    %span= @current.strftime('%B %Y')
     = link_to 'Next >>', calendar_activities_path(:current => @current.next_month)
   %tr
     %th Mon
@@ -18,22 +18,20 @@
     %th Fri
     %th Sat
     %th Sun
-  - 0.upto(@rows) do |i|
+  
+  - groups = group(@activities) {|i| i.date}
+  - 0.upto(@rows) do |row|
     %tr
-    - 0.upto(6) do |j|
-      - day = @first_day.advance(:days => i * 7 + j + 1 - @first_day.wday)
-      - activities = @activities.select {|k| k.date == day}
-      - has_activity = !activities.empty?
+    - 0.upto(6) do |col|
+      - day = @first_day.advance(:days => row * 7 + col + 1 - @first_day.wday)
+      - activities = groups[day]
+      - has_activity = !activities.nil?
       - classes = [:cell]
       - classes << :disabled unless (@first_day.month == day.month)
-      - classes << :active if has_activity 
+      - classes << :active if has_activity
       %td{:class => classes.join(' ')}
         %p
           = day.mday
-        - if has_activity
-          %ul{:style => 'display: none'}
-            - activities.each do |a|
-              %li
-                = a.comments
-
+        .content{:style => 'display: none'}
+          = render :partial => 'activity_cell', :object => activities, :locals => {:activities => activities} if has_activity
 #activity_details.cell{:style => 'display: none'}

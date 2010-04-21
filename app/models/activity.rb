@@ -5,6 +5,8 @@ class Activity < ActiveRecord::Base
   validates_presence_of :comments, :date, :project_id, :user_id, :minutes
   validates_format_of :time_spent, :with => /^\d{1,2}:\d{2}$/
   
+  named_scope :for_day, lambda {|date| {:conditions => {:date => date}}}
+  
   def time_spent
     @time_spent || "#{minutes.to_i / 60}:#{(minutes.to_i % 60).to_s.rjust(2, '0')}"
   end
@@ -26,7 +28,7 @@ class Activity < ActiveRecord::Base
     
     conditions[:date] = Range.new(from, to) if from || to
     
-    all(:conditions => conditions)
+    all(:conditions => conditions, :include => :project)
   end
   
   protected

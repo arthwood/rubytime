@@ -51,7 +51,7 @@ class ActivitiesController < ApplicationController
     @activity = Activity.new(data)
     
     if @activity.save
-      render :nothing => true
+      render :json => @activity.to_json
     else
       render :partial => 'form'
     end
@@ -59,18 +59,18 @@ class ActivitiesController < ApplicationController
   
   def update
     @activity = Activity.find(params[:id])
-
+    
     if @activity.update_attributes(params[:activity])
-      render :nothing => true
+      render :json => {:activity => @activity.to_json, :success => true}
     else
-      render :partial => 'form'
+      render :json => {:html => render_to_string(:partial => 'form'), :success => false}
     end
   end
 
   def destroy
     @activity = Activity.find(params[:id])
     @activity.destroy
-
-    redirect_to activities_url
+    
+    render :json => @activity.to_json
   end
 end

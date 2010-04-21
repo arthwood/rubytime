@@ -1,0 +1,15 @@
+- activities.each do |a|
+  %p
+    = a.project.name
+    %span
+      = "(#{a.time_spent})"
+  %ul
+    %li
+      = a.comments
+      .actions
+        = link_to image_tag('pencil.png'), edit_activity_path(a)
+        = link_to image_tag('cross.png'), activity_path(a, :calendar => 1)
+%p
+  Total:
+  %span
+    = time_spent(activities.inject(0) {|mem, i| mem + i.minutes})

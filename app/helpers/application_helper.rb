@@ -71,4 +71,28 @@ module ApplicationHelper
      "#{from.strftime('%d-%m-%Y')}/#{to.strftime('%d-%m-%Y')}"
     ]
   end
+  
+  def group(arr, &block)
+    result = {}
+    
+    arr.each do |i|
+      key = block.call(i)
+      
+      if result[key]
+        result[key] << i
+      else
+        result[key] = [i]
+      end
+    end
+    
+    result
+  end
+  
+  def time_spent(minutes)
+    "#{minutes.to_i / 60}:#{(minutes.to_i % 60).to_s.rjust(2, '0')}"
+  end
+  
+  def activity_field_id(name)
+    "#{@prefix}_activity_#{name}"
+  end
 end

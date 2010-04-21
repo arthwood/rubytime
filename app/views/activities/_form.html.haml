@@ -1,39 +1,40 @@
 - create_mode = @activity.new_record?
+- @prefix = create_mode ? 'new' : 'edit'
 
 - form_for :activity, :url => (create_mode ? activities_url : activity_url(@activity)), :html => {:method => (create_mode ? :post : :put)} do |i|
   - if admin?
     .item.clearfix
       .label
-        = i.label :user_id, 'User'
+        = i.label :user_id, 'User', :id => activity_field_id(:user_id)
       .input
-        = i.select :user_id, options_from_collection_for_select(User.employees, :id, :name, @activity.user_id)
+        = i.select :user_id, options_from_collection_for_select(User.employees, :id, :name, @activity.user_id), {}, :id => activity_field_id(:user_id)
         = error_field(i, :user_id)
   .item.clearfix
     .label
-      = i.label :project_id, 'Project'
+      = i.label :project_id, 'Project', :id => activity_field_id(:project_id)
     .input
-      = i.select :project_id, options_from_collection_for_select(Project.all, :id, :name, @activity.project_id)
+      = i.select :project_id, options_from_collection_for_select(Project.all, :id, :name, @activity.project_id), {}, :id => activity_field_id(:project_id)
       = error_field(i, :project_id)
   .item.clearfix.datepicker
     .label
-      = i.label :date
+      = i.label :date, 'Date', :id => activity_field_id(:date)
     .input
-      = i.text_field :date
+      = i.text_field :date, :id => activity_field_id(:date)
       = image_tag 'datepicker/cal.gif'
       = error_field(i, :date)
   .item.clearfix
     .label
-      = i.label :time_spent
+      = i.label :time_spent, 'Time spent', :id => activity_field_id(:time_spent)
     .input
-      = i.text_field :time_spent
+      = i.text_field :time_spent, :id => activity_field_id(:time_spent)
       = error_field(i, :time_spent)
     .note.no_label
       e.g. 7:30
   .item.clearfix
     .label
-      = i.label :comments
+      = i.label :comments, 'Comments', :id => activity_field_id(:comments)
     .input
-      = i.text_area :comments
+      = i.text_area :comments, :id => activity_field_id(:comments)
       = error_field(i, :comments)
   .item.last
     = i.submit((create_mode ? 'Add' : 'Save'), :class => :no_label)

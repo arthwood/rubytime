@@ -36,9 +36,11 @@ a {
 input[type=text], input[type=password], select, textarea {
   font-family: Verdana;
   font-size: 11px;
+  vertical-align: middle;
   background-color: #FEFFAF;
   border-width: 1px;
-  vertical-align: middle;
+  border-style: solid;
+  border-color: #999 #DDD #DDD #999;
 }
 input[type=submit] {
   font-family: Verdana;
@@ -278,6 +280,12 @@ table.calendar caption {
   border: 1px solid #CCC;
   border-bottom-color: #DDD;
 }
+table.calendar caption a {
+  color: #123D5C;
+}
+table.calendar caption a:hover {
+  color: black;
+}
 table.calendar caption span {
   margin: 0 20px;
   font-weight: bold;
@@ -302,18 +310,31 @@ table.calendar td.active {
   vertical-align: top;
 }
 .cell p {
-  margin-bottom: 4px;
+  margin-bottom: 0;
+}
+.cell .content {
+  padding: 10px;
+}
+.cell .content > p {
+  font-weight: bold;
+}
+.cell .content > p span {
+  font-weight: normal;
 }
 #activity_details {
   position: absolute;
   width: 210px;
   min-height: 74px;
   background: white;
+  border: 1px solid #CCC;
 }
 #activity_details ul {
-  padding-left: 24px;
+  padding-left: 14px;
   padding-right: 10px;
   margin: 10px 0;
+}
+#activity_details .actions {
+  margin-top: 6px;
 }
 #activity {
   position: absolute;
