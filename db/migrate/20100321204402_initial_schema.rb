@@ -72,6 +72,8 @@ class InitialSchema < ActiveRecord::Migration
       t.timestamps
     end
     
+    add_index :activities, [:date, :project_id, :user_id], :name => :main, :unique => true
+    
     create_table :hourly_rates do |t|
       t.references :project, :null => false
       t.references :role, :null => false
