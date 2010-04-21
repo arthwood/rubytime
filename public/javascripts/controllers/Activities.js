@@ -16,7 +16,7 @@ var Activities = $E(Resources, function() {
   this.period.onchange = this.onPeriod.bind(this);
 }, {
   onEditSuccess: function(ajax) {
-    newActivity.onEdit($P(ajax.getResponseText()));
+    newActivity.onEdit(this, $P(ajax.getResponseText()));
   },
   
   onUserSelect: function(e) {
@@ -40,6 +40,10 @@ var Activities = $E(Resources, function() {
       this.filterDateFrom.value = arr.first();
       this.filterDateTo.value = arr.second();
     }
+  },
+  
+  onEditActivitySuccess: function(activity) {
+    
   }
 });
 

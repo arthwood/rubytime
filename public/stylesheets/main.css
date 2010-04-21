@@ -315,11 +315,14 @@ table.calendar td.active {
 .cell .content {
   padding: 10px;
 }
-.cell .content > p {
+.cell .content .project {
   font-weight: bold;
 }
-.cell .content > p span {
+.cell .content .project span {
   font-weight: normal;
+}
+.cell .actions {
+  margin-top: 6px;
 }
 #activity_details {
   position: absolute;
@@ -328,19 +331,12 @@ table.calendar td.active {
   background: white;
   border: 1px solid #CCC;
 }
-#activity_details ul {
-  padding-left: 14px;
-  padding-right: 10px;
-  margin: 10px 0;
-}
-#activity_details .actions {
-  margin-top: 6px;
-}
 #activity {
   position: absolute;
   background: #171026;
   padding: 14px;
   color: #A7B2BF;
+  z-index: 1;
 }
 #activity a {
   color: #8E9DAF;

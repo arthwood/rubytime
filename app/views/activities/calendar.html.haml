@@ -24,14 +24,16 @@
     %tr
     - 0.upto(6) do |col|
       - day = @first_day.advance(:days => row * 7 + col + 1 - @first_day.wday)
-      - activities = groups[day]
-      - has_activity = !activities.nil?
+      - activities = groups[day] || []
+      - has_activity = !activities.empty?
       - classes = [:cell]
       - classes << :disabled unless (@first_day.month == day.month)
       - classes << :active if has_activity
       %td{:class => classes.join(' ')}
+        %p.day{:style => 'display: none'}
+          = format_date(day)
         %p
           = day.mday
         .content{:style => 'display: none'}
-          = render :partial => 'activity_cell', :object => activities, :locals => {:activities => activities} if has_activity
+          = render :partial => 'cell', :object => activities, :locals => {:activities => activities}
 #activity_details.cell{:style => 'display: none'}

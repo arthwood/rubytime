@@ -31,10 +31,9 @@
 = javascript_include_tag 'Helper'
 = javascript_include_tag 'Application'
 = javascript_include_tag 'NewActivity' if logged_in?
-= javascript_include_tag 'Resources'
 
-- if @c == 'activities'
-  - js_file = (@a == 'calendar') ? 'ActivitiesCalendar' : @c.capitalize
-  = javascript_include_tag "controllers/#{js_file}"
+- if @c == 'activities' && @a == 'calendar'
+  = javascript_include_tag "controllers/ActivitiesCalendar"
 - else
+  = javascript_include_tag 'Resources'
   = javascript_include_tag "controllers/#{@c.capitalize}"

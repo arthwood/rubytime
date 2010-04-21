@@ -7,7 +7,8 @@ var ActivitiesCalendar = function() {
   this.onEditSuccessD = $D(this, this.onEditSuccess);
   this.onDeleteSuccessD = $D(this, this.onDeleteSuccess);
   this.userSelect = $('user_id');
-  
+  this.timeSpentInjectDC = this.timeSpentInject.bind(this);
+  this.detectDayDC = this.detectDay.bind(this);
   $$('table.calendar td.active').each(this.initDetails.bind(this));
 };
 
@@ -68,7 +69,7 @@ ActivitiesCalendar.prototype = {
   },
   
   onEditSuccess: function(ajax) {
-    newActivity.onEdit($P(ajax.getResponseText()));
+    newActivity.onEdit(this, $P(ajax.getResponseText()));
   },
   
   onDeleteSuccess: function(ajax) {
@@ -76,7 +77,48 @@ ActivitiesCalendar.prototype = {
   },
   
   onEditActivitySuccess: function(activity) {
+    var e = $('activity_' + activity.id);
+    var date = e.up('.day').innerHTML.trim();
+    var project = e.down('.project').first();
+    var comments = e.down('.comments').first();
     
+    project.innerHTML = activity.project.name;
+    project.down('span').first().innerHTML = activity.time_spent;
+    comments.innerHTML = activity.comments;
+    
+    if (activity.date == date) {
+      this.updateTotal(e);
+    }
+    else {
+      this.dayToDetect = activity.date;
+      
+      var day = $$('.calendar .day').detect(this.detectDayDC);
+      
+      if (day) {
+        day.up('.cell').down('.activities').first().appendChild(e);
+        this.updateTotal(e);
+      }
+      else {
+        this.updateTotal(e);
+        e.remove();
+      }
+    }
+  },
+  
+  detectDay: function(e) {
+    return this.dayToDetect == e.getContent().trim();
+  },
+  
+  updateTotal: function(e) {
+    var content = e.up('.content');
+    var times = content.down('.activity .project span').map(ElementUtils.getContentDC).inject(0, this.timeSpentInjectDC);
+    var total = content.down('.total').first();
+    
+    total.setContent(DateUtils.minutesToHM(total));
+  },
+  
+  timeSpentInject: function(mem, i) {
+    return mem + DateUtils.hmToMinutes(i);
   }
 };
 

@@ -9,6 +9,7 @@ module ApplicationHelper
     :activities => [{:c => :activities}],
     :invoices => [{:c => :invoices}]
   }
+  ROW_CLASSES = %w(odd even)
   
   def section
     c = @c.to_sym
@@ -36,8 +37,6 @@ module ApplicationHelper
   def error_field(form, attr)
     error_message_on(form.object_name, attr, :css_class => :error)
   end
-  
-  ROW_CLASSES = %w(odd even)
   
   def row_class(i)
     ROW_CLASSES[i % 2]
@@ -67,9 +66,7 @@ module ApplicationHelper
   end
   
   def daterange(label, from, to)
-    ["#{label} (#{from.strftime('%d/%m/%Y')} - #{to.strftime('%d/%m/%Y')})", 
-     "#{from.strftime('%d-%m-%Y')}/#{to.strftime('%d-%m-%Y')}"
-    ]
+    ["#{label} (#{format_date(from, '/')} - #{format_date(to, '/')})", "#{format_date(from)}/#{format_date(to)}"]
   end
   
   def group(arr, &block)
@@ -94,5 +91,9 @@ module ApplicationHelper
   
   def activity_field_id(name)
     "#{@prefix}_activity_#{name}"
+  end
+  
+  def format_date(date, separator = '-')
+    date.strftime("%d#{separator}%m#{separator}%Y")
   end
 end

@@ -13,6 +13,8 @@ var NewActivity = function() {
   this.onEditActivitySuccessD = $D(this, this.onEditActivitySuccess);
   this.onCancelEditActivityDC = this.onCancelEditActivity.bind(this);
   
+  this.controller = null;
+  
   this.initNewForm();
   
   app.onResize.add($D(this, this.onResize));
@@ -77,7 +79,9 @@ NewActivity.prototype = {
     this.container.hide();
   },
   
-  onEdit: function(form) {
+  onEdit: function(controller, form) {
+    this.controller = controller;
+    
     if (this.editForm) {
       form.replace(this.editForm);
     }
@@ -129,7 +133,8 @@ NewActivity.prototype = {
       
       app.flash.show('info', 'Activity successfully updated!');
       
-      window.activitiesCalendar.onEditActivitySuccess(json.activity);
+      
+      this.controller.onEditActivitySuccess(json.activity);
     }
     else {
       this.editForm.replace($P(json.html));
