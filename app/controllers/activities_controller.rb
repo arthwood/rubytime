@@ -27,6 +27,7 @@ class ActivitiesController < ApplicationController
       @user = current_user
     end
     
+    @activities = @user.activities
     @current = (current = params[:current]).blank? ? Date.current : Date.parse(current)
     @first_day = @current.at_beginning_of_month
     @rows = (@first_day.wday + @current.end_of_month.mday - 1) / 7

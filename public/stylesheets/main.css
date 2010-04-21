@@ -14,7 +14,7 @@ body {
 }
 p {
   margin: 0 0 10px;
-  line-height: 18px;
+  line-height: 14px;
 }
 h1 {
   margin: 0 0 10px;
@@ -288,12 +288,32 @@ table.calendar th {
 }
 table.calendar td {
   height: 80px;
-  vertical-align: top;
-  padding: 2px;
-  border: 1px solid #EEE;
 }
 table.calendar td.disabled {
   color: #DDD;
+  background: url('/images/datepicker/backstripes.gif');
+}
+table.calendar td.active {
+  background: url('/images/comment.png') no-repeat 50% 50%;
+}
+.cell {
+  padding: 2px;
+  border: 1px solid #EEE;
+  vertical-align: top;
+}
+.cell p {
+  margin-bottom: 4px;
+}
+#activity_details {
+  position: absolute;
+  width: 210px;
+  min-height: 74px;
+  background: white;
+}
+#activity_details ul {
+  padding-left: 24px;
+  padding-right: 10px;
+  margin: 10px 0;
 }
 #activity {
   position: absolute;
