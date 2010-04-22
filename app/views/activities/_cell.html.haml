@@ -1,17 +1,6 @@
 .activities
-  - activities.each do |a|
-    .activity[a]
-      %p.project
-        %span.name
-          = a.project.name
-        %span
-          = "(#{content_tag(:span, a.time_spent, :class => :time)})" 
-      %p.comments
-        = a.comments
-      .actions
-        = link_to image_tag('pencil.png'), edit_activity_path(a)
-        = link_to image_tag('cross.png'), activity_path(a, :calendar => 1)
-%p
+  = render :partial => 'cell_activity', :collection => activities, :as => :activity
+%p.total
   Total:
-  %span.total
+  %span
     = time_spent(activities.inject(0) {|mem, i| mem + i.minutes})

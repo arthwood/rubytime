@@ -51,9 +51,9 @@ class ActivitiesController < ApplicationController
     @activity = Activity.new(data)
     
     if @activity.save
-      render :json => @activity.to_json
+      render :json => {:activity => @activity.to_json(:include => :project, :methods => :time_spent), :success => true}
     else
-      render :partial => 'form'
+      render :json => {:html => render_to_string(:partial => 'form'), :success => false}
     end
   end
   

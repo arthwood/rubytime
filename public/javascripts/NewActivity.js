@@ -1,6 +1,7 @@
 var NewActivity = function() {
   this.container = $('activity');
   this.menu = $('menu');
+  this.newActivityUserId = $('new_activity_user_id');
   
   this.addNewActivity = $$('.add_activity').first();
   this.addNewActivity.onclick = this.onAddNewActivity.bind(this);
@@ -12,8 +13,6 @@ var NewActivity = function() {
   this.onEditActivityDC = this.onEditActivity.bind(this);
   this.onEditActivitySuccessD = $D(this, this.onEditActivitySuccess);
   this.onCancelEditActivityDC = this.onCancelEditActivity.bind(this);
-  
-  this.controller = null;
   
   this.initNewForm();
   
@@ -57,8 +56,9 @@ NewActivity.prototype = {
   },
 
   onAddNewActivity: function(e) {
+    this.newActivityUserId.value = this.controller.getCurrentUserId();
     this.container.show();
-
+    
     return false;
   },
   
@@ -83,9 +83,7 @@ NewActivity.prototype = {
     this.container.hide();
   },
   
-  onEdit: function(controller, form) {
-    this.controller = controller;
-    
+  onEdit: function(form) {
     if (this.editForm) {
       form.replace(this.editForm);
     }
@@ -107,15 +105,17 @@ NewActivity.prototype = {
   },
   
   onNewActivitySuccess: function(ajax) {
-    var body = ajax.getResponseText();
+    var json = ajax.getResponseText().toJson();
     
-    if (body.empty()) {
+    if (json.success) {
       this.container.hide();
       
       app.flash.show('info', 'Activity successfully created!');
+      
+      this.controller.onNewActivitySuccess(json.activity);
     }
     else {
-      this.container.innerHTML = body;
+      $P(json.html).replace(this.newForm);
       this.initNewForm();
       app.flash.show('error', 'There were errors while creating the activity');
     }

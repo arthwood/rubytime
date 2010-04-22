@@ -1,0 +1,11 @@
+.activity[activity]
+  %p.project
+    %span.name
+      = (project = activity.project) && project.name
+    %span
+      = "(#{content_tag(:span, activity.time_spent, :class => :time)})" 
+  %p.comments
+    = activity.comments
+  .actions
+    = link_to image_tag('pencil.png'), activity.new_record? ? '#' : edit_activity_path(activity)
+    = link_to image_tag('cross.png'), activity.new_record? ? '#' : activity_path(activity)

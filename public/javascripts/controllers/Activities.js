@@ -49,4 +49,5 @@ var Activities = $E(Resources, function() {
 
 Application.onLoad.add($D(null, function() {
   this.activities = new Activities();
+  this.newActivity.controller = this.activities;
 }));

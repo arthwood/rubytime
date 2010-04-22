@@ -29,6 +29,7 @@
       - classes = [:cell]
       - classes << :disabled unless (@first_day.month == day.month)
       - classes << :active if has_activity
+      - classes << :weekend if col > 4
       %td{:class => classes.join(' ')}
         %p.day{:style => 'display: none'}
           = day.strftime('%Y-%m-%d')
@@ -36,4 +37,8 @@
           = day.mday
         .content{:style => 'display: none'}
           = render :partial => 'cell', :object => activities, :locals => {:activities => activities}
+
 #activity_details.cell{:style => 'display: none'}
+
+#activity_template{:style => 'display: none'}
+  = render :partial => 'cell_activity', :locals => {:activity => Activity.new}

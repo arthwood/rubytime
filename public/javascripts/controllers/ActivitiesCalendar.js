@@ -1,5 +1,6 @@
 var ActivitiesCalendar = function() {
   this.details = $('activity_details');
+  this.template = $('activity_template');
   this.onActiveCellOverDC = this.onActiveCellOver.bind(this);
   this.details.onmouseout = this.onDetailsOut.bind(this);
   this.onEditDC = this.onEdit.bind(this);
@@ -73,23 +74,44 @@ ActivitiesCalendar.prototype = {
   },
   
   onEditSuccess: function(ajax) {
-    newActivity.onEdit(this, $P(ajax.getResponseText()));
+    newActivity.onEdit($P(ajax.getResponseText()));
   },
   
   onDeleteSuccess: function(ajax) {
     app.flash.show('info', 'Activity successfully deleted!');
   },
   
+  onNewActivitySuccess: function(activity) {
+    this.dayToDetect = activity.date;
+    
+    var day = $$('.calendar .day').detect(this.detectDayDC);
+    
+    if (day) {
+      var cell = day.up('.cell');
+      var activities = cell.down('.activities').first();
+      var e = this.template.elements().first().clone(true);
+      var id = activity.id;
+      
+      activities.appendChild(e);
+      
+      e.id = 'activity_' + id;
+      
+      var actions = e.down('.actions a');
+      
+      actions.first().href = '/activities/' + id + '/edit';
+      actions.second().href = '/activities/' + id;
+      
+      this.updateData(e, activity);
+      this.updateCell(cell);
+    }
+  },
+  
   onEditActivitySuccess: function(activity) {
     var e = $('activity_' + activity.id);
     var cell = e.up('.cell');
     var date = cell.down('.day').first().innerHTML.trim();
-    var project = e.down('.project').first();
-    var comments = e.down('.comments').first();
     
-    project.down('.name').first().innerHTML = activity.project.name;
-    project.down('.time').first().innerHTML = activity.time_spent;
-    comments.innerHTML = activity.comments;
+    this.updateData(e, activity);
     
     if (activity.date != date) {
       this.dayToDetect = activity.date;
@@ -110,6 +132,15 @@ ActivitiesCalendar.prototype = {
     }
     
     this.updateCell(cell);
+  },
+  
+  updateData: function(e, activity) {
+    var project = e.down('.project').first();
+    var comments = e.down('.comments').first();
+    
+    project.down('.name').first().innerHTML = activity.project.name;
+    project.down('.time').first().innerHTML = activity.time_spent;
+    comments.innerHTML = activity.comments;
   },
   
   updateCell: function(cell) {
@@ -133,16 +164,21 @@ ActivitiesCalendar.prototype = {
     var times = cell.down('.activity .project .time');
     var values = times.map(ElementUtils.getContentDC);
     var minutes = values.inject(0, this.timeSpentInjectDC);
-    var total = cell.down('.total').first();
+    var total = cell.down('.total span').first();
     
     total.setContent(DateUtils.minutesToHM(minutes));
   },
   
   timeSpentInject: function(mem, i) {
     return mem + DateUtils.hmToMinutes(i.trim());
+  },
+  
+  getCurrentUserId: function() {
+    return this.userSelect.value;
   }
 };
 
 Application.onLoad.add($D(null, function() {
   this.activitiesCalendar = new ActivitiesCalendar();
+  this.newActivity.controller = this.activitiesCalendar;
 }));

@@ -1,7 +1,5 @@
 var MouseBoundaryCrossing = {
   update: function(evt, landmark) {
-    evt = evt || window.event;
-    
     var eventType = evt.type;
     
     this.landmark = landmark;
@@ -45,7 +43,7 @@ var MouseBoundaryCrossing = {
   },
 
   findLandmark: function(e) {
-    while (e.nodeType == 1) {
+    while (e && e.nodeType == 1) {
       if (e == this.landmark) return e;
       e = e.parentNode;
     }

@@ -308,6 +308,9 @@ table.calendar td.disabled {
 table.calendar td.active {
   background: url('/images/comment.png') no-repeat 50% 50%;
 }
+table.calendar td.weekend {
+  background-color: #CFFFDF;
+}
 .cell {
   padding: 2px;
   border: 1px solid #EEE;
@@ -317,13 +320,26 @@ table.calendar td.active {
   margin-bottom: 0;
 }
 .cell .content {
-  padding: 10px;
+  padding: 0 10px;
 }
-.cell .content .project .name {
+.cell .activity {
+  border-bottom: 1px solid #DDDDDD;
+  padding: 10px 0;
+}
+.cell .activity .project .name {
   font-weight: bold;
 }
-.cell .actions {
+.cell .activity p {
+  margin-bottom: 4px;
+}
+.cell .activity .actions {
   margin-top: 6px;
+}
+.cell .total {
+  margin: 4px 0;
+}
+.cell .total span {
+  font-weight: bold;
 }
 #activity_details {
   position: absolute;
