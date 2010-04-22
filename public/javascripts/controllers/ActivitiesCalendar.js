@@ -35,7 +35,6 @@ ActivitiesCalendar.prototype = {
       
       links.first().onclick = this.onEditDC;
       links.second().onclick = this.onDeleteDC;
-      links.second().href += ('&user_id=' + this.userSelect.value);
       content.show();
       this.details.setPosition(cell.getPosition(true));
       this.details.show();
