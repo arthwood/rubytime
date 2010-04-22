@@ -45,6 +45,8 @@ NewActivity.prototype = {
     var cancelEditActivity = form.down('.item.last a').first();
     
     cancelEditActivity.onclick = this.onCancelEditActivityDC;
+    
+    app.datePicker.initField(form.down('.datepicker').first());
   },
 
   updateLayout: function() {
@@ -61,12 +63,14 @@ NewActivity.prototype = {
   },
   
   onCancelNewActivity: function(e) {
+    app.datePicker.calendar.hide();
     this.container.hide();
     
     return false;
   },
   
   onCancelEditActivity: function(e) {
+    app.datePicker.calendar.hide();
     this.restoreForm();
     
     return false;
@@ -133,11 +137,10 @@ NewActivity.prototype = {
       
       app.flash.show('info', 'Activity successfully updated!');
       
-      
       this.controller.onEditActivitySuccess(json.activity);
     }
     else {
-      this.editForm.replace($P(json.html));
+      $P(json.html).replace(this.editForm);
       this.initEditForm();
       app.flash.show('error', 'There were errors while updating the activity');
     }

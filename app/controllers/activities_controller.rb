@@ -61,7 +61,7 @@ class ActivitiesController < ApplicationController
     @activity = Activity.find(params[:id])
     
     if @activity.update_attributes(params[:activity])
-      render :json => {:activity => @activity.to_json, :success => true}
+      render :json => {:activity => @activity.to_json(:include => :project, :methods => :time_spent), :success => true}
     else
       render :json => {:html => render_to_string(:partial => 'form'), :success => false}
     end

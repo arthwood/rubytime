@@ -31,7 +31,7 @@
       - classes << :active if has_activity
       %td{:class => classes.join(' ')}
         %p.day{:style => 'display: none'}
-          = format_date(day)
+          = day.strftime('%Y-%m-%d')
         %p
           = day.mday
         .content{:style => 'display: none'}

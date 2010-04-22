@@ -2,9 +2,10 @@
   - activities.each do |a|
     .activity[a]
       %p.project
-        = a.project.name
+        %span.name
+          = a.project.name
         %span
-          = "(#{a.time_spent})"
+          = "(#{content_tag(:span, a.time_spent, :class => :time)})" 
       %p.comments
         = a.comments
       .actions

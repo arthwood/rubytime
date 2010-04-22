@@ -19,7 +19,8 @@
     .label
       = i.label :date, 'Date', :id => activity_field_id(:date)
     .input
-      = i.text_field :date, :id => activity_field_id(:date)
+      - date = @activity.date
+      = i.text_field :date, :id => activity_field_id(:date), :value => date && format_date(date), :readOnly => true
       = image_tag 'datepicker/cal.gif'
       = error_field(i, :date)
   .item.clearfix

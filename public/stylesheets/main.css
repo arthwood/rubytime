@@ -199,6 +199,7 @@ form .error {
   border: 1px solid #999;
   padding: 20px;
   width: 400px;
+  z-index: 3;
 }
 #flash img {
   vertical-align: middle;
@@ -206,6 +207,9 @@ form .error {
 }
 #flash span {
   vertical-align: middle;
+}
+.datepicker_calendar {
+  z-index: 2;
 }
 form.login {
   margin-bottom: 20px;
@@ -315,11 +319,8 @@ table.calendar td.active {
 .cell .content {
   padding: 10px;
 }
-.cell .content .project {
+.cell .content .project .name {
   font-weight: bold;
-}
-.cell .content .project span {
-  font-weight: normal;
 }
 .cell .actions {
   margin-top: 6px;

@@ -4,6 +4,7 @@ class Activity < ActiveRecord::Base
   
   validates_presence_of :comments, :date, :project_id, :user_id, :minutes
   validates_format_of :time_spent, :with => /^\d{1,2}:\d{2}$/
+  validate :time_spent_values
   
   named_scope :for_day, lambda {|date| {:conditions => {:date => date}}}
   
@@ -36,5 +37,10 @@ class Activity < ActiveRecord::Base
   def after_validation
     arr = @time_spent.split(':')
     self.minutes = 60 * arr.first.to_i + arr.last.to_i
+  end
+  
+  def time_spent_values
+    hours, minutes = time_spent.split(':')
+    errors.add(:time_spent, 'has invalid format') if minutes.to_i > 59
   end
 end
