@@ -72,7 +72,7 @@ ActivitiesCalendar.prototype = {
     
     content.down('.activity').each(this.initActivityActionsDC);
     content.show();
-    this.details.setPosition(cell.getPosition(true).add(cell.getSize().times(0.6)));
+    this.details.setPosition(cell.getPosition().add(cell.getSize().times(0.6)));
     this.details.show();
   },
   

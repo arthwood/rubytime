@@ -54,7 +54,7 @@ NewActivity.prototype = {
   
   updateContainerPosition: function() {
     var w = this.container.getSize().x;
-    var rect = this.menu.getLayout(true);
+    var rect = this.menu.getLayout();
     
     this.container.setPosition(rect.getRightBottom().sub(new Point(w, 0)));
   },
