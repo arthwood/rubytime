@@ -174,7 +174,7 @@ ActivitiesCalendar.prototype = {
   updateCell: function(cell) {
     this.updateTotal(cell);
     
-    if (cell.down('.activities').first().elements().empty()) {
+    if (cell.down('.activity').empty()) {
       cell.removeClass('active');
       this.dectivateCell(cell);
     }
@@ -195,8 +195,6 @@ ActivitiesCalendar.prototype = {
       
     editLink.href = '/activities/' + id + '/edit';
     actions.href = '/activities/' + id;
-    //editLink.onclick = this.onEditDC;
-    //deleteLink.onclick = this.onDeleteDC;
   },
   
   updateTotal: function(cell) {
