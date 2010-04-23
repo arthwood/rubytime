@@ -1,7 +1,6 @@
 var Application = function() {
   this.flash = new Flash();
   this.datePicker = new DatePicker(1);
-  this.helper = new Helper();
   this.onResize = new CustomEvent('Application.onResize');
 
   window.onresize = $DC(this, this._onResize);
