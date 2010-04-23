@@ -348,6 +348,9 @@ table.calendar td.weekend {
   background: white;
   border: 1px solid #CCC;
 }
+#activity_details .mday {
+  display: none;
+}
 #activity {
   position: absolute;
   background: #171026;

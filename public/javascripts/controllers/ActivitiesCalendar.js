@@ -1,8 +1,13 @@
 var ActivitiesCalendar = function() {
   this.details = $('activity_details');
   this.template = $('activity_template');
-  this.onActiveCellOverDC = this.onActiveCellOver.bind(this);
-  this.details.onmouseout = this.onDetailsOut.bind(this);
+  
+  this.onCellOverD = $D(this, this.onCellOver);
+  this.onCellOutD = $D(this, this.onCellOut);
+  
+  this.detailsMC = new MouseController(this.details);
+  this.detailsMC.onOut.add($D(this, this.onDetailsOut));
+  
   this.onEditDC = this.onEdit.bind(this);
   this.onDeleteDC = this.onDelete.bind(this);
   this.onEditSuccessD = $D(this, this.onEditSuccess);
@@ -10,46 +15,73 @@ var ActivitiesCalendar = function() {
   this.userSelect = $('user_id');
   this.timeSpentInjectDC = this.timeSpentInject.bind(this);
   this.detectDayDC = this.detectDay.bind(this);
+  this.initActivityActionsDC = this.initActivityActions.bind(this);
+  
   $$('table.calendar td.active').each(this.activateCell.bind(this));
 };
 
 ActivitiesCalendar.prototype = {
   activateCell: function(i) {
-    i.onmouseover = this.onActiveCellOverDC;
+    var mc = MouseController.find(i);
+    
+    if (!mc) {
+      mc = new MouseController(i);
+    }
+    
+    mc.onOver.add(this.onCellOverD);
+    mc.onOut.add(this.onCellOutD);
   },
   
   dectivateCell: function(i) {
-    i.onmouseover = null;
+    var mc = MouseController.find(i);
+    
+    mc.onOver.remove(this.onCellOverD);
+    mc.onOut.remove(this.onCellOutD);
   },
   
-  onActiveCellOver: function(e) {
-    var cell = e.currentTarget;
-    
-    $MBC.update(e, cell);
-    
-    if ($MBC.enteredLandmark) {
-      this.details.innerHTML = cell.innerHTML;
-      var content = this.details.down('.content').first();
-      var actions = content.down('.actions').first();
-      var links = actions.down('a');
+  onCellOver: function(e, mc) {
+    this.updateDetails(mc.element);
+  },
+  
+  onCellOut: function(e, mc) {
+    if (!e.relatedTarget.descendantOf(this.details, true)) {
+      this.hideDetails();
+    }
+    else {
+      this.detailsCell = mc.element;
+    }
+  },
+  
+  onDetailsOut: function(e, mc) {
+    if (e.relatedTarget != this.detailsCell) {
+      this.hideDetails();
+    }
       
-      links.first().onclick = this.onEditDC;
-      links.second().onclick = this.onDeleteDC;
-      content.show();
-      this.details.setPosition(cell.getPosition(true));
-      this.details.show();
-    }
+    this.detailsCell = null;
   },
   
-  onDetailsOut: function(e) {
-    var cell = e.currentTarget;
+  hideDetails: function() {
+    this.details.innerHTML = '';
+    this.details.hide();
+  },
+  
+  updateDetails: function(cell) {
+    this.details.innerHTML = cell.innerHTML;
     
-    $MBC.update(e, cell);
+    var content = this.details.down('.content').first();
     
-    if ($MBC.leftLandmark) {
-      this.details.innerHTML = '';
-      this.details.hide();
-    }
+    content.down('.activity').each(this.initActivityActionsDC);
+    content.show();
+    this.details.setPosition(cell.getPosition(true).add(cell.getSize().times(0.6)));
+    this.details.show();
+  },
+  
+  initActivityActions: function(activity) {
+    var actions = activity.down('.actions').first();
+    var links = actions.down('a');
+    
+    links.first().onclick = this.onEditDC;
+    links.second().onclick = this.onDeleteDC;
   },
   
   onEdit: function(e) {
@@ -89,18 +121,11 @@ ActivitiesCalendar.prototype = {
       var cell = day.up('.cell');
       var activities = cell.down('.activities').first();
       var e = this.template.elements().first().clone(true);
-      var id = activity.id;
       
       activities.appendChild(e);
       
-      e.id = 'activity_' + id;
-      
-      var actions = e.down('.actions a');
-      
-      actions.first().href = '/activities/' + id + '/edit';
-      actions.second().href = '/activities/' + id;
-      
       this.updateData(e, activity);
+      this.updateDom(e, activity);
       this.updateCell(cell);
     }
   },
@@ -133,6 +158,10 @@ ActivitiesCalendar.prototype = {
     this.updateCell(cell);
   },
   
+  detectDay: function(e) {
+    return this.dayToDetect == e.getContent().trim();
+  },
+  
   updateData: function(e, activity) {
     var project = e.down('.project').first();
     var comments = e.down('.comments').first();
@@ -154,9 +183,20 @@ ActivitiesCalendar.prototype = {
       this.activateCell(cell);
     }
   },
-  
-  detectDay: function(e) {
-    return this.dayToDetect == e.getContent().trim();
+
+  updateDom: function(e, activity) {
+    var id = activity.id;
+    
+    e.id = 'activity_' + id;
+      
+    var actions = e.down('.actions a');
+    var editLink = actions.first();
+    var deleteLink = actions.first();
+      
+    editLink.href = '/activities/' + id + '/edit';
+    actions.href = '/activities/' + id;
+    //editLink.onclick = this.onEditDC;
+    //deleteLink.onclick = this.onDeleteDC;
   },
   
   updateTotal: function(cell) {

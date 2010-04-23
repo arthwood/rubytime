@@ -49,12 +49,16 @@ NewActivity.prototype = {
   },
 
   updateLayout: function() {
+    this.updateContainerPosition();
+  },
+  
+  updateContainerPosition: function() {
     var w = this.container.getSize().x;
-    var rect = this.menu.getLayout();
-
+    var rect = this.menu.getLayout(true);
+    
     this.container.setPosition(rect.getRightBottom().sub(new Point(w, 0)));
   },
-
+  
   onAddNewActivity: function(e) {
     this.newActivityUserId.value = this.controller.getCurrentUserId();
     this.container.show();

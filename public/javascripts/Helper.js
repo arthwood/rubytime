@@ -1,5 +1,5 @@
 var Helper = function() {
-  this.onProjectsLoad = new Event('Helper::onProjectsLoad');
+  this.onProjectsLoad = new CustomEvent('Helper::onProjectsLoad');
   this.onProjectsSuccessD = $D(this, this.onProjectsSuccess);
   this.projectToOptionDC = $DC(this, this.projectToOption);
 };
