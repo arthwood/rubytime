@@ -4,4 +4,8 @@ class Project < ActiveRecord::Base
   validates_inclusion_of :active, :in => [true, false]
   
   belongs_to :client
+  
+  def as_json(options = {})
+    super(:include => :client)
+  end
 end

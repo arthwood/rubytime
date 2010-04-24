@@ -15,6 +15,7 @@ var Activities = $E(Resources, function() {
   this.period.onchange = this.onPeriod.bind(this);
   this.onProjectsSuccessD = $D(this, this.onProjectsSuccess);
   this.projectToOptionDC = this.projectToOption.bind(this);
+  this.activityTemplate = $('activity_template');
 }, {
   onEditSuccess: function(ajax) {
     newActivity.onEdit($P(ajax.getResponseText()));
@@ -33,10 +34,6 @@ var Activities = $E(Resources, function() {
       this.filterDateFrom.value = arr.first();
       this.filterDateTo.value = arr.second();
     }
-  },
-  
-  onEditActivitySuccess: function(activity) {
-    
   },
   
   onProjectsSuccess: function(ajax) {
@@ -61,7 +58,34 @@ var Activities = $E(Resources, function() {
   },
   
   onNewActivitySuccess: function(activity) {
+    var projectElement = $('project_' + activity.project_id);
     
+    // TODO: when there is no results
+    
+    if (!projectElement) {
+      var clientClone = this.activityTemplate.down('.client').first().clone();
+      
+      projectElement = clientClone.down('.project').first();
+      projectElement.id = 'project_' + activity.project_id;
+      
+      clientClone.putAtBottom($$('.listing').first().down('.clients').first());
+    }
+    
+    var activityClone = this.activityTemplate.down('tr').second().clone();
+    var cols = activityClone.down('td');
+    
+    activityClone.title = activity.comments;
+    
+    cols[0].setContent(activity.date);
+    cols[1].setContent(activity.user.name);
+    cols[2].setContent(activity.time_spent);
+    
+    var actions = cols[3].down('a');
+    
+    actions.first().onclick = this.onEditDC;
+    actions.second().onclick = this.onDeleteDC;
+    
+    activityClone.putAtBottom(projectElement.down('tbody').first());
   },
   
   onEditActivitySuccess: function(activity) {

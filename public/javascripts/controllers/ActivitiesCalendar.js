@@ -14,7 +14,6 @@ var ActivitiesCalendar = function() {
   this.onDeleteSuccessD = $D(this, this.onDeleteSuccess);
   this.userSelect = $('user_id');
   this.timeSpentInjectDC = this.timeSpentInject.bind(this);
-  this.detectDayDC = this.detectDay.bind(this);
   this.initActivityActionsDC = this.initActivityActions.bind(this);
   
   $$('table.calendar td.active').each(this.activateCell.bind(this));
@@ -113,12 +112,9 @@ ActivitiesCalendar.prototype = {
   },
   
   onNewActivitySuccess: function(activity) {
-    this.dayToDetect = activity.date;
+    var cell = $(activity.date);
     
-    var day = $$('.calendar .day').detect(this.detectDayDC);
-    
-    if (day) {
-      var cell = day.up('.cell');
+    if (cell) {
       var activities = cell.down('.activities').first();
       var e = this.template.elements().first().clone(true);
       
@@ -138,12 +134,9 @@ ActivitiesCalendar.prototype = {
     this.updateData(e, activity);
     
     if (activity.date != date) {
-      this.dayToDetect = activity.date;
+      var targetCell = $(activity.date);
       
-      var day = $$('.calendar .day').detect(this.detectDayDC);
-      
-      if (day) {
-        var targetCell = day.up('.cell');
+      if (targetCell) {
         var targetActivities = targetCell.down('.activities').first();
         
         targetActivities.appendChild(e);
@@ -156,10 +149,6 @@ ActivitiesCalendar.prototype = {
     }
     
     this.updateCell(cell);
-  },
-  
-  detectDay: function(e) {
-    return this.dayToDetect == e.getContent().trim();
   },
   
   updateData: function(e, activity) {

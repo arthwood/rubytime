@@ -6,5 +6,16 @@
       %h3
         Use filter form on the right to search activities
     - else
-      .listing
-        = render :partial => 'listing'
+      .listing.activities
+        %h1
+          List of activities
+        
+        - if @activities.empty?
+          %p
+            No activities found for selected criteria.
+        - else
+          = render :partial => 'list', :object => @activities
+      
+      #activity_template{:style => 'display: none'}
+        - activity = Activity.new(:user => User.new, :project => Project.new(:client => Client.new))
+        = render :partial => 'list', :object => [activity]

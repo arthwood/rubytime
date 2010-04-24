@@ -29,7 +29,7 @@ class Activity < ActiveRecord::Base
     
     conditions[:date] = Range.new(from, to) if from || to
     
-    all(:conditions => conditions, :include => :project)
+    all(:conditions => conditions, :include => :project, :order => 'date DESC')
   end
   
   protected

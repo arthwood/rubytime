@@ -30,9 +30,7 @@
       - classes << :disabled unless (@first_day.month == day.month)
       - classes << :active if has_activity
       - classes << :weekend if col > 4
-      %td{:class => classes.join(' ')}
-        %p.day{:style => 'display: none'}
-          = day.strftime('%Y-%m-%d')
+      %td{:class => classes.join(' '), :id => day.strftime('%Y-%m-%d')}
         %p.mday
           = day.mday
         .content{:style => 'display: none'}
