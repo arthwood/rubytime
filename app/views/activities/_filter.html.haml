@@ -1,7 +1,7 @@
 %h2
   Filter
 
-- form_for @filter, :url => activities_url, :html => {:method => :get} do |i|
+- form_for @filter, :url => search_activities_url, :html => {:method => :post} do |i|
   .item.clearfix
     .label
       = i.label :user_id, 'User'

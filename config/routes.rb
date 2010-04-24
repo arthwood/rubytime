@@ -12,6 +12,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :sessions
 
   map.resources :activities, :collection => {:calendar => :get}
+  map.search_activities '/search_activities', :controller => :activities, :action => :index,  :conditions => {:method => :post}
   map.resources :projects
   map.resources :invoices
   map.resources :clients

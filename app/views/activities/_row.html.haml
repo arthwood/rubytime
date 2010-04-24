@@ -1,7 +1,6 @@
 %tr{:title => activity.comments}
   %td= activity.date
   %td= activity.user.name
-  %td= activity.project.name
   %td= activity.time_spent
   %td.actions
     = link_to image_tag('pencil.png'), edit_activity_path(activity)

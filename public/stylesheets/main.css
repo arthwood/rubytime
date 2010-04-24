@@ -250,9 +250,12 @@ p.reset_password {
   width: 520px;
   margin-bottom: 30px;
 }
-.listing h1 {
-  margin-bottom: 4px;
-  margin-left: 3px;
+.listing h2 {
+  margin-bottom: 0;
+}
+.listing h2 span,
+.listing h3 span {
+  font-weight: normal;
 }
 .listing table {
   width: 100%;
@@ -273,6 +276,13 @@ p.reset_password {
 }
 .listing table td.centered {
   text-align: center;
+}
+.listing .clients {
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.listing .projects {
+  margin: 10px 0 20px 20px;
 }
 table.calendar {
   border: 1px solid #CCC;

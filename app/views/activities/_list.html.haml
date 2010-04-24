@@ -1,8 +1,23 @@
-%table
-  %tr
-    %th Date
-    %th User
-    %th Project
-    %th Time
-    %th.actions &nbsp;
-  = render :partial => 'row', :collection => @activities, :as => :activity
+- group_by_clients = group(@activities) {|i| i.project.client}
+
+.clients
+  - group_by_clients.each_pair do |client, client_activities|
+    %h2
+      Client:
+      %span
+        = client.name
+    
+    .projects
+      - group_by_projects = group(client_activities) {|i| i.project}
+      - group_by_projects.each_pair do |project, project_activities|
+        %h3
+          Project:
+          %span
+            = project.name
+        %table
+          %tr
+            %th Date
+            %th User
+            %th Time
+            %th.actions &nbsp;
+          = render :partial => 'row', :collection => project_activities, :as => :activity

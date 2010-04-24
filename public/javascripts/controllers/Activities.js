@@ -17,7 +17,7 @@ var Activities = $E(Resources, function() {
   this.projectToOptionDC = this.projectToOption.bind(this);
 }, {
   onEditSuccess: function(ajax) {
-    newActivity.onEdit(this, $P(ajax.getResponseText()));
+    newActivity.onEdit($P(ajax.getResponseText()));
   },
   
   onUserSelect: function(e) {
