@@ -1,7 +1,8 @@
 - if logged_in?
   .left
     = menu_link 'activities', activities_url
-    = menu_link 'invoices', invoices_url
-    = menu_link 'manage', users_url
+    - if admin?
+      = menu_link 'invoices', invoices_url
+      = menu_link 'manage', users_url
   .right
     = link_to 'Add new activity', new_activity_url, :class => :add_activity

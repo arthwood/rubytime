@@ -60,7 +60,7 @@ NewActivity.prototype = {
   },
   
   onAddNewActivity: function(e) {
-    this.newActivityUserId.value = this.controller.getCurrentUserId();
+    this.newActivityUserId && (this.newActivityUserId.value = this.controller.getCurrentUserId());
     this.container.show();
     
     return false;

@@ -46,9 +46,16 @@ Resources.prototype = {
   },
   
   onDeleteSuccess: function(ajax) {
-    this.listing.innerHTML = ajax.getResponseText();
+    var name = this.name.toUpperCase();
     
-    app.flash.show('info', this.name.toUpperCase() + ' successfully deleted!');
+    if (ajax.success) {
+      this.listing.innerHTML = ajax.getResponseText();
+      
+      app.flash.show('info', name + ' successfully deleted!');
+    }
+    else {
+      app.flash.show('error', "Couldn't delete " + name + "!");
+    }
   },
   
   initAddNewLink: function() {

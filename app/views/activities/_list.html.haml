@@ -2,7 +2,7 @@
 
 .clients
   - group_by_clients.each_pair do |client, client_activities|
-    .client
+    .client[client]
       %h2
         Client:
         %span

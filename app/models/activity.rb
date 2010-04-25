@@ -8,6 +8,10 @@ class Activity < ActiveRecord::Base
   
   named_scope :for_day, lambda {|date| {:conditions => {:date => date}}}
   
+  def as_json(options = {})
+    super(:include => [:project, :user], :methods => :time_spent)
+  end
+  
   def time_spent
     @time_spent || "#{minutes.to_i / 60}:#{(minutes.to_i % 60).to_s.rjust(2, '0')}"
   end

@@ -33,44 +33,53 @@ class ActivitiesController < ApplicationController
     @rows = (@first_day.wday + @current.end_of_month.mday - 1) / 7
   end
   
-  def show
-    @activity = Activity.find(params[:id])
-  end
-  
   def edit
-    @activity = Activity.find(params[:id])
+    set_activity
     
-    render :partial => 'form'
+    if @found
+      render :partial => 'form'
+    else
+      render :nothing => true
+    end
   end
   
   def create
     data = params[:activity]
     
-    data.user_id = current_user.id unless current_user.admin
+    data[:user_id] = current_user.id unless current_user.admin
     
     @activity = Activity.new(data)
     
     if @activity.save
-      render :json => {:activity => @activity.to_json(:include => [:project, :user], :methods => :time_spent), :success => true}
+      render :json => {:activity => @activity, :success => true}
     else
       render :json => {:html => render_to_string(:partial => 'form'), :success => false}
     end
   end
   
   def update
-    @activity = Activity.find(params[:id])
+    set_activity
+    success = @found && @activity.update_attributes(params[:activity])
     
-    if @activity.update_attributes(params[:activity])
-      render :json => {:activity => @activity.to_json(:include => :project, :methods => :time_spent), :success => true}
+    if success 
+      render :json => {:activity => @activity.reload, :success => success}
     else
-      render :json => {:html => render_to_string(:partial => 'form'), :success => false}
+      render :json => {:html => render_to_string(:partial => 'form'), :success => success}
     end
   end
 
   def destroy
-    @activity = Activity.find(params[:id])
-    @activity.destroy
+    set_activity
     
-    render :json => @activity.to_json
+    @activity.destroy if @found
+    
+    render :json => @activity.to_json, :success => @found
+  end
+  
+  protected
+  
+  def set_activity
+    @activity = current_user.admin ? Activity.find_by_id(params[:id]) : current_user.activities.find_by_id(params[:id])
+    @found = !@activity.nil?
   end
 end

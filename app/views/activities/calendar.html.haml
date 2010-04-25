@@ -1,10 +1,14 @@
-.clearfix
-  - form_tag calendar_activities_path, :class => :right do
-    = select_tag :user_id, options_from_collection_for_select(User.employees, :id, :name, @user.id)
-    = submit_tag :ok
-  %h1.left
+- if admin?
+  .clearfix
+    - form_tag calendar_activities_path, :class => :right do
+      = select_tag :user_id, options_from_collection_for_select(User.employees, :id, :name, @user.id)
+      = submit_tag :ok
+    %h1.left
+      Calendar view
+- else
+  %h1
     Calendar view
- 
+    
 %table.calendar{:cellspacing => 1}
   %caption
     = link_to '<< Previous', calendar_activities_path(:current => @current.last_month, :user_id => @user.id)

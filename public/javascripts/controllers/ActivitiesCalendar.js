@@ -60,12 +60,12 @@ ActivitiesCalendar.prototype = {
   },
   
   hideDetails: function() {
-    this.details.innerHTML = '';
+    this.details.setContent('');
     this.details.hide();
   },
   
   updateDetails: function(cell) {
-    this.details.innerHTML = cell.innerHTML;
+    this.details.setContent(cell.getContent());
     
     var content = this.details.down('.content').first();
     
@@ -104,11 +104,23 @@ ActivitiesCalendar.prototype = {
   },
   
   onEditSuccess: function(ajax) {
-    newActivity.onEdit($P(ajax.getResponseText()));
+    var body = ajax.getResponseText();
+    
+    if (body.empty()) {
+      app.flash.show('error', "Couldn't edit that activity");
+    }
+    else {
+      newActivity.onEdit($P(body));
+    }
   },
   
   onDeleteSuccess: function(ajax) {
-    app.flash.show('info', 'Activity successfully deleted!');
+    if (ajax.success) {
+      app.flash.show('info', 'Activity successfully deleted!');
+    }
+    else {
+      app.flash.show('error', "Couldn't delete activity!");
+    }
   },
   
   onNewActivitySuccess: function(activity) {
@@ -129,7 +141,7 @@ ActivitiesCalendar.prototype = {
   onEditActivitySuccess: function(activity) {
     var e = $('activity_' + activity.id);
     var cell = e.up('.cell');
-    var date = cell.down('.day').first().innerHTML.trim();
+    var date = cell.id;
     
     this.updateData(e, activity);
     
@@ -155,9 +167,9 @@ ActivitiesCalendar.prototype = {
     var project = e.down('.project').first();
     var comments = e.down('.comments').first();
     
-    project.down('.name').first().innerHTML = activity.project.name;
-    project.down('.time').first().innerHTML = activity.time_spent;
-    comments.innerHTML = activity.comments;
+    project.down('.name').first().setContent(activity.project.name);
+    project.down('.time').first().setContent(activity.time_spent);
+    comments.setContent(activity.comments);
   },
   
   updateCell: function(cell) {
@@ -200,7 +212,7 @@ ActivitiesCalendar.prototype = {
   },
   
   getCurrentUserId: function() {
-    return this.userSelect.value;
+    return this.userSelect && this.userSelect.value;
   }
 };
 

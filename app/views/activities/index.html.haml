@@ -6,12 +6,12 @@
       %h3
         Use filter form on the right to search activities
     - else
-      .listing.activities
+      .listing
         %h1
           List of activities
         
         - if @activities.empty?
-          %p
+          %p.no_results
             No activities found for selected criteria.
         - else
           = render :partial => 'list', :object => @activities

@@ -1,5 +1,5 @@
 - if logged_in?
-  - if current_user.admin
+  - if admin?
     - case section
       - when :activities
         = submenu_link 'List', activities_url
@@ -17,4 +17,4 @@
         = submenu_link 'Settings', settings_url
   - else
     = submenu_link 'List', activities_url
-    = submenu_link 'Calendar', activities_url(:calendar => 1)
+    = submenu_link 'Calendar', calendar_activities_url
