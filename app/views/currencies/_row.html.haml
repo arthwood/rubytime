@@ -1,9 +1,9 @@
-%tr{:class => row_class(currency_row_counter)}
+%tr{:class => row_class(row_counter)}
   %td= currency.name
   %td= currency.plural
   %td.centered= currency.symbol
   %td.centered= verbalize(currency.prefix)
-  %td= currency_example(currency)
+  %td= format_currency(currency, '45.99')
   %td.actions
     = link_to image_tag('pencil.png'), edit_currency_url(currency)
     = link_to image_tag('cross.png'), currency_url(currency)

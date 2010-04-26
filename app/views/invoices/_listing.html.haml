@@ -1,0 +1,15 @@
+%h1
+  List of invoices
+
+- if @invoices.empty?
+  %p
+    No invoices found.
+- else
+  %table.base
+    %tr
+      %th Name
+      %th Client
+      %th Created at
+      %th Issued at
+      %th.actions &nbsp;
+    = render :partial => 'row', :collection => @invoices, :as => :invoice

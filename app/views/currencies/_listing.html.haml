@@ -5,7 +5,7 @@
   %p
     No currencies found.
 - else
-  %table
+  %table.base
     %tr
       %th Name
       %th Prular
@@ -13,4 +13,4 @@
       %th Prefix?
       %th Example
       %th.actions &nbsp;
-    = render :partial => 'currency_row', :collection => @currencies, :as => :currency
+    = render :partial => 'row', :collection => @currencies, :as => :currency

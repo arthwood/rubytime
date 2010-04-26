@@ -1,0 +1,11 @@
+- if list.empty?
+  %p
+    No hourly rates defined!
+- else
+  %table.base
+    %tr
+      %th
+        value
+      %th
+        takes effect at
+    = render :partial => 'hourly_rates/row', :collection => list, :as => :hr 

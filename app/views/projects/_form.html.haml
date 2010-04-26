@@ -29,3 +29,18 @@
       = i.check_box :active
   .item.last
     = submit_tag((create_mode ? 'Create' : 'Save'), :class => :no_label)
+
+- unless create_mode
+  .hourly_rates
+    %h3
+      Hourly rates
+    - Role.all.each do |i|
+      .role
+        %h4
+          = i.name
+        .list
+          = render :partial => 'hourly_rates/list', :object => @hourly_rates.with_role(i)
+    
+        = link_to 'New hourly rate', new_project_hourly_rate_path(@project, :role_id => i.id)
+
+        .form

@@ -77,12 +77,12 @@ class InitialSchema < ActiveRecord::Migration
     create_table :hourly_rates do |t|
       t.references :project, :null => false
       t.references :role, :null => false
-      t.date :takes_effect_at, :null => false
+      t.date :date, :null => false
       t.decimal :value, :precision => 8, :scale => 2, :null => false
       t.references :currency, :null => false
     end
     
-    add_index :hourly_rates, [:project_id, :role_id], :name => :main, :unique => true
+    add_index :hourly_rates, [:project_id, :role_id, :date], :name => :main, :unique => true
     
     create_table :hourly_rate_logs do |t|
       t.datetime :logged_at

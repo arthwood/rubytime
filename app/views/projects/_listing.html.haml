@@ -5,11 +5,10 @@
   %p
     No projects found.
 - else
-  %table
+  %table.base
     %tr
       %th Name
-      %th Description
       %th Client
       %th Active
       %th.actions &nbsp;
-    = render :partial => 'project_row', :collection => @projects, :as => :project
+    = render :partial => 'row', :collection => @projects, :as => :project

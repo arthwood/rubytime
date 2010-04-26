@@ -5,6 +5,8 @@ class Project < ActiveRecord::Base
   
   belongs_to :client
   
+  has_many :hourly_rates
+  
   def as_json(options = {})
     super(:include => :client)
   end

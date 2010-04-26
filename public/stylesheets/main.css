@@ -32,6 +32,10 @@ img {
 }
 a {
   text-decoration: none;
+  color: #40A0CF;
+}
+a:hover {
+  color: #2083AF;
 }
 input[type=text], input[type=password], select, textarea {
   font-family: Verdana;
@@ -260,24 +264,24 @@ p.reset_password {
 .listing h3 span {
   font-weight: normal;
 }
-.listing table {
+table.base {
   width: 100%;
   border: 1px solid #CCC;
 }
-.listing table tr th {
+table.base tr th {
   background: #86CFEF;
 }
-.listing table th,
-.listing table td {
+table.base th,
+table.base td {
   padding: 2px 4px;
 }
-.listing table tr.even {
+table.base tr.even {
   background: #eee;
 }
-.listing table td.actions {
+table.base td.actions {
   text-align: right;
 }
-.listing table td.centered {
+table.base td.centered {
   text-align: center;
 }
 .listing .clients {
@@ -390,4 +394,30 @@ table.calendar td.weekend {
 }
 #activity form .item .no_label {
   margin-left: 76px;
+}
+.hourly_rates h3 {
+  margin-top: 10px;
+}
+.hourly_rates .role {
+  border: 1px solid #CCC;
+  background: #FAFAFA;
+  padding: 6px;
+  margin-bottom: 10px;
+}
+.hourly_rates .role h4 {
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+.hourly_rates .role .list {
+  margin-bottom: 6px;
+}
+.hourly_rates .form form {
+  margin-top: 10px;
+}
+.hourly_rates .form form .item input[type="text"], 
+.hourly_rates .form form .item .error {
+  width: 106px;
+}
+.hourly_rates .form form .item select {
+  width: 110px;
 }

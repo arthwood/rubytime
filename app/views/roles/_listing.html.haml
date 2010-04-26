@@ -5,9 +5,9 @@
   %p
     No roles found.
 - else
-  %table
+  %table.base
     %tr
       %th Name
       %th Can manage financial data?
       %th.actions &nbsp;
-    = render :partial => 'role_row', :collection => @roles, :as => :role
+    = render :partial => 'row', :collection => @roles, :as => :role

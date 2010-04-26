@@ -23,7 +23,7 @@ class ProjectsController < ApplicationController
   
   def create
     @project = Project.new(params[:project])
-
+    
     if @project.save
       flash[:info] = 'Project was successfully created.'
       redirect_to projects_url
@@ -38,6 +38,7 @@ class ProjectsController < ApplicationController
 
   def edit
     @project = Project.find(params[:id])
+    @hourly_rates = @project.hourly_rates
     
     render :partial => 'form'
   end

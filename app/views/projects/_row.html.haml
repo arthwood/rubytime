@@ -1,6 +1,5 @@
-%tr{:class => row_class(project_row_counter)}
+%tr{:class => row_class(row_counter), :title => project.description}
   %td= project.name
-  %td= project.description
   %td= project.client.name
   %td.centered= verbalize(project.active)
   %td.actions

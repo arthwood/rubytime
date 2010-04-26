@@ -1,0 +1,31 @@
+- create_mode = @hourly_rate.new_record?
+- @prefix = create_mode ? 'new' : 'edit'
+- url = create_mode ? project_hourly_rates_url(@project) : project_hourly_rate_url(@project, @hourly_rate)
+- html = {:method => (create_mode ? :post : :put)}
+
+- form_for :hourly_rate, :url => url, :html => html do |i|
+  = i.hidden_field :role_id
+  .item.clearfix.datepicker
+    .label
+      = i.label :date, 'Takes effect at'
+    .input
+      - date = @hourly_rate.date
+      = i.text_field :date, :value => date && format_date(date), :readOnly => true
+      = image_tag 'datepicker/cal.gif'
+      = error_field(i, :date)
+  .item.clearfix
+    .label
+      = i.label :value
+    .input
+      = i.text_field :value
+      = error_field(i, :value)
+  .item.clearfix
+    .label
+      = i.label :currency_id
+    .input
+      = i.select :currency_id, options_from_collection_for_select(Currency.all, :id, :name, @hourly_rate.currency_id)
+      = error_field(i, :currency_id)
+  .item.last
+    = i.submit((create_mode ? 'Add' : 'Save'), :class => :no_label)
+    or
+    = link_to 'Cancel', '#'

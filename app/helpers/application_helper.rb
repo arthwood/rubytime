@@ -96,4 +96,11 @@ module ApplicationHelper
   def format_date(date, separator = '-')
     date.strftime("%d#{separator}%m#{separator}%Y")
   end
+  
+  def format_currency(currency, value)
+    prefix = currency.prefix
+    symbol = currency.symbol
+    (arr = [value, symbol]) && prefix && arr.reverse!
+    arr.join('')
+  end
 end

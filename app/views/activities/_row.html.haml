@@ -1,7 +1,7 @@
 %tr[activity]{:title => activity.comments}
-  %td= activity.date
+  %td.centered= activity.date
   %td= activity.user.name
-  %td= activity.time_spent
+  %td.centered= activity.time_spent
   %td.actions
     = link_to image_tag('pencil.png'), activity.new_record? ? '#' : edit_activity_path(activity)
     = link_to image_tag('cross.png'), activity.new_record? ? '#' : activity_path(activity)
