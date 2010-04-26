@@ -1,4 +1,4 @@
-%tr{:class => row_class(client_row_counter)}
+%tr{:class => row_class(client_row_counter), :title => client.description}
   %td= client.name
   %td= client.email
   %td.centered= verbalize(client.active)
