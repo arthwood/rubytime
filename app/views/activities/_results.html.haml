@@ -1,0 +1,5 @@
+- if @activities.empty?
+  %p.no_results
+    No activities found for selected criteria.
+- else
+  = render :partial => 'list', :object => @activities

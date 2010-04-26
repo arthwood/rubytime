@@ -5,8 +5,10 @@ var Activities = $E(Resources, function() {
   this.initAddNewLink = null;
   this.onAddNew = null;
   this.onAddNewSuccess = null;
-  
-  
+  this.results = $('results');
+  this.filterForm = $$('.filter form').first();
+  this.filterForm.onsubmit = this.onFilter.bind(this);
+  this.onFilterSuccessD = $D(this, this.onFilterSuccess);
   this.filterUserSelect = $('activity_filter_user_id');
   
   if (this.filterUserSelect) {
@@ -23,6 +25,22 @@ var Activities = $E(Resources, function() {
   this.period.onchange = this.onPeriod.bind(this);
   this.activityTemplate = $('activity_template');
 }, {
+  onFilter: function(e) {
+    this.search();
+    
+    return false;
+  },
+  
+  search: function() {
+    $post(this.filterForm.action, this.filterForm.serialize(), this.onFilterSuccessD);
+  },
+  
+  onFilterSuccess: function(ajax) {
+    this.results.setContent(ajax.getResponseText());
+    
+    this.initRows();
+  },
+  
   onEditSuccess: function(ajax) {
     var body = ajax.getResponseText();
     
@@ -50,7 +68,7 @@ var Activities = $E(Resources, function() {
   },
   
   onProjectsSuccess: function(ajax) {
-    var selectAllOption = $B('option', {value: 0}, 'All projects...');
+    var selectAllOption = $B('option', {value: ''}, 'All projects...');
     
     this.filterProject.setContent(selectAllOption + this.buildProjectOptions(eval(ajax.getResponseText())));
   },
@@ -71,9 +89,11 @@ var Activities = $E(Resources, function() {
   },
   
   onNewActivitySuccess: function(activity) {
+    this.search();
   },
   
   onEditActivitySuccess: function(activity) {
+    this.search();
   }
 });
 

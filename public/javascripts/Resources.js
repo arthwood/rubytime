@@ -9,10 +9,14 @@ var Resources = function(name, plural) {
   this.onAddNewSuccessD = $D(this, this.onAddNewSuccess);
   this.listing = $$('.listing').first();
   this.sideForm = $$('.side_form').first();
-  $$('.listing td.actions').each(this.initActions.bind(this));
+  this.initRows();
 };
 
 Resources.prototype = {
+  initRows: function(i) {
+    $$('.listing td.actions').each(this.initActions.bind(this));
+  },
+  
   initActions: function(i) {
     var elements = i.elements();
     var edit = elements.first();

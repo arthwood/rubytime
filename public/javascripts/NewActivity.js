@@ -62,6 +62,7 @@ NewActivity.prototype = {
   onAddNewActivity: function(e) {
     this.newActivityUserId && (this.newActivityUserId.value = this.controller.getCurrentUserId());
     this.container.show();
+    this.updateContainerPosition();
     
     return false;
   },
