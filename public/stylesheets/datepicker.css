@@ -30,3 +30,6 @@
   border: 1px solid #000000;
   font-weight: bold;
 }
+.datepicker_calendar table tr td.invalid {
+  color: #DDD;
+}
