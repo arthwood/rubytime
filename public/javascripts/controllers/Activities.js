@@ -58,13 +58,10 @@ var Activities = $E(Resources, function() {
   
   onPeriod: function(e) {
     var select = e.currentTarget;
+    var arr = (select.selectedIndex > 0) ? select.value.split('/') : ['', ''];
     
-    if (select.selectedIndex > 0) {
-      var arr = select.value.split('/');
-    
-      this.filterDateFrom.value = arr.first();
-      this.filterDateTo.value = arr.second();
-    }
+    this.filterDateFrom.value = arr.first();
+    this.filterDateTo.value = arr.second();
   },
   
   onProjectsSuccess: function(ajax) {
@@ -89,7 +86,10 @@ var Activities = $E(Resources, function() {
   },
   
   onNewActivitySuccess: function(activity) {
-    this.search();
+    // Search only if any search has been performed
+    if ($$('.clients').first()) {
+      this.search();
+    }
   },
   
   onEditActivitySuccess: function(activity) {

@@ -24,16 +24,21 @@ class Activity < ActiveRecord::Base
   def self.search(filter)
     project_id = filter.project_id
     user_id = filter.user_id
+    client_id = filter.client_id
     conditions = {}
     conditions[:project_id] = project_id unless project_id.blank?
     conditions[:user_id] = user_id unless user_id.blank?
+    conditions['projects.client_id'] = client_id unless client_id.blank?
     from, to = filter.from, filter.to
     from = from.blank? ? nil : Date.parse(from)
     to = to.blank? ? nil : Date.parse(to)
     
     conditions[:date] = Range.new(from, to) if from || to
-    
-    all(:conditions => conditions, :include => :project, :order => 'date DESC')
+    joins = %q{
+      LEFT OUTER JOIN projects ON (projects.id = project_id)
+      LEFT OUTER JOIN clients ON (clients.id = projects.client_id)
+    }
+    all(:conditions => conditions, :joins => joins, :order => 'date DESC')
   end
   
   protected

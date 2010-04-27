@@ -28,6 +28,8 @@ class User < ActiveRecord::Base
   has_many :activities, :include => :project
   has_many :projects, :through => :activities, :uniq => true
   
+  default_scope :order => :name
+  
   named_scope :employees, :conditions => 'client_id IS NULL'
   named_scope :clients, :conditions => 'client_id IS NOT NULL'
   named_scope :not_admins, :conditions => 'admin = 0'

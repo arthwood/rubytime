@@ -23,6 +23,7 @@ class ActivitiesController < ApplicationController
       @users = User.employees
       user = (user_id = @filter.user_id).blank? ? nil : User.find(user_id)
       @projects = user ? user.projects : Project.all
+      @clients = Client.all
     else
       @filter.user_id = current_user.id
       @projects = current_user.projects

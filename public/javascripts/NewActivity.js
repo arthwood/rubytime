@@ -60,7 +60,7 @@ NewActivity.prototype = {
   },
   
   onAddNewActivity: function(e) {
-    this.newActivityUserId && (this.newActivityUserId.value = this.controller.getCurrentUserId());
+    this.controller && this.newActivityUserId && (this.newActivityUserId.value = this.controller.getCurrentUserId());
     this.container.show();
     this.updateContainerPosition();
     
@@ -117,7 +117,7 @@ NewActivity.prototype = {
       
       app.flash.show('info', 'Activity successfully created!');
       
-      this.controller.onNewActivitySuccess(json.activity);
+      this.controller && this.controller.onNewActivitySuccess(json.activity);
     }
     else {
       $P(json.html).replace(this.newForm);
@@ -142,7 +142,7 @@ NewActivity.prototype = {
       
       app.flash.show('info', 'Activity successfully updated!');
       
-      this.controller.onEditActivitySuccess(json.activity);
+      this.controller && this.controller.onEditActivitySuccess(json.activity);
     }
     else {
       $P(json.html).replace(this.editForm);

@@ -7,4 +7,6 @@ class Currency < ActiveRecord::Base
   validates_uniqueness_of :symbol
   
   validates_inclusion_of :prefix, :in => [true, false]
+  
+  default_scope :order => :name
 end

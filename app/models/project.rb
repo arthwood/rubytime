@@ -7,6 +7,8 @@ class Project < ActiveRecord::Base
   
   has_many :hourly_rates
   
+  default_scope :order => :name
+  
   def as_json(options = {})
     super(:include => :client)
   end

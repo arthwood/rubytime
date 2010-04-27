@@ -4,4 +4,6 @@ class Client < ActiveRecord::Base
   validates_inclusion_of :active, :in => [true, false]
   
   has_many :users, :dependent => :destroy
+  
+  default_scope :order => :name
 end

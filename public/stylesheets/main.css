@@ -296,6 +296,9 @@ table.base td.centered {
 .listing .projects {
   margin-left: 20px;
 }
+.listing .project {
+  margin-bottom: 10px;
+}
 table.calendar {
   border: 1px solid #CCC;
 }
