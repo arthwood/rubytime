@@ -1,4 +1,5 @@
-%tr[activity]{:title => activity.comments}
+%tr[activity]{:class => row_class(row_counter), :title => activity.comments}
+  %td.centered= check_box_tag :select, 1, false, :id => nil if activity.invoice_id.nil?
   %td.centered= activity.date
   %td= activity.user.name
   %td.centered= activity.time_spent

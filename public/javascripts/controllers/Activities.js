@@ -24,6 +24,13 @@ var Activities = $E(Resources, function() {
   this.period = $('activity_filter_period');
   this.period.onchange = this.onPeriod.bind(this);
   this.activityTemplate = $('activity_template');
+  this.initSelectAllDC = this.initSelectAll.bind(this);
+  this.onSelectAllChangeDC = this.onSelectAllChange.bind(this);
+  this.selectActivityDC = this.selectActivity.bind(this);
+  this.onCreateInvoiceFormSubmitDC = this.onCreateInvoiceFormSubmit.bind(this);
+  this.onCreateInvoiceFormSubmitSuccessD = $D(this, this.onCreateInvoiceFormSubmitSuccess);
+  this.onAddToInvoiceFormSubmitDC = this.onAddToInvoiceFormSubmit.bind(this);
+  this.onAddToInvoiceFormSubmitSuccessD = $D(this, this.onAddToInvoiceFormSubmitSuccess);
 }, {
   onFilter: function(e) {
     this.search();
@@ -38,7 +45,44 @@ var Activities = $E(Resources, function() {
   onFilterSuccess: function(ajax) {
     this.results.setContent(ajax.getResponseText());
     
-    this.initRows();
+    this.initResults();
+  },
+  
+  initResults: function(i) {
+    arguments.callee.super();
+    
+    $$('.listing input[type=checkbox,name=select_all]').each(this.initSelectAllDC);
+    
+    var forms = this.results.down('.invoice form');
+    
+    this.createInvoiceForm = forms.first();
+    this.addToInvoiceForm = forms.second();
+    
+    this.createInvoiceForm.onsubmit = this.onCreateInvoiceFormSubmitDC;
+    this.addToInvoiceForm.onsubmit = this.onAddToInvoiceFormSubmitDC;
+  },
+  
+  initSelectAll: function(i) {
+    var chbs = this.getCheckboxes(i);
+    
+    i.onchange = this.onSelectAllChangeDC;
+    i.setVisible(!chbs.empty());
+  },
+  
+  getCheckboxes: function(chb) {
+    return chb.up('table').down('.activity input[type=checkbox,name=select]');
+  },
+  
+  onSelectAllChange: function(e) {
+    var chb = e.currentTarget;
+    
+    this.selectActivityDC.delegate.args = [chb.checked];
+    
+    this.getCheckboxes(chb).each(this.selectActivityDC);
+  },
+  
+  selectActivity: function(i, checked) {
+    i.checked = checked;
   },
   
   onEditSuccess: function(ajax) {
@@ -93,6 +137,34 @@ var Activities = $E(Resources, function() {
   },
   
   onEditActivitySuccess: function(activity) {
+    this.search();
+  },
+  
+  onCreateInvoiceFormSubmit: function(e) {
+    var form = e.currentTarget;
+    
+    $post(form.action, form.serialize(), this.onCreateInvoiceFormSubmitSuccessD);
+    
+    return false;
+  },
+  
+  onCreateInvoiceFormSubmitSuccess: function(ajax) {
+    app.flash.show('info', 'Activities successfully invoiced!');
+    
+    this.search();
+  },
+  
+  onAddToInvoiceFormSubmit: function(e) {
+    var form = e.currentTarget;
+    
+    $post(form.action, form.serialize(), this.onAddToInvoiceFormSubmitSuccessD);
+    
+    return false;
+  },
+  
+  onAddToInvoiceFormSubmitSuccess: function(ajax) {
+    app.flash.show('info', 'Activities successfully invoiced!');
+    
     this.search();
   }
 });

@@ -6,15 +6,16 @@ var Resources = function(name, plural) {
   this.onEditSuccessD = $D(this, this.onEditSuccess);
   this.onDeleteSuccessD = $D(this, this.onDeleteSuccess);
   this.onAddNewDC = this.onAddNew.bind(this);
+  this.initActionsDC = this.initActions.bind(this);
   this.onAddNewSuccessD = $D(this, this.onAddNewSuccess);
   this.listing = $$('.listing').first();
   this.sideForm = $$('.side_form').first();
-  this.initRows();
+  this.initResults();
 };
 
 Resources.prototype = {
-  initRows: function(i) {
-    $$('.listing td.actions').each(this.initActions.bind(this));
+  initResults: function() {
+    $$('.listing td.actions').each(this.initActionsDC);
   },
   
   initActions: function(i) {

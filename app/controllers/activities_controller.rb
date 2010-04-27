@@ -12,7 +12,10 @@ class ActivitiesController < ApplicationController
     set_filter
     
     @activities = Activity.search(@filter)
-    
+    filter_client_id = @filter.client_id.to_i
+    @client = @clients.detect {|i| i.id == filter_client_id}
+    @invoices = @client && @client.invoices || Invoice.all
+
     render :partial => 'results'
   end
   
@@ -84,6 +87,12 @@ class ActivitiesController < ApplicationController
     @activity.destroy if @found
     
     render :json => @activity.to_json, :success => @found
+  end
+  
+  def invoice
+    invoice_name = params[:invoice_name]
+    client_id = params[:client_id]
+    #@invoice 
   end
   
   protected

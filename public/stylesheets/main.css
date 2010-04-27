@@ -124,6 +124,9 @@ form .error {
 .right {
   float: right;
 }
+.bold {
+  font-weight: bold;
+}
 #main {
   width: 900px;
   margin: 0 auto;
@@ -271,7 +274,9 @@ table.base {
 table.base tr th {
   background: #86CFEF;
 }
-table.base th,
+table.base th {
+  padding: 4px 4px;
+}
 table.base td {
   padding: 2px 4px;
 }
@@ -283,6 +288,10 @@ table.base td.actions {
 }
 table.base td.centered {
   text-align: center;
+}
+table.base input[type=checkbox],
+table.base input[type=radio] {
+  vertical-align: top;
 }
 .listing .clients {
   margin-left: 10px;
@@ -423,4 +432,11 @@ table.calendar td.weekend {
 }
 .hourly_rates .form form .item select {
   width: 110px;
+}
+.icon_with_label span,
+.icon_with_label img {
+  vertical-align: bottom;
+}
+#results .invoice {
+  padding: 10px 0;
 }

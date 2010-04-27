@@ -3,3 +3,25 @@
     No activities found for selected criteria.
 - else
   = render :partial => 'list', :object => @activities
+
+- if admin?
+  - if @client
+    .invoice
+      %p.icon_with_label
+        = image_tag 'create_doc.png'
+        %span.bold== Create invoice for #{@client.name} from selected activities
+        
+      - form_tag invoice_activities_path do
+        = hidden_field_tag :client_id, @client.id
+        = text_field_tag :invoice_name
+        = submit_tag 'Create'
+
+    - unless @invoices.empty?
+      .invoice
+        %p.icon_with_label
+          = image_tag 'create_doc.png'
+          %span.bold== Add selected activities to existing invoice for #{@client.name} 
+          
+        - form_tag invoice_activities_path do
+          = select_tag :invoice_id, options_from_collection_for_select(@invoices, :id, :name)
+          = submit_tag 'Add'

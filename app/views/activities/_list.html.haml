@@ -18,6 +18,7 @@
                 = project.name
             %table.base
               %tr
+                %th= check_box_tag :select_all, 1, false, :id => nil, :style => 'display: none'
                 %th Date
                 %th User
                 %th Time
