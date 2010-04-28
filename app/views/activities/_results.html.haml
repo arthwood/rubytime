@@ -23,5 +23,6 @@
           %span.bold== Add selected activities to existing invoice for #{@client.name} 
           
         - form_tag invoice_activities_path do
+          = hidden_field_tag :client_id, @client.id
           = select_tag :invoice_id, options_from_collection_for_select(@invoices, :id, :name)
           = submit_tag 'Add'

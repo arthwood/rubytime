@@ -10,11 +10,11 @@ var Resources = function(name, plural) {
   this.onAddNewSuccessD = $D(this, this.onAddNewSuccess);
   this.listing = $$('.listing').first();
   this.sideForm = $$('.side_form').first();
-  this.initResults();
+  this.init();
 };
 
 Resources.prototype = {
-  initResults: function() {
+  init: function() {
     $$('.listing td.actions').each(this.initActionsDC);
   },
   

@@ -1,6 +1,8 @@
 class ActivitiesController < ApplicationController
   skip_before_filter :login_required, :only => :index
   
+  before_filter :admin_required, :only => [:invoice]
+  
   def index
     redirect_to login_url and return unless logged_in?
     set_filter
@@ -17,20 +19,6 @@ class ActivitiesController < ApplicationController
     @invoices = @client && @client.invoices || Invoice.all
 
     render :partial => 'results'
-  end
-  
-  def set_filter
-    @filter = ActivityFilter.new(@params_filter || {:from => nil, :to => nil})
-    
-    if current_user.admin
-      @users = User.employees
-      user = (user_id = @filter.user_id).blank? ? nil : User.find(user_id)
-      @projects = user ? user.projects : Project.all
-      @clients = Client.all
-    else
-      @filter.user_id = current_user.id
-      @projects = current_user.projects
-    end
   end
   
   def calendar
@@ -90,12 +78,60 @@ class ActivitiesController < ApplicationController
   end
   
   def invoice
+    @client = Client.find(params[:client_id])
+    activity_ids = params[:activity_ids]
+    # new invoice
     invoice_name = params[:invoice_name]
-    client_id = params[:client_id]
-    #@invoice 
+    # existing invoice
+    invoice_id = params[:invoice_id]
+    
+    @activities = Activity.find(activity_ids)
+    t = Date.current
+    hourly_rates = HourlyRate.all(:order => 'date DESC')
+    activity_and_hr = @activities.map do |i|
+      {:activity => i, :hr => hourly_rates.detect {|j| 
+        j.role_id == i.user.role_id && j.project_id == i.project_id && j.date <= t
+      }}
+    end
+    
+    bad_activities = activity_and_hr.select {|i| i[:hr].nil?}
+    success = bad_activities.empty?
+    json = {:success => success}
+    
+    if success
+      @invoice = invoice_id.blank? \
+        ? @client.invoices.create(:name => invoice_name, :user_id => current_user) \
+        : Invoice.find(invoice_id)
+      invoice_id = @invoice.id
+      activity_and_hr.each do |i|
+        activity = i[:activity]
+        hr = i[:hr]
+        activity.update_attributes(:invoice_id => invoice_id, :price => hr.value, :currency_id => hr.currency_id)
+      end
+      
+    else
+      json[:error] = "Some of the activities don't have hourly rates defined"
+      json[:bad_activities] = bad_activities.map {|i| i[:activity].id}
+    end
+    
+    render :json => json
   end
   
   protected
+
+  def set_filter
+    @filter = ActivityFilter.new(@params_filter || {:from => nil, :to => nil})
+    
+    if current_user.admin
+      @users = User.employees
+      user = (user_id = @filter.user_id).blank? ? nil : User.find(user_id)
+      @projects = user ? user.projects : Project.all
+      @clients = Client.all
+    else
+      @filter.user_id = current_user.id
+      @projects = current_user.projects
+    end
+  end
   
   def set_activity
     @activity = current_user.admin ? Activity.find_by_id(params[:id]) : current_user.activities.find_by_id(params[:id])

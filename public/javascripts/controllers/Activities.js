@@ -1,10 +1,4 @@
 var Activities = $E(Resources, function() {
-  arguments.callee.super('activity');
-  
-  this.sideForm = null;
-  this.initAddNewLink = null;
-  this.onAddNew = null;
-  this.onAddNewSuccess = null;
   this.results = $('results');
   this.filterForm = $$('.filter form').first();
   this.filterForm.onsubmit = this.onFilter.bind(this);
@@ -31,6 +25,17 @@ var Activities = $E(Resources, function() {
   this.onCreateInvoiceFormSubmitSuccessD = $D(this, this.onCreateInvoiceFormSubmitSuccess);
   this.onAddToInvoiceFormSubmitDC = this.onAddToInvoiceFormSubmit.bind(this);
   this.onAddToInvoiceFormSubmitSuccessD = $D(this, this.onAddToInvoiceFormSubmitSuccess);
+  this.selectCheckedDC = this.selectChecked.bind(this);
+  this.checkboxToActivityIdDC = this.checkboxToActivityId.bind(this);
+  this.markActivityAsInvalidDC = this.markActivityAsInvalid.bind(this);
+  
+  arguments.callee.super('activity');
+  
+  // nullify not used properties and methods
+  this.sideForm = null;
+  this.initAddNewLink = null;
+  this.onAddNew = null;
+  this.onAddNewSuccess = null;
 }, {
   onFilter: function(e) {
     this.search();
@@ -49,17 +54,15 @@ var Activities = $E(Resources, function() {
   },
   
   initResults: function(i) {
-    arguments.callee.super();
-    
     $$('.listing input[type=checkbox,name=select_all]').each(this.initSelectAllDC);
     
-    var forms = this.results.down('.invoice form');
-    
+    var forms = this.results.down('form');
+  
     this.createInvoiceForm = forms.first();
     this.addToInvoiceForm = forms.second();
-    
-    this.createInvoiceForm.onsubmit = this.onCreateInvoiceFormSubmitDC;
-    this.addToInvoiceForm.onsubmit = this.onAddToInvoiceFormSubmitDC;
+  
+    this.createInvoiceForm && (this.createInvoiceForm.onsubmit = this.onCreateInvoiceFormSubmitDC);
+    this.addToInvoiceForm && (this.addToInvoiceForm.onsubmit = this.onAddToInvoiceFormSubmitDC);
   },
   
   initSelectAll: function(i) {
@@ -141,31 +144,63 @@ var Activities = $E(Resources, function() {
   },
   
   onCreateInvoiceFormSubmit: function(e) {
-    var form = e.currentTarget;
-    
-    $post(form.action, form.serialize(), this.onCreateInvoiceFormSubmitSuccessD);
-    
-    return false;
-  },
-  
-  onCreateInvoiceFormSubmitSuccess: function(ajax) {
-    app.flash.show('info', 'Activities successfully invoiced!');
-    
-    this.search();
+    return this.onInvoiceFormSubmit(e);
   },
   
   onAddToInvoiceFormSubmit: function(e) {
+    return this.onInvoiceFormSubmit(e);
+  },
+  
+  onInvoiceFormSubmit: function(e) {
+    var activityIds = this.selectedActivityIds();
+    
+    if (activityIds.empty()) {
+      app.flash.show('warning', 'Please select at least one activity.');
+      
+      return false;
+    }
+    
     var form = e.currentTarget;
     
-    $post(form.action, form.serialize(), this.onAddToInvoiceFormSubmitSuccessD);
+    $post(form.action, form.serialize().merge({activity_ids: activityIds}), this.onCreateInvoiceFormSubmitSuccessD);
     
     return false;
+  },
+  
+  selectedActivityIds: function() {
+    return $$('input[name=select]').select(this.selectCheckedDC).map(this.checkboxToActivityIdDC);
+  },
+  
+  selectChecked: function(i) {
+    return i.checked;
+  },
+  
+  checkboxToActivityId: function(i) {
+    return i.up('.activity').id.split('_').last();
+  },
+  
+  onCreateInvoiceFormSubmitSuccess: function(ajax) {
+    var json = ajax.getResponseText().toJson();
+    
+    if (json.success) {
+      app.flash.show('info', 'Activities successfully invoiced!');
+      
+      this.search();
+    }
+    else {
+      app.flash.show('error', json.error);
+      json.bad_activities.each(this.markActivityAsInvalidDC);
+    }
   },
   
   onAddToInvoiceFormSubmitSuccess: function(ajax) {
     app.flash.show('info', 'Activities successfully invoiced!');
     
     this.search();
+  },
+  
+  markActivityAsInvalid: function(id) {
+    $('activity_' + id).addClass('invalid');
   }
 });
 
