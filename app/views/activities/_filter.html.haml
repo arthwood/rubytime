@@ -42,13 +42,13 @@
         Include
       .radiogroup
         .radio
-          = i.radio_button :include, :all
-          = i.label :include_all, 'All'
+          = i.radio_button :invoice_filter, :all
+          = i.label :invoice_filter_all, 'All'
         .radio
-          = i.radio_button :include, :invoiced
-          = i.label :include_invoiced, 'Invoiced'
+          = i.radio_button :invoice_filter, :invoiced
+          = i.label :invoice_filter_invoiced, 'Invoiced'
         .radio
-          = i.radio_button :include, :not_invoiced
-          = i.label :include_not_invoiced, 'Not invoiced'
+          = i.radio_button :invoice_filter, :not_invoiced
+          = i.label :invoice_filter_not_invoiced, 'Not invoiced'
   .item.last
     = i.submit 'Submit', :class => :no_label
