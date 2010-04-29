@@ -17,7 +17,6 @@ var Activities = $E(Resources, function() {
   this.filterDateTo = $('activity_filter_to');
   this.period = $('activity_filter_period');
   this.period.onchange = this.onPeriod.bind(this);
-  this.activityTemplate = $('activity_template');
   this.initSelectAllDC = this.initSelectAll.bind(this);
   this.onSelectAllChangeDC = this.onSelectAllChange.bind(this);
   this.selectActivityDC = this.selectActivity.bind(this);
@@ -57,12 +56,11 @@ var Activities = $E(Resources, function() {
     $$('.listing input[type=checkbox,name=select_all]').each(this.initSelectAllDC);
     
     var forms = this.results.down('form');
-  
-    this.createInvoiceForm = forms.first();
-    this.addToInvoiceForm = forms.second();
-  
-    this.createInvoiceForm && (this.createInvoiceForm.onsubmit = this.onCreateInvoiceFormSubmitDC);
-    this.addToInvoiceForm && (this.addToInvoiceForm.onsubmit = this.onAddToInvoiceFormSubmitDC);
+    var createInvoiceForm = forms.first();
+    var addToInvoiceForm = forms.second();
+    
+    createInvoiceForm && (createInvoiceForm.onsubmit = this.onCreateInvoiceFormSubmitDC);
+    addToInvoiceForm && (addToInvoiceForm.onsubmit = this.onAddToInvoiceFormSubmitDC);
   },
   
   initSelectAll: function(i) {

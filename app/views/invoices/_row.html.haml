@@ -1,8 +1,8 @@
 %tr{:class => row_class(row_counter), :title => invoice.notes}
   %td= invoice.name
   %td= invoice.client.name
-  %td.centered= format_date(invoice.created_at)
-  %td.centered= invoice.issued_at && format_date(invoice.issued_at)
-  %td.actions
+  %td.calign= format_date(invoice.created_at)
+  %td.calign= invoice.issued_at && format_date(invoice.issued_at)
+  %td.actions.ralign
     = link_to image_tag('pencil.png'), edit_invoice_url(invoice)
     = link_to image_tag('cross.png'), invoice_url(invoice)

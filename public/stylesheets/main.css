@@ -27,6 +27,9 @@ h2 {
 h3 {
   margin: 0 0 4px;
 }
+h4 {
+  margin: 0 0 4px;
+}
 img {
   border: none;
 }
@@ -126,6 +129,15 @@ form .error {
 }
 .bold {
   font-weight: bold;
+}
+.lalign {
+  text-align: left;
+}
+.calign {
+  text-align: center;
+}
+.ralign {
+  text-align: right;
 }
 #main {
   width: 900px;
@@ -283,30 +295,9 @@ table.base td {
 table.base tr.even {
   background: #eee;
 }
-table.base td.actions {
-  text-align: right;
-}
-table.base td.centered {
-  text-align: center;
-}
 table.base input[type=checkbox],
 table.base input[type=radio] {
   vertical-align: top;
-}
-.listing .clients {
-  margin-left: 10px;
-}
-.listing .client {
-  margin: 20px 0;
-}
-.listing .client h2 {
-  margin-bottom: 10px;
-}
-.listing .projects {
-  margin-left: 20px;
-}
-.listing .project {
-  margin-bottom: 10px;
 }
 table.calendar {
   border: 1px solid #CCC;
@@ -437,8 +428,66 @@ table.calendar td.weekend {
 .icon_with_label img {
   vertical-align: bottom;
 }
-#results .invoice {
-  padding: 10px 0;
+.listing .clients {
+}
+.listing .client {
+  border: 1px solid #E0E0E0;
+  background: #F0F0F0;
+  padding: 4px 6px;
+  margin-bottom: 10px;
+}
+.listing .client h2 {
+  margin-bottom: 10px;
+  color: #333;
+}
+.listing .projects {
+  margin-left: 20px;
+}
+.listing .project {
+  margin-bottom: 10px;
+  border: 1px solid #E6E6E6;
+  background: #F6F6F6;
+  padding: 4px 6px;
+}
+.listing .project h3 {
+  margin: 0 0 10px;
+  color: #444;
+}
+.listing .roles {
+  margin-left: 20px;
+}
+.listing .role {
+  margin-bottom: 10px;
+  border: 1px solid #ECECEC;
+  background: #FCFCFC;
+  padding: 4px 6px;
+}
+.listing .role h4 {
+  margin: 0 0 10px;
+  color: #555;
+}
+.listing .users {
+  margin-left: 20px;
+}
+.listing .user {
+  margin-bottom: 10px;
+  border: 1px solid #EEE;
+  background: white;
+  padding: 4px 6px;
+}
+.listing .user h4 {
+  margin: 0 0 10px;
+  color: #666;
+}
+.listing .user table.base .first {
+  padding: 4px 0;
+  width: 24px;
+}
+.listing .user table.base .total {
+  font-weight: bold;
+}
+.listing .invoice {
+  padding-top: 20px;
 }
 tr.invalid {
   color: red;

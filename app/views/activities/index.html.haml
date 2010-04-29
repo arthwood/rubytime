@@ -11,7 +11,3 @@
             Use filter form on the right to search activities
         - else
           = render :partial => 'results'
-    
-    #activity_template{:style => 'display: none'}
-      - activity = Activity.new(:user => User.new, :project => Project.new(:client => Client.new))
-      = render :partial => 'list', :object => [activity]

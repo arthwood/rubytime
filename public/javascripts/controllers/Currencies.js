@@ -1,13 +1,14 @@
 var Currencies = $E(Resources, function() {
   arguments.callee.super('currency', 'currencies');
   
+  this.onPrefixChangeDC = this.onPrefixChange.bind(this);
+  this.onSymbolChangeDC = this.onSymbolChange.bind(this);
+  
   this.initExample();
+  this.updateExample();
 }, {
   onEditSuccess: function(ajax) {
     arguments.callee.super(ajax);
-    
-    this.onPrefixChangeDC = this.onPrefixChange.bind(this);
-    this.onSymbolChangeDC = this.onSymbolChange.bind(this);
     
     this.initExample();
   },
@@ -33,7 +34,7 @@ var Currencies = $E(Resources, function() {
     
     this.currencyPrefix.checked && arr.reverse();
     
-    this.example.innerHTML = arr.join(''); 
+    this.example.setContent(arr.join('')); 
   }
 });
 

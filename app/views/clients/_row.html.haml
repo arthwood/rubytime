@@ -1,7 +1,7 @@
 %tr{:class => row_class(row_counter), :title => client.description}
   %td= client.name
   %td= client.email
-  %td.centered= verbalize(client.active)
-  %td.actions
+  %td.calign= verbalize(client.active)
+  %td.actions.ralign
     = link_to image_tag('pencil.png'), edit_client_url(client)
     = link_to image_tag('cross.png'), client_url(client)

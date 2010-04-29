@@ -1,6 +1,6 @@
 %tr{:class => row_class(row_counter)}
   %td= role.name
-  %td.centered= verbalize(role.can_manage_financial_data)
-  %td.actions
+  %td.calign= verbalize(role.can_manage_financial_data)
+  %td.actions.ralign
     = link_to image_tag('pencil.png'), edit_role_url(role)
     = link_to image_tag('cross.png'), role_url(role)

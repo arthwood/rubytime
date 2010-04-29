@@ -20,8 +20,6 @@ class User < ActiveRecord::Base
   
   validates_inclusion_of :active, :in => [true, false]
   
-  attr_accessible :login, :email, :name, :password, :password_confirmation, :active, :admin, :role_id, :client_id
-  
   belongs_to :client
   belongs_to :role
   

@@ -39,11 +39,23 @@ class Activity < ActiveRecord::Base
     
     conditions[:date] = Range.new(from, to) if from || to
     joins = %q{
+      LEFT OUTER JOIN users ON (users.id = user_id)
       LEFT OUTER JOIN projects ON (projects.id = project_id)
       LEFT OUTER JOIN clients ON (clients.id = projects.client_id)
     }
     
-    send(scope, :conditions => conditions, :joins => joins, :order => 'date DESC')
+    options = {:conditions => conditions, :joins => joins, :order => 'date DESC'}
+    
+    case scope
+      when :all
+        all(options)
+      when :invoiced
+        invoiced.all(options)
+      when :not_invoiced
+        not_invoiced.all(options)
+      else
+        []
+    end
   end
   
   protected
