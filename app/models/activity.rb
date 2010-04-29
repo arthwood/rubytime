@@ -44,8 +44,10 @@ class Activity < ActiveRecord::Base
   protected
   
   def after_validation
-    arr = @time_spent.split(':')
-    self.minutes = 60 * arr.first.to_i + arr.last.to_i
+    if @time_spent
+      arr = @time_spent.split(':')
+      self.minutes = 60 * arr.first.to_i + arr.last.to_i
+    end
   end
   
   def time_spent_values
