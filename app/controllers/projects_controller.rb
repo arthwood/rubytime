@@ -1,4 +1,6 @@
 class ProjectsController < ApplicationController
+  before_filter :admin_required
+  
   def index
     respond_to do |format|
       format.html do

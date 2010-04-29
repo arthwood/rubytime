@@ -1,7 +1,12 @@
+- invoiced = !activity.invoice_id.nil?
 %tr[activity]{:class => row_class(row_counter), :title => activity.comments}
-  %td.calign.first= check_box_tag :select, 1, false, :id => nil if activity.invoice_id.nil?
+  - if admin?
+    %td.calign.first= check_box_tag :select, 1, false, :id => nil unless invoiced 
   %td.calign= activity.date
   %td.calign= activity.time_spent
+  - if admin?
+    %td= (invoice = activity.invoice) && invoice.name
   %td.actions.ralign
-    = link_to image_tag('pencil.png'), activity.new_record? ? '#' : edit_activity_path(activity)
-    = link_to image_tag('cross.png'), activity.new_record? ? '#' : activity_path(activity)
+    - unless invoiced
+      = link_to image_tag('pencil.png'), activity.new_record? ? '#' : edit_activity_path(activity)
+      = link_to image_tag('cross.png'), activity.new_record? ? '#' : activity_path(activity)

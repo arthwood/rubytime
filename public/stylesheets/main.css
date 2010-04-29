@@ -290,7 +290,8 @@ table.base th {
   padding: 4px 4px;
 }
 table.base td {
-  padding: 2px 4px;
+  height: 22px;
+  padding: 0 4px;
 }
 table.base tr.even {
   background: #eee;
@@ -483,7 +484,7 @@ table.calendar td.weekend {
   padding: 4px 0;
   width: 24px;
 }
-.listing .user table.base .total {
+.listing .user table.base tfoot {
   font-weight: bold;
 }
 .listing .invoice {

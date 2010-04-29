@@ -14,10 +14,13 @@ class ActivitiesController < ApplicationController
     set_filter
     
     @activities = Activity.search(@filter)
-    filter_client_id = @filter.client_id.to_i
-    @client = @clients.detect {|i| i.id == filter_client_id}
-    @invoices = @client && @client.invoices || Invoice.all
-
+    
+    if current_user.admin
+      filter_client_id = @filter.client_id.to_i
+      @client = @clients.detect {|i| i.id == filter_client_id}
+      @invoices = @client && @client.invoices || Invoice.all
+    end
+    
     render :partial => 'results'
   end
   
@@ -51,21 +54,28 @@ class ActivitiesController < ApplicationController
     
     @activity = Activity.new(data)
     
-    if @activity.save
-      render :json => {:activity => @activity, :success => true}
+    success = @activity.save
+    
+    json = {:success => success}
+    
+    if success
+      render :json => json.merge(:activity => @activity)
     else
-      render :json => {:html => render_to_string(:partial => 'form'), :success => false}
+      render :json => json.merge(:html => render_to_string(:partial => 'form'))
     end
   end
   
   def update
     set_activity
+    
     success = @found && @activity.update_attributes(params[:activity])
     
-    if success 
-      render :json => {:activity => @activity.reload, :success => success}
+    json = {:success => success}
+    
+    if success
+      render :json => json.merge(:activity => @activity.reload)
     else
-      render :json => {:html => render_to_string(:partial => 'form'), :success => success}
+      render :json => json.merge(:html => render_to_string(:partial => 'form'))
     end
   end
 

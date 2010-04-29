@@ -1,4 +1,6 @@
 class InvoicesController < ApplicationController
+  before_filter :admin_required
+  
   def index
     @invoices = Invoice.all
     @invoice = Invoice.new

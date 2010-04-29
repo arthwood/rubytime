@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  before_filter :admin_required, :except => [:do_request_password, :reset]
+  
   def index
     @user = User.new
     @admins = User.admins

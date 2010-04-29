@@ -1,0 +1,18 @@
+.roles
+  - group_by_roles = group(project_activities) {|i| i.user.role}
+  - group_by_roles.each_pair do |role, role_activities|
+    .role[role]
+      %h4
+        Role:
+        %span
+          = role.name
+        - hr = project.hourly_rates.current(role)
+        = hr.nil? ? '(Hourly rate not defined!)' : "(Hourly rate: #{format_currency_hr(hr)})"
+      .users
+        - group_by_users = group(role_activities) {|i| i.user}
+        - group_by_users.each_pair do |user, user_activities|
+          .user[user]
+            %h4
+              = user.name
+                
+            = render :partial => 'table', :locals => {:user_activities => user_activities, :hr => hr}

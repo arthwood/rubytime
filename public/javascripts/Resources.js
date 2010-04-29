@@ -23,8 +23,8 @@ Resources.prototype = {
     var edit = elements.first();
     var remove = elements.second();
     
-    edit.onclick = this.onEditDC;
-    remove.onclick = this.onRemoveDC;
+    edit && (edit.onclick = this.onEditDC);
+    remove && (remove.onclick = this.onRemoveDC);
   },
   
   onEdit: function(e) {

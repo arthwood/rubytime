@@ -1,4 +1,6 @@
 class CurrenciesController < ApplicationController
+  before_filter :admin_required
+  
   def index
     @currencies = Currency.all
     @currency = Currency.new

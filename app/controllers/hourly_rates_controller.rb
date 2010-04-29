@@ -1,4 +1,6 @@
 class HourlyRatesController < ApplicationController
+  before_filter :admin_required
+  
   def new
     @project = Project.find(params[:project_id])
     @hourly_rate = @project.hourly_rates.build(:role_id => params[:role_id])

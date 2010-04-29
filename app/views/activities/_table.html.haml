@@ -1,0 +1,26 @@
+%table.base
+  %thead
+    %tr
+      - if admin?
+        %th.first= check_box_tag :select_all, 1, false, :id => nil, :style => 'display: none'
+      %th Date
+      %th Time
+      - if admin?
+        %th Invoice
+      %th.actions.ralign &nbsp;
+
+  - if admin?
+    %tfoot
+      %tr
+        %td.ralign{:colspan => 2}
+          Total:
+        %td.calign
+          - minutes = user_activities.inject(0) {|mem, i| mem + i.minutes}
+          = time_spent(minutes)
+        %td{:colspan => 2}
+          - unless hr.nil?
+            value:
+            = format_currency(hr.currency, hr.value * minutes / 60.0)
+
+  %tbody
+    = render :partial => 'row', :collection => user_activities, :as => :activity

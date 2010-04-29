@@ -53,6 +53,8 @@ var Activities = $E(Resources, function() {
   },
   
   initResults: function(i) {
+    this.init();
+    
     $$('.listing input[type=checkbox,name=select_all]').each(this.initSelectAllDC);
     
     var forms = this.results.down('form');
