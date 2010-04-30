@@ -12,11 +12,14 @@ var ActivitiesCalendar = function() {
   this.onDeleteDC = this.onDelete.bind(this);
   this.onEditSuccessD = $D(this, this.onEditSuccess);
   this.onDeleteSuccessD = $D(this, this.onDeleteSuccess);
-  this.userSelect = $('user_id');
+  this.userId = $('user_id').value;
   this.timeSpentInjectDC = this.timeSpentInject.bind(this);
   this.initActivityActionsDC = this.initActivityActions.bind(this);
+  this.onDayOffDC = this.onDayOff.bind(this);
+  this.onDayOffSuccessD = $D(this, this.onDayOffSuccess);
+  this.dayOffTag = $('day_off_tag').firstElement();
   
-  $$('table.calendar td.active').each(this.activateCell.bind(this));
+  $$('table.calendar td.enabled').each(this.activateCell.bind(this));
 };
 
 ActivitiesCalendar.prototype = {
@@ -29,25 +32,36 @@ ActivitiesCalendar.prototype = {
     
     mc.onOver.add(this.onCellOverD);
     mc.onOut.add(this.onCellOutD);
-  },
-  
-  dectivateCell: function(i) {
-    var mc = MouseController.find(i);
     
-    mc.onOver.remove(this.onCellOverD);
-    mc.onOut.remove(this.onCellOutD);
+    var day_off = i.down('.day_off_icon a').first();
+    
+    day_off && (day_off.onclick = this.onDayOffDC);
   },
   
   onCellOver: function(e, mc) {
-    this.updateDetails(mc.element);
+    var element = mc.element;
+    
+    if (element.hasClass('active')) {
+      this.updateDetails(element);
+    }
+    else {
+      element.down('.day_off_icon').first().show();
+    }
   },
   
   onCellOut: function(e, mc) {
-    if (!e.relatedTarget.descendantOf(this.details, true)) {
-      this.hideDetails();
+    var element = mc.element;
+    
+    if (element.hasClass('active')) {
+      if (!e.relatedTarget.descendantOf(this.details, true)) {
+        this.hideDetails();
+      }
+      else {
+        this.detailsCell = element;
+      }
     }
     else {
-      this.detailsCell = mc.element;
+      element.down('.day_off_icon').first().hide();
     }
   },
   
@@ -71,7 +85,7 @@ ActivitiesCalendar.prototype = {
     
     content.down('.activity').each(this.initActivityActionsDC);
     content.show();
-    this.details.setPosition(cell.getPosition().add(cell.getSize().times(0.6)));
+    this.details.setPosition(cell.getPosition().add(cell.getSize().times(0.5)));
     this.details.show();
   },
   
@@ -115,7 +129,13 @@ ActivitiesCalendar.prototype = {
   },
   
   onDeleteSuccess: function(ajax) {
-    if (ajax.success) {
+    var json = ajax.getResponseText().toJson();
+    
+    if (json.success) {
+      var e = $('activity_' + activity.id);
+      
+      e.remove();
+      
       app.flash.show('info', 'Activity successfully deleted!');
     }
     else {
@@ -128,9 +148,7 @@ ActivitiesCalendar.prototype = {
     
     if (cell) {
       var activities = cell.down('.activities').first();
-      var e = this.template.elements().first().clone(true);
-      
-      activities.appendChild(e);
+      var e = this.template.firstElement().putAtBottom(activities);
       
       this.updateData(e, activity);
       this.updateDom(e, activity);
@@ -172,16 +190,23 @@ ActivitiesCalendar.prototype = {
     comments.setContent(activity.comments);
   },
   
-  updateCell: function(cell) {
+  updateCell: function(cell, day_off_tag) {
     this.updateTotal(cell);
     
     if (cell.down('.activity').empty()) {
       cell.removeClass('active');
-      this.dectivateCell(cell);
+      
+      var icon = cell.down('.day_off_icon').first();
+      
+      this.dayOffTag.putAtBottom(icon).onclick = this.onDayOffDC;
     }
     else {
+      var a = cell.down('.day_off_icon a').first();
+      
+      a && a.remove();
+      
       cell.addClass('active');
-      this.activateCell(cell);
+      cell.removeClass('day_off');
     }
   },
 
@@ -211,8 +236,20 @@ ActivitiesCalendar.prototype = {
     return mem + DateUtils.hmToMinutes(i.trim());
   },
   
-  getCurrentUserId: function() {
-    return this.userSelect && this.userSelect.value;
+  onDayOff: function(e) {
+    var a = e.currentTarget;
+    
+    $post(a.href, {date: a.up('td').id, user_id: this.userId}, this.onDayOffSuccessD);
+    
+    return false;
+  },
+  
+  onDayOffSuccess: function(ajax) {
+    var json = ajax.getResponseText().toJson();
+    var cell = $(json.date); 
+    
+    cell.addClass('day_off');
+    cell.down('.day_off_icon').first().setContent('');
   }
 };
 

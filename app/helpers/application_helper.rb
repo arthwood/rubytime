@@ -107,4 +107,8 @@ module ApplicationHelper
   def format_currency_hr(hr)
     format_currency(hr.currency, hr.value)
   end
+  
+  def day_off_tag
+    link_to image_tag('day_off.png', :title => 'Day off'), day_off_activities_path
+  end
 end

@@ -4,6 +4,7 @@
   - group_by_clients.each_pair do |client, client_activities|
     .client[client]
       %h2
+        = image_tag 'client.png'
         Client:
         %span
           = client.name
@@ -13,6 +14,7 @@
         - group_by_projects.each_pair do |project, project_activities|
           .project[project]
             %h3
+              = image_tag 'project.png'
               Project:
               %span
                 = project.name

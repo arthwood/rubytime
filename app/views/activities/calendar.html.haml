@@ -26,21 +26,30 @@
   - groups = group(@activities) {|i| i.date}
   - 0.upto(@rows) do |row|
     %tr
-    - 0.upto(6) do |col|
-      - day = @first_day.advance(:days => row * 7 + col + 1 - @first_day.wday)
-      - activities = groups[day] || []
-      - has_activity = !activities.empty?
-      - classes = [:cell]
-      - classes << :disabled unless (@first_day.month == day.month)
-      - classes << :active if has_activity
-      - classes << :weekend if col > 4
-      %td{:class => classes.join(' '), :id => day.strftime('%Y-%m-%d')}
-        %p.mday
-          = day.mday
-        .content{:style => 'display: none'}
-          = render :partial => 'cell', :object => activities, :locals => {:activities => activities}
-
+      - 0.upto(6) do |col|
+        - day = @first_day.advance(:days => row * 7 + col + 1 - @first_day.wday)
+        - activities = groups[day] || []
+        - has_activity = !activities.empty?
+        - enabled = @first_day.month == day.month
+        - weekend = col > 4
+        - day_off = @days_off_hash[day]
+        - classes = [:cell]
+        - classes << (weekend && :weekend || enabled && :enabled || :disabled)
+        - classes << :active if has_activity
+        - classes << :day_off if day_off
+        
+        %td{:class => classes.join(' '), :id => day.strftime('%Y-%m-%d')}
+          %p.mday
+            = day.mday
+          .day_off_icon{:style => 'display: none'}
+            = day_off_tag if enabled && !has_activity && !weekend && day_off.nil?
+            
+          .content{:style => 'display: none'}
+            = render :partial => 'cell', :object => activities, :locals => {:activities => activities}
 #activity_details.cell{:style => 'display: none'}
+
+#day_off_tag{:style => 'display: none'}
+  = day_off_tag
 
 #activity_template{:style => 'display: none'}
   = render :partial => 'cell_activity', :locals => {:activity => Activity.new}

@@ -32,6 +32,9 @@ class ActivitiesController < ApplicationController
     end
     
     @activities = @user.activities
+    @days_off = @user.free_days
+    @days_off_hash = @days_off.inject({}) {|mem, i| mem[i.date] = i; mem}
+    
     @current = (current = params[:current]).blank? ? Date.current : Date.parse(current)
     @first_day = @current.at_beginning_of_month
     @rows = (@first_day.wday + @current.end_of_month.mday - 1) / 7
@@ -84,7 +87,7 @@ class ActivitiesController < ApplicationController
     
     @activity.destroy if @found
     
-    render :json => @activity.to_json, :success => @found
+    render :json => {:activity => @activity.to_json, :success => @found}
   end
   
   def invoice
@@ -125,6 +128,13 @@ class ActivitiesController < ApplicationController
     end
     
     render :json => json
+  end
+  
+  def day_off
+    user = current_user.admin ? User.find(params[:user_id]) : current_user
+    @free_day = user.free_days.create(:date => params[:date])
+    
+    render :json => {:date => @free_day.date}
   end
   
   protected

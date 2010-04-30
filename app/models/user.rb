@@ -26,6 +26,7 @@ class User < ActiveRecord::Base
   has_many :activities, :include => :project
   has_many :projects, :through => :activities, :uniq => true
   has_many :invoices
+  has_many :free_days
   
   default_scope :order => :name
   

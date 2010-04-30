@@ -12,6 +12,8 @@ class Activity < ActiveRecord::Base
   named_scope :invoiced, :conditions => 'invoice_id IS NOT NULL'
   named_scope :not_invoiced, :conditions => 'invoice_id IS NULL'
   
+  after_save :check_day_off
+  
   def as_json(options = {})
     super(:include => [:project, :user], :methods => :time_spent)
   end
@@ -73,5 +75,9 @@ class Activity < ActiveRecord::Base
   def time_spent_values
     hours, minutes = time_spent.split(':')
     errors.add(:time_spent, 'has invalid format') if minutes.to_i > 59
+  end
+  
+  def check_day_off
+    (day_off = FreeDay.first(:conditions => {:user_id => user_id, :date => date})) && day_off.destroy
   end
 end

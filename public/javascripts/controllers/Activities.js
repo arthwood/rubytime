@@ -128,18 +128,14 @@ var Activities = $E(Resources, function() {
   /**
    * NewActivity's controller implementation
    */
-  getCurrentUserId: function() {
-    return null;
-  },
-  
-  onNewActivitySuccess: function(activity) {
+  onNewActivitySuccess: function(json) {
     // Search only if any search has been performed
     if ($$('.clients').first()) {
       this.search();
     }
   },
   
-  onEditActivitySuccess: function(activity) {
+  onEditActivitySuccess: function(json) {
     this.search();
   },
   
