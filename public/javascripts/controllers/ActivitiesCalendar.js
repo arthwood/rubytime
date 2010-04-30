@@ -16,8 +16,14 @@ var ActivitiesCalendar = function() {
   this.timeSpentInjectDC = this.timeSpentInject.bind(this);
   this.initActivityActionsDC = this.initActivityActions.bind(this);
   this.onDayOffDC = this.onDayOff.bind(this);
+  this.onRevertDayOffDC = this.onRevertDayOff.bind(this);
   this.onDayOffSuccessD = $D(this, this.onDayOffSuccess);
-  this.dayOffTag = $('day_off_tag').firstElement();
+  this.onRevertDayOffSuccessD = $D(this, this.onRevertDayOffSuccess);
+  
+  var dayOffTags = $('day_off_tag').elements();
+  
+  this.dayOffTag = dayOffTags.first();
+  this.revertDayOffTag = dayOffTags.second();
   
   $$('table.calendar td.enabled').each(this.activateCell.bind(this));
 };
@@ -33,9 +39,9 @@ ActivitiesCalendar.prototype = {
     mc.onOver.add(this.onCellOverD);
     mc.onOut.add(this.onCellOutD);
     
-    var day_off = i.down('.day_off_icon a').first();
+    var dayOff = i.down('.day_off_icon a').first();
     
-    day_off && (day_off.onclick = this.onDayOffDC);
+    dayOff && (dayOff.onclick = (dayOff.hasClass('revert') ? this.onRevertDayOffDC : this.onDayOffDC));
   },
   
   onCellOver: function(e, mc) {
@@ -247,9 +253,35 @@ ActivitiesCalendar.prototype = {
   onDayOffSuccess: function(ajax) {
     var json = ajax.getResponseText().toJson();
     var cell = $(json.date); 
+    var dayOffIcon = cell.down('.day_off_icon').first();
+    var icon = dayOffIcon.firstElement();
     
     cell.addClass('day_off');
-    cell.down('.day_off_icon').first().setContent('');
+    
+    this.revertDayOffTag.replace(icon);
+    
+    dayOffIcon.firstElement().onclick = this.onDayOffDC;
+  },
+  
+  onRevertDayOff: function(e) {
+    var a = e.currentTarget;
+    p('aaa');
+    $del(a.href, {date: a.up('td').id, user_id: this.userId}, this.onRevertDayOffSuccessD);
+    
+    return false;
+  },
+  
+  onRevertDayOffSuccess: function(ajax) {
+    var json = ajax.getResponseText().toJson();
+    var cell = $(json.date); 
+    var dayOffIcon = cell.down('.day_off_icon').first();
+    var icon = dayOffIcon.firstElement();
+    p('onRevertDayOffSuccess');
+    cell.removeClass('day_off');
+    
+    this.dayOffTag.replace(icon);
+    
+    dayOffIcon.firstElement().onclick = this.onRevertDayOffDC;
   }
 };
 

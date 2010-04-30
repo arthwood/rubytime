@@ -111,4 +111,8 @@ module ApplicationHelper
   def day_off_tag
     link_to image_tag('day_off.png', :title => 'Day off'), day_off_activities_path
   end
+  
+  def revert_day_off_tag
+    link_to image_tag('revert_day_off.png', :title => 'Revert day off'), revert_day_off_activities_path, :class => :revert
+  end
 end

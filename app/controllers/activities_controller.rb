@@ -137,6 +137,13 @@ class ActivitiesController < ApplicationController
     render :json => {:date => @free_day.date}
   end
   
+  def revert_day_off
+    user = current_user.admin ? User.find(params[:user_id]) : current_user
+    @free_day = user.free_days.find_by_date(params[:date]).destroy
+    
+    render :json => {:date => @free_day.date}
+  end
+  
   protected
 
   def set_filter

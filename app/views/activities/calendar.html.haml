@@ -42,14 +42,13 @@
           %p.mday
             = day.mday
           .day_off_icon{:style => 'display: none'}
-            = day_off_tag if enabled && !has_activity && !weekend && day_off.nil?
-            
+            = (day_off.nil? ? day_off_tag : revert_day_off_tag) if enabled && !has_activity && !weekend
           .content{:style => 'display: none'}
             = render :partial => 'cell', :object => activities, :locals => {:activities => activities}
 #activity_details.cell{:style => 'display: none'}
 
 #day_off_tag{:style => 'display: none'}
   = day_off_tag
-
+  = revert_day_off_tag
 #activity_template{:style => 'display: none'}
   = render :partial => 'cell_activity', :locals => {:activity => Activity.new}
