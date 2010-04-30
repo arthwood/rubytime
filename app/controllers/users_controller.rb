@@ -69,7 +69,9 @@ class UsersController < ApplicationController
     @user.destroy
     @users = User.all
     
-    render :partial => @user.employee? ? 'listing_employees' : 'listing_clients_users'
+    partial = @user.employee? ? 'listing_employees' : 'listing_clients_users'
+    
+    render :json => {:html => render_to_string(:partial => partial), :success => true} 
   end
 
   def do_request_password

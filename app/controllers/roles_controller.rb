@@ -52,6 +52,6 @@ class RolesController < ApplicationController
     @role.destroy
     @roles = Role.all
     
-    render :partial => 'listing'
+    render :json => {:html => render_to_string(:partial => 'listing'), :success => true} 
   end
 end

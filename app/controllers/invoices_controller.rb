@@ -52,6 +52,6 @@ class InvoicesController < ApplicationController
     @invoice.destroy
     @invoices = Invoice.all
     
-    render :partial => 'listing'
+    render :json => {:html => render_to_string(:partial => 'listing'), :success => true} 
   end
 end

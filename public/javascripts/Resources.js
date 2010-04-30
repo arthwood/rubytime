@@ -46,15 +46,16 @@ Resources.prototype = {
   },
   
   onEditSuccess: function(ajax) {
-    this.sideForm.innerHTML = ajax.getResponseText();
+    this.sideForm.setContent(ajax.getResponseText());
     this.initAddNewLink();
   },
   
   onDeleteSuccess: function(ajax) {
-    var name = this.name.toUpperCase();
+    var json = ajax.getResponseText().toJson();
+    var name = this.name.capitalize();
     
-    if (ajax.success) {
-      this.listing.innerHTML = ajax.getResponseText();
+    if (json.success) {
+      this.listing.setContent(json.html);
       
       app.flash.show('info', name + ' successfully deleted!');
     }
@@ -74,6 +75,6 @@ Resources.prototype = {
   },
   
   onAddNewSuccess: function(ajax) {
-    this.sideForm.innerHTML = ajax.getResponseText();
+    this.sideForm.setContent(ajax.getResponseText());
   }
 };

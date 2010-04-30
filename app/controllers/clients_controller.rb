@@ -62,6 +62,6 @@ class ClientsController < ApplicationController
     @client.destroy
     @clients = Client.all
     
-    render :partial => 'listing' 
+    render :json => {:html => render_to_string(:partial => 'listing'), :success => true} 
   end
 end
