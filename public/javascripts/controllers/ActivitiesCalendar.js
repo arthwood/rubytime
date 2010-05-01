@@ -253,19 +253,15 @@ ActivitiesCalendar.prototype = {
   onDayOffSuccess: function(ajax) {
     var json = ajax.getResponseText().toJson();
     var cell = $(json.date); 
-    var dayOffIcon = cell.down('.day_off_icon').first();
-    var icon = dayOffIcon.firstElement();
     
     cell.addClass('day_off');
     
-    this.revertDayOffTag.replace(icon);
-    
-    dayOffIcon.firstElement().onclick = this.onDayOffDC;
+    this.revertDayOffTag.replace(this.cellDayOffLink(cell)).onclick = this.onRevertDayOffDC;
   },
   
   onRevertDayOff: function(e) {
     var a = e.currentTarget;
-    p('aaa');
+    
     $del(a.href, {date: a.up('td').id, user_id: this.userId}, this.onRevertDayOffSuccessD);
     
     return false;
@@ -273,15 +269,15 @@ ActivitiesCalendar.prototype = {
   
   onRevertDayOffSuccess: function(ajax) {
     var json = ajax.getResponseText().toJson();
-    var cell = $(json.date); 
-    var dayOffIcon = cell.down('.day_off_icon').first();
-    var icon = dayOffIcon.firstElement();
-    p('onRevertDayOffSuccess');
+    var cell = $(json.date);
+    
     cell.removeClass('day_off');
     
-    this.dayOffTag.replace(icon);
-    
-    dayOffIcon.firstElement().onclick = this.onRevertDayOffDC;
+    this.dayOffTag.replace(this.cellDayOffLink(cell)).onclick = this.onDayOffDC;
+  },
+  
+  cellDayOffLink: function(cell) {
+    return cell.down('.day_off_icon').first().firstElement();
   }
 };
 
