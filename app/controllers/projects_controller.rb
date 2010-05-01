@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_filter :admin_required
+  before_filter :admin_required, :except => :index
   
   def index
     respond_to do |format|

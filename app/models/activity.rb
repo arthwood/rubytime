@@ -3,7 +3,7 @@ class Activity < ActiveRecord::Base
   belongs_to :project
   belongs_to :invoice
   
-  validates_presence_of :comments, :date, :project_id, :user_id, :minutes
+  validates_presence_of :comments, :date, :project_id, :user_id
   validates_uniqueness_of :project_id, :scope => [:date, :user_id], :message => 'activity for this project already exists at that day'
   validates_format_of :time_spent, :with => /^\d{1,2}:\d{2}$/
   validate :time_spent_values

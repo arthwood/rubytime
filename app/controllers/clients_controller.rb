@@ -15,7 +15,7 @@ class ClientsController < ApplicationController
   
   def create
     @client = Client.new(params[:client])
-    @user = User.new(params[:user])
+    @user = User.new(params[:user].merge(:admin => false))
     @client.users << @user
     
     @success = @client.save

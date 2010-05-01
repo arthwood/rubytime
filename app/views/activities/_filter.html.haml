@@ -2,12 +2,13 @@
   Filter
 
 - form_for @filter, :url => search_activities_url, :html => {:method => :post, :id => nil, :class => nil} do |i|
-  - if admin?
+  - if admin? || client?
     .item.clearfix
       .label
         = i.label :user_id, 'User'
       .input
         = i.select :user_id, options_from_collection_for_select(@users, :id, :name, @filter.user_id.to_i), :include_blank => 'All users...'
+  - if admin?
     .item.clearfix
       .label
         = i.label :client_id, 'Client'

@@ -283,5 +283,5 @@ ActivitiesCalendar.prototype = {
 
 Application.onLoad.add($D(null, function() {
   this.activitiesCalendar = new ActivitiesCalendar();
-  this.newActivity.controller = this.activitiesCalendar;
+  this.newActivity && (this.newActivity.controller = this.activitiesCalendar);
 }));

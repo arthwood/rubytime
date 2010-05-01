@@ -1,8 +1,8 @@
 class ActivitiesController < ApplicationController
   skip_before_filter :login_required, :only => :index
-  
-  before_filter :admin_required, :only => [:invoice]
-  
+
+  before_filter :editor_required, :except => [:index, :search, :calendar]
+
   def index
     redirect_to login_url and return unless logged_in?
     set_filter
@@ -25,10 +25,15 @@ class ActivitiesController < ApplicationController
   end
   
   def calendar
-    if current_user.admin
+    if current_user.admin?
       @user = (user_id = params[:user_id]).blank? ? current_user : User.find(user_id)
+      @users = User.employees
+    elsif current_user.client?
+      @users = current_user.client.collaborators
+      @user = @users.detect {|i| i.id == user_id}
     else
       @user = current_user
+      @users = [@user]
     end
     
     @activities = @user.activities
@@ -149,13 +154,15 @@ class ActivitiesController < ApplicationController
   def set_filter
     @filter = ActivityFilter.new(@params_filter || {:from => nil, :to => nil})
     
-    if current_user.admin
+    if current_user.admin?
       @users = User.employees
       user = (user_id = @filter.user_id).blank? ? nil : User.find(user_id)
       @projects = user ? user.projects : Project.all
       @clients = Client.all
+    elsif current_user.client?
+      @projects = current_user.client.projects
+      @users = current_user.client.collaborators
     else
-      @filter.user_id = current_user.id
       @projects = current_user.projects
     end
   end

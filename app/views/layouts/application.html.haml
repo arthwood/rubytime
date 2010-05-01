@@ -17,7 +17,7 @@
         = link_to(image_tag('logo.png'), root_url, :class => :logo)
       #menu.clearfix
         = render :partial => 'layouts/menu'
-      - if logged_in?
+      - if logged_in? && editor?
         #activity{:style => 'display: none'}
           = render :partial => 'activities/form'
       #submenu

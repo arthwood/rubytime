@@ -54,7 +54,11 @@ module AuthenticatedSystem
     end
   
     def admin_required
-      authorized? && current_user.admin || access_denied
+      authorized? && current_user.admin? || access_denied
+    end
+    
+    def editor_required
+      authorized? && current_user.editor? || access_denied
     end
 
     # Redirect as appropriate when an access request fails.

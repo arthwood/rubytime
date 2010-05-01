@@ -64,4 +64,8 @@ class User < ActiveRecord::Base
   def client?
     !client_id.nil?
   end
+
+  def editor?
+    admin? || employee?
+  end
 end

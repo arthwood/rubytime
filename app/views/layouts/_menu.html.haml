@@ -4,5 +4,6 @@
     - if admin?
       = menu_link 'invoices', invoices_url
       = menu_link 'manage', users_url
-  .right
-    = link_to 'Add new activity', new_activity_url, :class => :add_activity
+  - if editor?
+    .right
+      = link_to 'Add new activity', new_activity_url, :class => :add_activity
