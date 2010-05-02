@@ -19,7 +19,7 @@
               %span
                 = project.name
             
-            - if admin?
+            - if admin_or_client?
               = render :partial => 'roles', :locals => {:project_activities => project_activities, :project => project}
             - else
               = render :partial => 'table', :locals => {:user_activities => project_activities}

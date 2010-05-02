@@ -1,17 +1,19 @@
+- user_id = @user && @user.id
+
 .clearfix
   - options = {:class => :right}
-  - options[:style] = 'display: none' unless admin?
+  - options[:style] = 'display: none' unless admin_or_client?
   - form_tag calendar_activities_path, options do
-    = select_tag :user_id, options_from_collection_for_select(@users, :id, :name, @user.id)
+    = select_tag :user_id, options_from_collection_for_select(@users, :id, :name, user_id)
     = submit_tag :ok
   %h1.left
     Calendar view
     
 %table.calendar{:cellspacing => 1}
   %caption
-    = link_to '<< Previous', calendar_activities_path(:current => @current.last_month, :user_id => @user.id)
+    = link_to '<< Previous', calendar_activities_path(:current => @current.last_month, :user_id => user_id)
     %span= @current.strftime('%B %Y')
-    = link_to 'Next >>', calendar_activities_path(:current => @current.next_month, :user_id => @user.id)
+    = link_to 'Next >>', calendar_activities_path(:current => @current.next_month, :user_id => user_id)
   %tr
     %th Mon
     %th Tue
@@ -39,8 +41,9 @@
         %td{:class => classes.join(' '), :id => day.strftime('%Y-%m-%d')}
           %p.mday
             = day.mday
-          .day_off_icon{:style => 'display: none'}
-            = (day_off.nil? ? day_off_tag : revert_day_off_tag) if enabled && !has_activity && !weekend
+          - if editor?
+            .day_off_icon{:style => 'display: none'}
+              = (day_off.nil? ? day_off_tag : revert_day_off_tag) if enabled && !has_activity && !weekend
           .content{:style => 'display: none'}
             = render :partial => 'cell', :object => activities, :locals => {:activities => activities}
 #activity_details.cell{:style => 'display: none'}

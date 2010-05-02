@@ -1,6 +1,6 @@
 # This controller handles the login/logout function of the site.  
 class SessionsController < ApplicationController
-  skip_before_filter :login_required, :only => [:new, :create]
+  before_filter :login_required, :only => :destroy
   
   def create
     s = params[:session]

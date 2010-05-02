@@ -54,6 +54,10 @@ module ApplicationHelper
     current_user.client?
   end
 
+  def admin_or_client?
+    admin? || client?
+  end
+
   def form_header(object)
     create_mode = object.new_record?
     name = object.class.name.downcase

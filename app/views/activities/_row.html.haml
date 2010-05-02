@@ -4,9 +4,10 @@
     %td.calign.first= check_box_tag :select, 1, false, :id => nil unless invoiced 
   %td.calign= activity.date
   %td.calign= activity.time_spent
-  - if admin?
+  - if admin_or_client?
     %td= (invoice = activity.invoice) && invoice.name
-  %td.actions.ralign
-    - unless invoiced
-      = link_to image_tag('pencil.png'), activity.new_record? ? '#' : edit_activity_path(activity)
-      = link_to image_tag('cross.png'), activity.new_record? ? '#' : activity_path(activity)
+  - unless client?
+    %td.actions.ralign
+      - unless invoiced
+        = link_to image_tag('pencil.png'), activity.new_record? ? '#' : edit_activity_path(activity)
+        = link_to image_tag('cross.png'), activity.new_record? ? '#' : activity_path(activity)

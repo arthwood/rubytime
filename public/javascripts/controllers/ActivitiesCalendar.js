@@ -7,6 +7,7 @@ var ActivitiesCalendar = function() {
   
   this.detailsMC = new MouseController(this.details);
   this.detailsMC.onOut.add($D(this, this.onDetailsOut));
+
   
   this.onEditDC = this.onEdit.bind(this);
   this.onDeleteDC = this.onDelete.bind(this);

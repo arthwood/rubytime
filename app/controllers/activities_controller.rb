@@ -1,6 +1,4 @@
 class ActivitiesController < ApplicationController
-  skip_before_filter :login_required, :only => :index
-
   before_filter :editor_required, :except => [:index, :search, :calendar]
 
   def index
@@ -30,14 +28,14 @@ class ActivitiesController < ApplicationController
       @users = User.employees
     elsif current_user.client?
       @users = current_user.client.collaborators
-      @user = @users.detect {|i| i.id == user_id}
+      @user = @users.detect {|i| i.id == user_id} || @users.first
     else
       @user = current_user
       @users = [@user]
     end
-    
-    @activities = @user.activities
-    @days_off = @user.free_days
+
+    @activities = @user && @user.activities || []
+    @days_off = @user && @user.free_days || []
     @days_off_hash = @days_off.inject({}) {|mem, i| mem[i.date] = i; mem}
     
     @current = (current = params[:current]).blank? ? Date.current : Date.parse(current)
