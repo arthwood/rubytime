@@ -1,4 +1,5 @@
 class ActivitiesController < ApplicationController
+  before_filter :login_required, :only => [:search, :calendar]
   before_filter :editor_required, :except => [:index, :search, :calendar]
 
   def index
@@ -13,7 +14,7 @@ class ActivitiesController < ApplicationController
     
     @activities = Activity.search(@filter)
     
-    if current_user.admin
+    if current_user.admin?
       filter_client_id = @filter.client_id.to_i
       @client = @clients.detect {|i| i.id == filter_client_id}
       @invoices = @client && @client.invoices || Invoice.all
@@ -56,7 +57,7 @@ class ActivitiesController < ApplicationController
   def create
     data = params[:activity]
     
-    data[:user_id] = current_user.id unless current_user.admin
+    data[:user_id] = current_user.id unless current_user.admin?
     
     @activity = Activity.new(data)
     
@@ -134,14 +135,14 @@ class ActivitiesController < ApplicationController
   end
   
   def day_off
-    user = current_user.admin ? User.find(params[:user_id]) : current_user
+    user = current_user.admin? ? User.find(params[:user_id]) : current_user
     @free_day = user.free_days.create(:date => params[:date])
     
     render :json => {:date => @free_day.date}
   end
   
   def revert_day_off
-    user = current_user.admin ? User.find(params[:user_id]) : current_user
+    user = current_user.admin? ? User.find(params[:user_id]) : current_user
     @free_day = user.free_days.find_by_date(params[:date]).destroy
     
     render :json => {:date => @free_day.date}
@@ -166,7 +167,7 @@ class ActivitiesController < ApplicationController
   end
   
   def set_activity
-    @activity = current_user.admin ? Activity.find_by_id(params[:id]) : current_user.activities.find_by_id(params[:id])
+    @activity = current_user.admin? ? Activity.find_by_id(params[:id]) : current_user.activities.find_by_id(params[:id])
     @found = !@activity.nil?
   end
 end

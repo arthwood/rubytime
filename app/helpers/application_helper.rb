@@ -4,6 +4,16 @@ module ApplicationHelper
     @a = params[:action]
   end
   
+  def js_env
+    javascript_tag do
+      %Q{
+        var env = {
+          user: {editor: #{editor?}}
+        };
+      }
+    end
+  end
+  
   SECTIONS = {
     :manage => [{:c => :users}, {:c => :clients}, {:c => :projects}, {:c => :roles}, {:c => :currencies}, {:c => :settings}],
     :activities => [{:c => :activities}],

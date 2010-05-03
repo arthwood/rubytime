@@ -1,30 +1,33 @@
 var ActivitiesCalendar = function() {
   this.details = $('activity_details');
-  this.template = $('activity_template');
+  this.editor = env.user.editor;
+  
+  if (this.editor) {
+    this.template = $('activity_template');
+    
+    this.onEditDC = this.onEdit.bind(this);
+    this.onDeleteDC = this.onDelete.bind(this);
+    this.onEditSuccessD = $D(this, this.onEditSuccess);
+    this.onDeleteSuccessD = $D(this, this.onDeleteSuccess);
+    this.userId = $('user_id').value;
+    this.timeSpentInjectDC = this.timeSpentInject.bind(this);
+    this.initActivityActionsDC = this.initActivityActions.bind(this);
+    this.onDayOffDC = this.onDayOff.bind(this);
+    this.onRevertDayOffDC = this.onRevertDayOff.bind(this);
+    this.onDayOffSuccessD = $D(this, this.onDayOffSuccess);
+    this.onRevertDayOffSuccessD = $D(this, this.onRevertDayOffSuccess);
+    
+    var dayOffTags = $('day_off_tag').elements();
+    
+    this.dayOffTag = dayOffTags.first();
+    this.revertDayOffTag = dayOffTags.second();
+  }
   
   this.onCellOverD = $D(this, this.onCellOver);
   this.onCellOutD = $D(this, this.onCellOut);
   
   this.detailsMC = new MouseController(this.details);
   this.detailsMC.onOut.add($D(this, this.onDetailsOut));
-
-  
-  this.onEditDC = this.onEdit.bind(this);
-  this.onDeleteDC = this.onDelete.bind(this);
-  this.onEditSuccessD = $D(this, this.onEditSuccess);
-  this.onDeleteSuccessD = $D(this, this.onDeleteSuccess);
-  this.userId = $('user_id').value;
-  this.timeSpentInjectDC = this.timeSpentInject.bind(this);
-  this.initActivityActionsDC = this.initActivityActions.bind(this);
-  this.onDayOffDC = this.onDayOff.bind(this);
-  this.onRevertDayOffDC = this.onRevertDayOff.bind(this);
-  this.onDayOffSuccessD = $D(this, this.onDayOffSuccess);
-  this.onRevertDayOffSuccessD = $D(this, this.onRevertDayOffSuccess);
-  
-  var dayOffTags = $('day_off_tag').elements();
-  
-  this.dayOffTag = dayOffTags.first();
-  this.revertDayOffTag = dayOffTags.second();
   
   $$('table.calendar td.enabled').each(this.activateCell.bind(this));
 };
@@ -40,9 +43,11 @@ ActivitiesCalendar.prototype = {
     mc.onOver.add(this.onCellOverD);
     mc.onOut.add(this.onCellOutD);
     
-    var dayOff = i.down('.day_off_icon a').first();
-    
-    dayOff && (dayOff.onclick = (dayOff.hasClass('revert') ? this.onRevertDayOffDC : this.onDayOffDC));
+    if (this.editor) {
+      var dayOff = i.down('.day_off_icon a').first();
+      
+      dayOff && (dayOff.onclick = (dayOff.hasClass('revert') ? this.onRevertDayOffDC : this.onDayOffDC));
+    }
   },
   
   onCellOver: function(e, mc) {
@@ -51,7 +56,7 @@ ActivitiesCalendar.prototype = {
     if (element.hasClass('active')) {
       this.updateDetails(element);
     }
-    else {
+    else if (this.editor) {
       element.down('.day_off_icon').first().show();
     }
   },
@@ -67,7 +72,7 @@ ActivitiesCalendar.prototype = {
         this.detailsCell = element;
       }
     }
-    else {
+    else if (this.editor) {
       element.down('.day_off_icon').first().hide();
     }
   },
@@ -90,9 +95,12 @@ ActivitiesCalendar.prototype = {
     
     var content = this.details.down('.content').first();
     
-    content.down('.activity').each(this.initActivityActionsDC);
+    if (this.editor) {
+      content.down('.activity').each(this.initActivityActionsDC);
+    }
+    
     content.show();
-    this.details.setPosition(cell.getPosition().add(cell.getSize().times(0.5)));
+    this.details.setPosition(cell.getPosition().add(cell.getSize().times(0.6)));
     this.details.show();
   },
   
