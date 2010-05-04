@@ -2,6 +2,7 @@ class Activity < ActiveRecord::Base
   belongs_to :user
   belongs_to :project
   belongs_to :invoice
+  belongs_to :currency
   
   validates_presence_of :comments, :date, :project_id, :user_id
   validates_uniqueness_of :project_id, :scope => [:date, :user_id], :message => 'activity for this project already exists at that day'
@@ -12,6 +13,8 @@ class Activity < ActiveRecord::Base
   named_scope :invoiced, :conditions => 'invoice_id IS NOT NULL'
   named_scope :not_invoiced, :conditions => 'invoice_id IS NULL'
   
+  default_scope :order => 'DATE DESC'
+  
   after_save :check_day_off
   
   def as_json(options = {})
@@ -19,7 +22,7 @@ class Activity < ActiveRecord::Base
   end
   
   def time_spent
-    @time_spent || "#{minutes.to_i / 60}:#{(minutes.to_i % 60).to_s.rjust(2, '0')}"
+    @time_spent || format_time_spent(minutes)
   end
   
   def time_spent=(v)
@@ -61,6 +64,10 @@ class Activity < ActiveRecord::Base
       else
         []
     end
+  end
+  
+  def to_csv_row
+    [date, project.name, user.name, time_spent, comments, format_currency(currency, price)]
   end
   
   protected

@@ -16,7 +16,7 @@
         Total:
       %td.calign
         - minutes = user_activities.inject(0) {|mem, i| mem + i.minutes}
-        = time_spent(minutes)
+        = format_time_spent(minutes)
       %td{:colspan => admin? ? 2 : 1}
         - unless hr.nil?
           value:

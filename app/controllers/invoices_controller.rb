@@ -12,6 +12,20 @@ class InvoicesController < ApplicationController
     render :partial => 'form'
   end
   
+  def show
+    @invoice = Invoice.find(params[:id])
+    @filename = "invoice_#{@invoice.client.name}_#{format_date(Date.current)}"
+    
+    respond_to do |format|
+     format.csv {
+       send_data @invoice.to_csv, :type => :csv, :filename => "#{@filename}.csv"
+     }
+     format.pdf {
+       send_data @invoice.to_pdf, :type => :pdf, :filename => "#{@filename}.pdf" 
+     }
+    end  
+  end
+  
   def create
     @invoice = Invoice.new(params[:invoice].merge(:user_id => current_user.id))
     
