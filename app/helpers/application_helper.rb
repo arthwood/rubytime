@@ -8,7 +8,7 @@ module ApplicationHelper
     javascript_tag do
       %Q{
         var env = {
-          user: {editor: #{editor?}}
+          user: {editor: #{logged_in? && editor?}}
         };
       }
     end
