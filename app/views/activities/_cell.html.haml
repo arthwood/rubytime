@@ -3,4 +3,4 @@
 %p.total
   Total:
   %span
-    = time_spent(activities.inject(0) {|mem, i| mem + i.minutes})
+    = format_time_spent(activities.inject(0) {|mem, i| mem + i.minutes})

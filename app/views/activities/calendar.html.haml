@@ -23,7 +23,7 @@
     %th Sat
     %th Sun
   
-  - groups = group(@activities) {|i| i.date}
+  - groups = @activities.group {|i| i.date}
   - 0.upto(@rows) do |row|
     %tr
       - 0.upto(6) do |col|
