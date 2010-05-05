@@ -73,7 +73,7 @@ class Activity < ActiveRecord::Base
   def self.total_price(items)
     by_currency = items.group {|i| i.currency}
     by_currency.map do |k, v|
-      format_currency(k, v.inject(0) {|mem, i| mem + i.price.to_f})
+      format_currency(k, v.inject(0) {|mem, i| mem + i.price.to_f * (i.minutes / 60.0)})
     end.join(' + ')
   end
   

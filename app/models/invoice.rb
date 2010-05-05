@@ -17,7 +17,7 @@ class Invoice < ActiveRecord::Base
       activities.each do |i|
         csv << i.to_csv_row
       end
-      csv << ["Total: #{Activity.total_price(activities)}"]
+      csv << [nil, nil, nil, nil, 'Total:', "#{Activity.total_price(activities)}"]
     end
   end
   
