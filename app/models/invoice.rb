@@ -13,10 +13,11 @@ class Invoice < ActiveRecord::Base
   
   def to_csv
     FasterCSV.generate do |csv|
-      csv << [name, notes]
+      csv << ['Date', 'Project', 'Person', 'Time Spent', 'Comments', 'Price']
       activities.each do |i|
         csv << i.to_csv_row
       end
+      csv << ["Total: #{Activity.total_price(activities)}"]
     end
   end
   

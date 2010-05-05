@@ -11,51 +11,71 @@ class InvoiceReport < Prawn::Document
   
   ACTIVITY_DATA_ROW_MAPPING = Proc.new {|i| [i.date, i.time_spent, i.comments]}
   ACTIVITY_TIME_SPENT_CALC_BLOCK = Proc.new {|mem, i| mem + i.minutes}
-  
-  def my_box(w, s_color, f_color, margin = {}, padding = 5, &block)
-    margin_left = margin[:left] || 20
-    margin_top = margin[:top] || 20
-    bounding_box([margin_left, bounds.top - margin_top], :width => w) do
-      fill_color '000000'
-      bounding_box([padding, bounds.top - padding], :width => w - margin_left, &block)
-      stroke_color s_color
-      fill_color f_color
-      move_down padding
-      fill_and_stroke_rounded_rectangle [bounds.top, bounds.left], bounds.width, bounds.height, 10
+  GROUP_BY_USER = Proc.new {|i| i.user}
+  GROUP_BY_PROJECT = Proc.new {|i| i.project}
+  GROUP_BY_ROLE = Proc.new {|i| i.user.role}
+      
+  def my_box(title, size, width, left, top)
+    bounding_box([left, bounds.height - top], :width => width) do
+      text title, :size => size
+      yield
     end
   end
   
   def to_pdf(invoice)
     activities = invoice.activities
+
     text invoice.name, :size => 16
     
-    by_projects = activities.group {|i| i.project}
-    by_projects.each_pair do |project, project_activities|
-      my_box(400, 'E6E6E6', 'F6F6F6', {:top => 40, :left => 0}) do
-        text "Project: #{project.name}", :size => 12
-        by_roles = project_activities.group {|i| i.user.role}
-        by_roles.each_pair do |role, role_activities|
-          my_box(370, 'ECECEC', 'FCFCFC') do
-            hr = project.hourly_rates.current(role)
-            txt = hr.nil? ? '(Hourly rate not defined!)' : "(Hourly rate: #{format_currency_hr(hr)})"
-            text "Role: #{role.name} #{txt}", :size => 11
-            
-            by_users = role_activities.group {|i| i.user}
-            by_users.each_pair do |user, user_activities|
-              my_box(340, 'EEEEEE', 'FFFFFF') do
-                text user.name, :size => 10
-                data = user_activities.map(&ACTIVITY_DATA_ROW_MAPPING)
-                minutes = user_activities.inject(0, &ACTIVITY_TIME_SPENT_CALC_BLOCK)
-                value = format_currency(hr.currency, hr.value * minutes / 60.0)
-                data << ['Total:', format_time_spent(minutes), "value: #{value}"]
-                table data, TABLE_OPTIONS
-              end
+    fill_color '000000'
+    
+    mb = 20
+    
+    project_top = 30
+    render_items(activities, GROUP_BY_PROJECT) do |project, project_activities|
+      my_box("Project: #{project.name}", 12, 400, 0, project_top) do
+        role_top = 20
+        render_items(project_activities, GROUP_BY_ROLE) do |role, role_activities|
+          my_box("Role: #{role.name} #{hourly_rate(project, role, role_activities)}", 11, 370, 20, role_top) do
+            user_top = 20
+            render_items(role_activities, GROUP_BY_USER) do |user, user_activities|
+              user_box(user_activities, user, user_top)
+              user_top = bounds.height + mb
             end
           end
+          role_top = bounds.height + mb
         end
       end
+      project_top = bounds.height + mb
     end
     
+    move_down 20
+    
+    text "Total: #{Activity.total_price(activities)}", :size => 14
+    
     render
+  end
+  
+  def hourly_rate(project, role, activities)
+    hrs = project.hourly_rates.between_days(activities.first.invoiced_at, activities.last.invoiced_at, role)
+    
+    v = (hrs.size == 1) \
+      ? format_currency_hr(hrs.first) \
+      : hrs.map {|i| format_currency_hr(i)}.join(', ')
+    
+    "(Hourly rate: #{v})"
+  end
+  
+  def render_items(items, grouping, &block)
+    items.group(&grouping).each_pair(&block)
+  end
+  
+  def user_box(items, i, top)
+    my_box(i.name, 10, 340, 20, top) do
+      data = items.map(&ACTIVITY_DATA_ROW_MAPPING)
+      minutes = items.inject(0, &ACTIVITY_TIME_SPENT_CALC_BLOCK)
+      data << ['Total:', format_time_spent(minutes), "value: #{Activity.total_price(items)}"]
+      table data, TABLE_OPTIONS
+    end
   end
 end

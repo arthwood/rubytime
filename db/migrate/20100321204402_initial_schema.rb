@@ -67,6 +67,7 @@ class InitialSchema < ActiveRecord::Migration
       t.references :project, :null => false
       t.references :user, :null => false
       t.references :invoice
+      t.date :invoiced_at
       t.decimal :price, :precision => 8, :scale => 2
       t.references :currency
       t.timestamps

@@ -70,6 +70,13 @@ class Activity < ActiveRecord::Base
     [date, project.name, user.name, time_spent, comments, format_currency(currency, price)]
   end
   
+  def self.total_price(items)
+    by_currency = items.group {|i| i.currency}
+    by_currency.map do |k, v|
+      format_currency(k, v.inject(0) {|mem, i| mem + i.price.to_f})
+    end.join(' + ')
+  end
+  
   protected
   
   def after_validation
