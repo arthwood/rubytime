@@ -16,21 +16,3 @@ end
 def format_date(date, separator = '-')
   date.strftime("%d#{separator}%m#{separator}%Y")
 end
-
-class Array
-  def group(&block)
-    result = {}
-    
-    each do |i|
-      key = block.call(i)
-      
-      if result[key]
-        result[key] << i
-      else
-        result[key] = [i]
-      end
-    end
-    
-    result
-  end
-end

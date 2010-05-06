@@ -24,19 +24,29 @@ class ActivitiesController < ApplicationController
   end
   
   def calendar
+    user_id = params[:user_id]
+    
     if current_user.admin?
-      @user = (user_id = params[:user_id]).blank? ? current_user : User.find(user_id)
+      @user = user_id.blank? ? current_user : User.find(user_id)
       @users = User.employees
     elsif current_user.client?
       @users = current_user.client.collaborators
-      @user = @users.detect {|i| i.id == user_id} || @users.first
+      @user = @users.detect {|i| i.id.to_s == user_id} || @users.first
     else
       @user = current_user
       @users = [@user]
     end
-
-    @activities = @user && @user.activities || []
-    @days_off = @user && @user.free_days || []
+    
+    if @user
+      @activities = current_user.client? \
+        ? @user.activities.for_projects(current_user.client.projects) \
+        : @user.activities
+      @days_off = @user.free_days
+    else
+      @activities = []
+      @days_off = []
+    end
+    
     @days_off_hash = @days_off.inject({}) {|mem, i| mem[i.date] = i; mem}
     
     @current = (current = params[:current]).blank? ? Date.current : Date.parse(current)
@@ -160,6 +170,8 @@ class ActivitiesController < ApplicationController
       @projects = user ? user.projects : Project.all
       @clients = Client.all
     elsif current_user.client?
+      @filter.client_id = current_user.client_id
+      @filter.project_id = nil unless current_user.client.project_ids.include?(@filter.project_id.to_i)
       @projects = current_user.client.projects
       @users = current_user.client.collaborators
     else

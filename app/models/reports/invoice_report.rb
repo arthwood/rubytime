@@ -67,7 +67,7 @@ class InvoiceReport < Prawn::Document
   end
   
   def render_items(items, grouping, &block)
-    items.group(&grouping).each_pair(&block)
+    items.group_by(&grouping).each_pair(&block)
   end
   
   def user_box(items, i, top)

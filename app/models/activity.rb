@@ -9,6 +9,7 @@ class Activity < ActiveRecord::Base
   validates_format_of :time_spent, :with => /^\d{1,2}:\d{2}$/
   validate :time_spent_values
   
+  named_scope :for_projects, lambda {|p| {:conditions => {:project_id => p}}}
   named_scope :for_day, lambda {|date| {:conditions => {:date => date}}}
   named_scope :invoiced, :conditions => 'invoice_id IS NOT NULL'
   named_scope :not_invoiced, :conditions => 'invoice_id IS NULL'
@@ -71,7 +72,7 @@ class Activity < ActiveRecord::Base
   end
   
   def self.total_price(items)
-    by_currency = items.group {|i| i.currency}
+    by_currency = items.group_by &:currency
     by_currency.map do |k, v|
       format_currency(k, v.inject(0) {|mem, i| mem + i.price.to_f * (i.minutes / 60.0)})
     end.join(' + ')

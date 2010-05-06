@@ -1,4 +1,4 @@
-- group_by_clients = list.group {|i| i.project.client}
+- group_by_clients = list.group_by {|i| i.project.client}
 
 .clients
   - group_by_clients.each_pair do |client, client_activities|
@@ -10,7 +10,7 @@
           = client.name
       
       .projects
-        - group_by_projects = client_activities.group {|i| i.project}
+        - group_by_projects = client_activities.group_by &:project
         - group_by_projects.each_pair do |project, project_activities|
           .project[project]
             %h3
