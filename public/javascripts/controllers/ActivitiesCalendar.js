@@ -265,7 +265,7 @@ ActivitiesCalendar.prototype = {
     
     cell.addClass('day_off');
     
-    this.revertDayOffTag.replace(this.cellDayOffLink(cell)).onclick = this.onRevertDayOffDC;
+    this.revertDayOffTag.replace(this.cellDayOffLink(cell), true).onclick = this.onRevertDayOffDC;
   },
   
   onRevertDayOff: function(e) {
@@ -282,7 +282,7 @@ ActivitiesCalendar.prototype = {
     
     cell.removeClass('day_off');
     
-    this.dayOffTag.replace(this.cellDayOffLink(cell)).onclick = this.onDayOffDC;
+    this.dayOffTag.replace(this.cellDayOffLink(cell), true).onclick = this.onDayOffDC;
   },
   
   cellDayOffLink: function(cell) {
