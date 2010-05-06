@@ -45,6 +45,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     
     data = params[:user]
+    data.delete(:group)
     
     @user.client = nil if data[:client_id].blank?
     @user.role = nil if data[:role_id].blank?

@@ -24,7 +24,7 @@ var Users = $E(Resources, function() {
     var value = parseInt(this.userType.value);
     var showSelect = this.selects[value];
     var hideSelect = this.selects[(value + 1) % 2];
-    
+
     hideSelect.input.disable();
     hideSelect.item.hide();
     showSelect.input.enable();
@@ -40,6 +40,13 @@ var Users = $E(Resources, function() {
   onEditSuccess: function(ajax) {
     arguments.callee.super(ajax);
     
+    this.initForm();
+    this.updateSelect();
+  },
+
+  onAddNewSuccess: function(ajax) {
+    arguments.callee.super(ajax);
+
     this.initForm();
     this.updateSelect();
   }
