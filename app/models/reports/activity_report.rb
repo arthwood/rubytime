@@ -1,4 +1,4 @@
-class InvoiceReport < Prawn::Document
+class ActivityReport < Prawn::Document
   TABLE_OPTIONS = {
     :headers => ['Date', 'Time', 'Comments'], 
     :font_size => 10, 
@@ -9,7 +9,7 @@ class InvoiceReport < Prawn::Document
     :row_colors => ['FFFFFF', 'EEEEEE']
   }
   
-  ACTIVITY_DATA_ROW_MAPPING = Proc.new {|i| [i.date, i.time_spent, i.comments]}
+  ACTIVITY_DATA_ROW_MAPPING = Proc.new {|i| [i.date, format_time_spent_decimal(i.minutes), i.comments]}
   ACTIVITY_TIME_SPENT_CALC_BLOCK = Proc.new {|mem, i| mem + i.minutes}
   GROUP_BY_USER = Proc.new {|i| i.user}
   GROUP_BY_PROJECT = Proc.new {|i| i.project}
@@ -22,10 +22,8 @@ class InvoiceReport < Prawn::Document
     end
   end
   
-  def to_pdf(invoice)
-    activities = invoice.activities
-
-    text invoice.name, :size => 16
+  def to_pdf(activities, title)
+    text title, :size => 16
     
     fill_color '000000'
     
@@ -36,7 +34,7 @@ class InvoiceReport < Prawn::Document
       my_box("Project: #{project.name}", 12, 400, 0, project_top) do
         role_top = 20
         render_items(project_activities, GROUP_BY_ROLE) do |role, role_activities|
-          my_box("Role: #{role.name} #{hourly_rate(project, role, role_activities)}", 11, 370, 20, role_top) do
+          my_box("Role: #{role.name} (Hourly rate: #{hourly_rate(project, role, role_activities)})", 11, 370, 20, role_top) do
             user_top = 20
             render_items(role_activities, GROUP_BY_USER) do |user, user_activities|
               user_box(user_activities, user, user_top)
@@ -51,19 +49,23 @@ class InvoiceReport < Prawn::Document
     
     move_down 20
     
-    text "Total: #{Activity.total_price(activities)}", :size => 14
+    text "Total: #{Activity.total_value(activities)}", :size => 14
     
     render
   end
   
   def hourly_rate(project, role, activities)
-    hrs = project.hourly_rates.between_days(activities.first.invoiced_at, activities.last.invoiced_at, role)
+    hrs = activities.map(&:hourly_rate).uniq.sort_by &:date
+    n = hrs.size
     
-    v = (hrs.size == 1) \
-      ? format_currency_hr(hrs.first) \
-      : hrs.map {|i| format_currency_hr(i)}.join(', ')
-    
-    "(Hourly rate: #{v})"
+    if n == 1
+      format_currency_hr(hrs.first)
+    else
+      hrs.map do |i|
+        succ = hrs.index(i).succ
+        "#{format_currency_hr(i)} (#{i.date} - #{succ == n ? '' : hrs[succ].date})"
+      end.join(', ')
+    end
   end
   
   def render_items(items, grouping, &block)
@@ -74,7 +76,7 @@ class InvoiceReport < Prawn::Document
     my_box(i.name, 10, 340, 20, top) do
       data = items.map(&ACTIVITY_DATA_ROW_MAPPING)
       minutes = items.inject(0, &ACTIVITY_TIME_SPENT_CALC_BLOCK)
-      data << ['Total:', format_time_spent(minutes), "value: #{Activity.total_price(items)}"]
+      data << ['Total:', format_time_spent_decimal(minutes), "value: #{Activity.total_value(items)}"]
       table data, TABLE_OPTIONS
     end
   end

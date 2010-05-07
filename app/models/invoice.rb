@@ -1,5 +1,5 @@
 require 'fastercsv'
-require 'reports/invoice_report'
+require 'reports/activity_report'
 
 class Invoice < ActiveRecord::Base
   validates_presence_of :name
@@ -17,11 +17,11 @@ class Invoice < ActiveRecord::Base
       activities.each do |i|
         csv << i.to_csv_row
       end
-      csv << [nil, nil, nil, nil, 'Total:', "#{Activity.total_price(activities)}"]
+      csv << [nil, nil, nil, nil, 'Total:', "#{Activity.total_value(activities)}"]
     end
   end
   
   def to_pdf
-    InvoiceReport.new.to_pdf(self)
+    ActivityReport.new.to_pdf(activities, name)
   end
 end

@@ -3,17 +3,19 @@ class HourlyRate < ActiveRecord::Base
   belongs_to :role
   belongs_to :currency
   
+  default_scope :order => 'date DESC'
+  
   named_scope :with_role, lambda {|i| {:conditions => {:role_id => i.id}}}
   
-  def self.current(role)
-    at_day(Date.current, role)
+  def self.current
+    at_day(Date.current)
   end
   
-  def self.at_day(day, role)
-    with_role(role).first(:conditions => "date <= '#{day}'", :order => 'date DESC')
+  def self.at_day(day)
+    first(:conditions => "date <= '#{day}'")
   end
   
-  def self.between_days(start_day, end_day, role)
-    with_role(role).all(:conditions => "date <= '#{start_day}' AND date <= '#{end_day}'", :order => 'date DESC')
+  def self.between_days(range)
+    all(:conditions => {:date => range})
   end
 end

@@ -2,7 +2,6 @@ class Activity < ActiveRecord::Base
   belongs_to :user
   belongs_to :project
   belongs_to :invoice
-  belongs_to :currency
   
   validates_presence_of :comments, :date, :project_id, :user_id
   validates_uniqueness_of :project_id, :scope => [:date, :user_id], :message => 'activity for this project already exists at that day'
@@ -68,14 +67,24 @@ class Activity < ActiveRecord::Base
   end
   
   def to_csv_row
-    [date, project.name, user.name, time_spent, comments, format_currency(currency, price)]
+    [date, project.name, user.name, format_time_spent_decimal(minutes), comments, 
+      format_currency(hourly_rate.currency, total_value)
+    ]
   end
   
-  def self.total_price(items)
-    by_currency = items.group_by &:currency
+  def total_value
+    hourly_rate.value.to_f * (minutes / 60.0)
+  end
+  
+  def self.total_value(activities)
+    by_currency = activities.group_by {|i| i.hourly_rate.currency}
     by_currency.map do |k, v|
-      format_currency(k, v.inject(0) {|mem, i| mem + i.price.to_f * (i.minutes / 60.0)})
+      format_currency(k, v.inject(0) {|mem, i| mem + i.total_value})
     end.join(' + ')
+  end
+  
+  def hourly_rate
+    project.hourly_rates.with_role(user.role).at_day(invoiced_at || Date.current)
   end
   
   protected

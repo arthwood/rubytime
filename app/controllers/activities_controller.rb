@@ -134,7 +134,7 @@ class ActivitiesController < ApplicationController
       activity_and_hr.each do |i|
         activity = i[:activity]
         hr = i[:hr]
-        activity.update_attributes(:invoice_id => invoice_id, :invoiced_at => date, :price => hr.value, :currency_id => hr.currency_id)
+        activity.update_attributes(:invoice_id => invoice_id, :invoiced_at => date, :value => hr.value, :currency_id => hr.currency_id)
       end
       
     else
