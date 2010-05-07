@@ -48,7 +48,7 @@ class InitialSchema < ActiveRecord::Migration
       t.text :notes
       t.references :user, :null => false
       t.references :client, :null => false
-      t.datetime :issued_at
+      t.date :issued_at
       t.datetime :created_at
     end
     

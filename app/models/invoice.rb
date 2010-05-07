@@ -10,7 +10,7 @@ class Invoice < ActiveRecord::Base
   has_many :activities, :dependent => :nullify, :include => [:project, :user]
   
   default_scope :order => :name
-  
+
   def to_csv
     FasterCSV.generate do |csv|
       csv << ['Date', 'Project', 'Person', 'Time Spent', 'Comments', 'Price']
