@@ -265,6 +265,19 @@ p.reset_password {
 .side_form h2 span {
   font-size: 11px;
 }
+.filter {
+  width: 260px;
+}
+.filter .item .label {
+  width: 80px; 
+}
+.filter .item select {
+  width: 140px;
+}
+.filter .item input[type="text"], 
+.filter .item .error {
+  width: 136px;
+}
 .listing {
   width: 520px;
   margin-bottom: 30px;
@@ -279,6 +292,9 @@ p.reset_password {
 .listing h3 span,
 .listing h4 span {
   font-weight: normal;
+}
+.listing.activities {
+  width:560px;
 }
 table.base {
   width: 100%;

@@ -5,7 +5,8 @@
   %td.calign= activity.date
   %td.calign= activity.time_spent
   - if admin_or_client?
-    %td= (invoice = activity.invoice) && invoice.name
+    %td= (invoice = activity.invoice) && "#{invoice.name} (#{activity.invoiced_at})"
+    %td.calign= format_currency_hr(activity.hourly_rate)
   - unless client?
     %td.actions.ralign
       - unless invoiced

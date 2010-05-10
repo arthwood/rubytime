@@ -11,8 +11,8 @@ class HourlyRate < ActiveRecord::Base
     project.hourly_rates.with_role(role).first(:conditions => "date > '#{date}'", :order => 'date ASC')
   end
   
-  def self.current
-    at_day(Date.current)
+  def self.current(role)
+    with_role(role).at_day(Date.current)
   end
   
   def self.at_day(day)

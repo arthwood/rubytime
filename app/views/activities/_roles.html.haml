@@ -7,8 +7,8 @@
         Role:
         %span
           = role.name
-        - hr = project.hourly_rates.current(role)
-        = hr.nil? ? '(Hourly rate not defined!)' : "(Hourly rate: #{format_currency_hr(hr)})"
+        
+        = "(#{Activity.total_value(role_activities)})"
       .users
         - group_by_users = role_activities.group_by &:user
         - group_by_users.each_pair do |user, user_activities|
@@ -16,4 +16,4 @@
             %h4
               = user.name
                 
-            = render :partial => 'table', :locals => {:user_activities => user_activities, :hr => hr}
+            = render :partial => 'table', :locals => {:user_activities => user_activities}

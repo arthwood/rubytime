@@ -6,7 +6,8 @@
       %th Date
       %th Time
       - if admin_or_client?
-        %th Invoice
+        %th Invoice (at)
+        %th Hourly rate
       - unless client?
         %th.actions.ralign &nbsp;
 
@@ -18,9 +19,7 @@
         - minutes = user_activities.inject(0) {|mem, i| mem + i.minutes}
         = format_time_spent(minutes)
       %td{:colspan => admin? ? 2 : 1}
-        - unless hr.nil?
-          value:
-          = format_currency(hr.currency, hr.value * minutes / 60.0)
+        = Activity.total_value(user_activities) 
 
   %tbody
     = render :partial => 'row', :collection => user_activities, :as => :activity
