@@ -10,6 +10,14 @@ var Activities = $E(Resources, function() {
     this.filterProject = $('activity_filter_project_id');
   }
   
+  this.usersVisible = true;
+  
+  this.toggleUsers = $('toggle_users');
+  
+  if (this.toggleUsers) {
+    this.toggleUsers.onclick = this.onToggleUsers.bind(this);
+  }
+  
   this.onProjectsSuccessD = $D(this, this.onProjectsSuccess);
   this.projectToOptionDC = this.projectToOption.bind(this);
   
@@ -48,6 +56,8 @@ var Activities = $E(Resources, function() {
   
   onFilterSuccess: function(ajax) {
     this.results.setContent(ajax.getResponseText());
+    
+    this.toggleUsers && this.toggleUsers.show();
     
     this.initResults();
   },
@@ -197,6 +207,19 @@ var Activities = $E(Resources, function() {
   
   markActivityAsInvalid: function(id) {
     $('activity_' + id).addClass('invalid');
+  },
+  
+  onToggleUsers: function(e) {
+    var a = e.currentTarget;
+    var label = this.usersVisible ? 'show users' : 'hide users';
+    var dc = this.usersVisible ? ElementUtils.hideDC : ElementUtils.showDC;
+    
+    a.setContent(label);
+    $$('.users').each(dc);
+    
+    this.usersVisible = !this.usersVisible;
+    
+    return false;
   }
 });
 

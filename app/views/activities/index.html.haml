@@ -3,8 +3,10 @@
     = render :partial => 'filter'
   .left
     .listing.activities
-      %h1
-        List of activities
+      .clearfix
+        = link_to 'hide users', '#', :id => :toggle_users, :style => 'display: none' if admin_or_client?
+        %h1.left
+          List of activities
       #results
         - if @params_filter.nil?
           %h3

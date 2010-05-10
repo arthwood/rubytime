@@ -296,6 +296,9 @@ p.reset_password {
 .listing.activities {
   width:560px;
 }
+#toggle_users {
+  float: right;
+}
 table.base {
   width: 100%;
   border: 1px solid #CCC;
