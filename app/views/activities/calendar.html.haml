@@ -4,6 +4,7 @@
   - options = {:class => :right}
   - options[:style] = 'display: none' unless admin_or_client?
   - form_tag calendar_activities_path, options do
+    = hidden_field_tag :current, @current
     = select_tag :user_id, options_from_collection_for_select(@users, :id, :name, user_id)
     = submit_tag :ok
   %h1.left
