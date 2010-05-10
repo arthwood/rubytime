@@ -1,15 +1,19 @@
 class ActivityReport < Prawn::Document
   TABLE_OPTIONS = {
-    :headers => ['Date', 'Time', 'Comments'], 
+    :headers => ['Date', 'Time', 'Comments', 'Invoiced', 'Hourly rate'], 
     :font_size => 10, 
     :header_color => '86CFEF', 
     :border_width => 1, 
     :border_style => :grid, 
     :border_color => 'CCCCCC', 
-    :row_colors => ['FFFFFF', 'EEEEEE']
+    :row_colors => ['FFFFFF', 'EEEEEE'],
+    :column_widths => {0 => 70, 1 => 40, 2 => 170, 3 => 70, 4 => 50}
   }
   
-  ACTIVITY_DATA_ROW_MAPPING = Proc.new {|i| [i.date, format_time_spent_decimal(i.minutes), i.comments]}
+  ACTIVITY_DATA_ROW_MAPPING = Proc.new do |i| 
+    [i.date, format_time_spent_decimal(i.minutes), i.comments, i.invoiced_at, format_currency_hr(i.hourly_rate)]
+  end
+  
   ACTIVITY_TIME_SPENT_CALC_BLOCK = Proc.new {|mem, i| mem + i.minutes}
   GROUP_BY_USER = Proc.new {|i| i.user}
   GROUP_BY_PROJECT = Proc.new {|i| i.project}
@@ -34,7 +38,7 @@ class ActivityReport < Prawn::Document
       my_box("Project: #{project.name}", 12, 400, 0, project_top) do
         role_top = 20
         render_items(project_activities, GROUP_BY_ROLE) do |role, role_activities|
-          my_box("Role: #{role.name} (Hourly rate: #{hourly_rate(project, role, role_activities)})", 11, 370, 20, role_top) do
+          my_box("Role: #{role.name}", 11, 370, 20, role_top) do
             user_top = 20
             render_items(role_activities, GROUP_BY_USER) do |user, user_activities|
               user_box(user_activities, user, user_top)
@@ -54,20 +58,6 @@ class ActivityReport < Prawn::Document
     render
   end
   
-  def hourly_rate(project, role, activities)
-    hrs = activities.map(&:hourly_rate).uniq.sort_by &:date
-    n = hrs.size
-    
-    if n == 1
-      format_currency_hr(hrs.first)
-    else
-      hrs.map do |i|
-        succ = hrs.index(i).succ
-        "#{format_currency_hr(i)} (#{i.date} - #{succ == n ? '' : hrs[succ].date})"
-      end.join(', ')
-    end
-  end
-  
   def render_items(items, grouping, &block)
     items.group_by(&grouping).each_pair(&block)
   end
@@ -76,7 +66,7 @@ class ActivityReport < Prawn::Document
     my_box(i.name, 10, 340, 20, top) do
       data = items.map(&ACTIVITY_DATA_ROW_MAPPING)
       minutes = items.inject(0, &ACTIVITY_TIME_SPENT_CALC_BLOCK)
-      data << ['Total:', format_time_spent_decimal(minutes), "value: #{Activity.total_value(items)}"]
+      data << ['Total:', format_time_spent_decimal(minutes), nil, nil, Activity.total_value(items)]
       table data, TABLE_OPTIONS
     end
   end

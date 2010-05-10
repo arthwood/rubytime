@@ -231,7 +231,7 @@ form .error {
   z-index: 2;
 }
 form.login {
-  margin-bottom: 20px;
+  margin: 20px 0;
 }
 form.reset_password .item > label {
   width: 40px;

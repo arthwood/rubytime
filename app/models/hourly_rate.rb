@@ -7,6 +7,10 @@ class HourlyRate < ActiveRecord::Base
   
   named_scope :with_role, lambda {|i| {:conditions => {:role_id => i.id}}}
   
+  def successor
+    project.hourly_rates.with_role(role).first(:conditions => "date > '#{date}'", :order => 'date ASC')
+  end
+  
   def self.current
     at_day(Date.current)
   end
