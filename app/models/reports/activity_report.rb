@@ -14,11 +14,6 @@ class ActivityReport < Prawn::Document
     [i.date, format_time_spent_decimal(i.minutes), i.comments, i.invoiced_at, format_currency_hr(i.hourly_rate)]
   end
   
-  ACTIVITY_TIME_SPENT_CALC_BLOCK = Proc.new {|mem, i| mem + i.minutes}
-  GROUP_BY_USER = Proc.new {|i| i.user}
-  GROUP_BY_PROJECT = Proc.new {|i| i.project}
-  GROUP_BY_ROLE = Proc.new {|i| i.user.role}
-      
   def my_box(title, size, width, left, top)
     bounding_box([left, bounds.height - top], :width => width) do
       text title, :size => size
@@ -33,22 +28,29 @@ class ActivityReport < Prawn::Document
     
     mb = 20
     
-    project_top = 30
-    render_items(activities, GROUP_BY_PROJECT) do |project, project_activities|
-      my_box("Project: #{project.name}", 12, 400, 0, project_top) do
-        role_top = 20
-        render_items(project_activities, GROUP_BY_ROLE) do |role, role_activities|
-          my_box("Role: #{role.name}", 11, 370, 20, role_top) do
-            user_top = 20
-            render_items(role_activities, GROUP_BY_USER) do |user, user_activities|
-              user_box(user_activities, user, user_top)
-              user_top = bounds.height + mb
+    client_top = 30
+    
+    render_items(activities, Activity::GROUP_BY_CLIENT_BLOCK) do |client, client_activities|
+      my_box("Client: #{client.name}", 12, 420, 0, client_top) do
+        project_top = 20
+        render_items(client_activities, Activity::GROUP_BY_PROJECT_BLOCK) do |project, project_activities|
+          my_box("Project: #{project.name}", 12, 400, 20, project_top) do
+            role_top = 20
+            render_items(project_activities, Activity::GROUP_BY_ROLE_BLOCK) do |role, role_activities|
+              my_box("Role: #{role.name}", 11, 380, 20, role_top) do
+                user_top = 20
+                render_items(role_activities, Activity::GROUP_BY_USER_BLOCK) do |user, user_activities|
+                  user_box(user_activities, user, user_top)
+                  user_top = bounds.height + mb
+                end
+              end
+              role_top = bounds.height + mb
             end
           end
-          role_top = bounds.height + mb
+          project_top = bounds.height + mb
         end
       end
-      project_top = bounds.height + mb
+      client_top = bounds.height + mb
     end
     
     move_down 20
@@ -63,9 +65,9 @@ class ActivityReport < Prawn::Document
   end
   
   def user_box(items, i, top)
-    my_box(i.name, 10, 340, 20, top) do
+    my_box(i.name, 10, 360, 20, top) do
       data = items.map(&ACTIVITY_DATA_ROW_MAPPING)
-      minutes = items.inject(0, &ACTIVITY_TIME_SPENT_CALC_BLOCK)
+      minutes = items.inject(0, &Activity::TIME_SPENT_BLOCK)
       data << ['Total:', format_time_spent_decimal(minutes), nil, nil, Activity.total_value(items)]
       table data, TABLE_OPTIONS
     end

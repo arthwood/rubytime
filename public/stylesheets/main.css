@@ -231,7 +231,7 @@ form .error {
   z-index: 2;
 }
 form.login {
-  margin: 20px 0;
+  padding: 20px 0;
 }
 form.reset_password .item > label {
   width: 40px;
@@ -286,10 +286,7 @@ p.reset_password {
   margin-bottom: 30px;
 }
 .listing h2 {
-  margin-bottom: 20px;
-}
-.listing h2 {
-  margin-bottom: 0;
+  margin-bottom: 4px;
 }
 .listing h2 span,
 .listing h3 span,

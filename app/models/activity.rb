@@ -17,6 +17,14 @@ class Activity < ActiveRecord::Base
   
   after_save :check_day_off
   
+  GROUP_BY_CLIENT_BLOCK = Proc.new {|i| i.project.client}
+  GROUP_BY_PROJECT_BLOCK = Proc.new {|i| i.project}
+  GROUP_BY_ROLE_BLOCK = Proc.new {|i| i.user.role}
+  GROUP_BY_USER_BLOCK = Proc.new {|i| i.user}
+  GROUP_BY_DATE_BLOCK = Proc.new {|i| i.date}
+  GROUP_BY_CURRENCY_BLOCK = Proc.new {|i| i.hourly_rate.currency}
+  TIME_SPENT_BLOCK = Proc.new {|mem, i| mem + i.minutes}
+  
   def as_json(options = {})
     super(:include => [:project, :user], :methods => :time_spent)
   end
@@ -85,7 +93,7 @@ class Activity < ActiveRecord::Base
     @activities = all(:conditions => conditions, :joins => joins, :order => 'date DESC')
     
     @users = user_id.blank? ? User.employees.all : [User.find(user_id)]
-    @user_activities = @activities.group_by(&:user)
+    @user_activities = @activities.group_by(&GROUP_BY_USER_BLOCK)
     @users.inject({}) do |mem, i|
       mem[i] = @days - (@user_activities[i] || []).map(&:date); mem
     end.reject {|k, v| v.empty?}
@@ -102,7 +110,7 @@ class Activity < ActiveRecord::Base
   end
   
   def self.total_value(activities)
-    by_currency = activities.group_by {|i| i.hourly_rate.currency}
+    by_currency = activities.reject {|i| i.hourly_rate.nil?}.group_by(&GROUP_BY_CURRENCY_BLOCK)
     by_currency.map do |k, v|
       format_currency(k, v.inject(0) {|mem, i| mem + i.total_value})
     end.join(' + ')
@@ -110,6 +118,10 @@ class Activity < ActiveRecord::Base
   
   def hourly_rate
     project.hourly_rates.with_role(user.role).at_day(invoiced_at || Date.current)
+  end
+  
+  def self.total_time(activities)
+    activities.inject(0, &TIME_SPENT_BLOCK)
   end
   
   protected

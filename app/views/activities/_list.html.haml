@@ -1,7 +1,10 @@
-- group_by_clients = list.group_by {|i| i.project.client}
+- by_clients = list.group_by(&Activity::GROUP_BY_CLIENT_BLOCK)
 
+%h2
+  = "Total: #{Activity.total_value(list)}"
+  
 .clients
-  - group_by_clients.each_pair do |client, client_activities|
+  - by_clients.each_pair do |client, client_activities|
     .client[client]
       %h2
         = image_tag 'client.png'
@@ -10,8 +13,8 @@
           = client.name
       
       .projects
-        - group_by_projects = client_activities.group_by &:project
-        - group_by_projects.each_pair do |project, project_activities|
+        - by_projects = client_activities.group_by(&Activity::GROUP_BY_PROJECT_BLOCK)
+        - by_projects.each_pair do |project, project_activities|
           .project[project]
             %h3
               = image_tag 'project.png'
@@ -20,6 +23,6 @@
                 = project.name
             
             - if admin_or_client?
-              = render :partial => 'roles', :locals => {:project_activities => project_activities, :project => project}
+              = render :partial => 'roles', :locals => {:activities => project_activities}
             - else
-              = render :partial => 'table', :locals => {:user_activities => project_activities}
+              = render :partial => 'table', :locals => {:activities => project_activities}
