@@ -54,6 +54,18 @@ class ActivitiesController < ApplicationController
     @rows = (@first_day.wday + @current.end_of_month.mday - 1) / 7
   end
   
+  def missed
+    set_missed_activities_filter
+  end
+  
+  def search_missed
+    @params_filter = params[:missed_activity_filter]
+    set_missed_activities_filter
+    @results = Activity.search_missed(@filter)
+    
+    render :partial => 'activities/missed/results'
+  end
+  
   def edit
     set_activity
     
@@ -162,7 +174,7 @@ class ActivitiesController < ApplicationController
   protected
 
   def set_filter
-    @filter = ActivityFilter.new(@params_filter || {:from => nil, :to => nil})
+    @filter = ActivityFilter.new(@params_filter)
     
     if current_user.admin?
       @users = User.employees
@@ -176,6 +188,16 @@ class ActivitiesController < ApplicationController
       @users = current_user.client.collaborators
     else
       @projects = current_user.projects
+    end
+  end
+  
+  def set_missed_activities_filter
+    @filter = MissedActivityFilter.new(@params_filter)
+    
+    if current_user.admin?
+      @users = User.employees
+    elsif current_user.client?
+      @users = current_user.client.collaborators
     end
   end
   

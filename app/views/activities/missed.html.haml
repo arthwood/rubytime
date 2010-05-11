@@ -1,0 +1,13 @@
+.clearfix
+  .side_form.filter
+    = render :partial => 'activities/missed/filter'
+  .left
+    .listing.activities
+      %h1
+        List of missed activities
+      #results
+        - if @params_filter.nil?
+          %h3
+            Use filter form on the right to search missed activities
+        - else
+          = render :partial => 'activities/missed/results'

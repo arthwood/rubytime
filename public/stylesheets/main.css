@@ -278,6 +278,9 @@ p.reset_password {
 .filter .item .error {
   width: 136px;
 }
+.filter .item .no_label {
+  margin-left: 86px;
+}
 .listing {
   width: 520px;
   margin-bottom: 30px;

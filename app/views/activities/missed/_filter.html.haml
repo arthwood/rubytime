@@ -1,0 +1,28 @@
+%h2
+  Filter
+
+- form_for @filter, :url => search_missed_activities_url, :html => {:method => :post, :id => nil, :class => nil} do |i|
+  .item.clearfix
+    .label
+      = i.label :user_id, 'User'
+    .input
+      = i.select :user_id, options_from_collection_for_select(@users, :id, :name, @filter.user_id.to_i), :include_blank => 'All users...'
+  .item.clearfix
+    .label
+      = i.label :period, 'Select period'
+    .input
+      = i.select :period, daterange_options(@filter.period), :include_blank => 'Select...'
+  .item.clearfix.datepicker
+    .label
+      = i.label :from, 'from'
+    .input
+      = i.text_field :from, :readOnly => true
+      = image_tag 'datepicker/cal.gif'
+  .item.clearfix.datepicker
+    .label
+      = i.label :to, 'to'
+    .input
+      = i.text_field :to, :readOnly => true
+      = image_tag 'datepicker/cal.gif'
+  .item.last
+    = i.submit 'Submit', :class => :no_label

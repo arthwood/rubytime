@@ -19,7 +19,7 @@ var NewActivity = function() {
   app.onResize.add($D(this, this.onResize));
   
   this.updateLayout();
-}
+};
 
 NewActivity.prototype = {
   onResize: function(e) {

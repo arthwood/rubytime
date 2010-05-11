@@ -1,0 +1,5 @@
+- if @results.empty?
+  %p.no_results
+    It seems that there is no missed activities for selected criteria.
+- else
+  = render :partial => 'activities/missed/list', :object => @results

@@ -66,6 +66,31 @@ class Activity < ActiveRecord::Base
     end
   end
   
+  WEEKENDS = [0, 6]
+  
+  def self.search_missed(filter)
+    user_id = filter.user_id
+    conditions = {}
+    conditions[:user_id] = user_id unless user_id.blank?
+    from, to = filter.from, filter.to
+    date_range = (from.blank? || to.blank?) \
+      ? Date.current.beginning_of_month..Date.current.end_of_month \
+      : Date.parse(from)..Date.parse(to)
+    conditions[:date] = date_range
+    joins = %q{
+      LEFT OUTER JOIN users ON (users.id = user_id)
+    }
+    
+    @days = date_range.to_a.reject {|i| WEEKENDS.include?(i.wday)}
+    @activities = all(:conditions => conditions, :joins => joins, :order => 'date DESC')
+    
+    @users = user_id.blank? ? User.employees.all : [User.find(user_id)]
+    @user_activities = @activities.group_by(&:user)
+    @users.inject({}) do |mem, i|
+      mem[i] = @days - (@user_activities[i] || []).map(&:date); mem
+    end.reject {|k, v| v.empty?}
+  end
+  
   def to_csv_row
     [date, project.name, user.name, format_time_spent_decimal(minutes), comments, 
       format_currency(hourly_rate.currency, total_value)

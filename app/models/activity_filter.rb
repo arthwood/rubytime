@@ -1,9 +1,3 @@
-class ActivityFilter
-  attr_accessor :id, :user_id, :project_id, :client_id, :period, :from, :to, :invoice_filter
-  
-  def initialize(params)
-    params.each do |k, v|
-      send "#{k}=", v
-    end
-  end
+class ActivityFilter < CustomFilter
+  attr_accessor :user_id, :project_id, :client_id, :period, :from, :to, :invoice_filter
 end
