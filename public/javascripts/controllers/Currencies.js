@@ -1,5 +1,5 @@
 var Currencies = $E(Resources, function() {
-  arguments.callee.super('currency', 'currencies');
+  arguments.callee.$super('currency', 'currencies');
   
   this.onPrefixChangeDC = this.onPrefixChange.bind(this);
   this.onSymbolChangeDC = this.onSymbolChange.bind(this);
@@ -8,7 +8,7 @@ var Currencies = $E(Resources, function() {
   this.updateExample();
 }, {
   onEditSuccess: function(ajax) {
-    arguments.callee.super(ajax);
+    arguments.callee.$super(ajax);
     
     this.initExample();
   },

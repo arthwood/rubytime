@@ -1,5 +1,5 @@
 var Roles = $E(Resources, function() {
-  arguments.callee.super('role');
+  arguments.callee.$super('role');
 });
 
 Application.onLoad.add($D(null, function() {

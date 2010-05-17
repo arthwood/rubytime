@@ -36,7 +36,7 @@ var Activities = $E(Resources, function() {
   this.checkboxToActivityIdDC = this.checkboxToActivityId.bind(this);
   this.markActivityAsInvalidDC = this.markActivityAsInvalid.bind(this);
   
-  arguments.callee.super('activity');
+  arguments.callee.$super('activity');
   
   // nullify not used properties and methods
   this.sideForm = null;

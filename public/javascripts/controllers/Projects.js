@@ -1,5 +1,5 @@
 var Projects = $E(Resources, function() {
-  arguments.callee.super('project');
+  arguments.callee.$super('project');
   
   this.initAddNewHourlyRateDC = this.initAddNewHourlyRate.bind(this);
   this.onAddNewHourlyRateDC = this.onAddNewHourlyRate.bind(this);
@@ -11,7 +11,7 @@ var Projects = $E(Resources, function() {
   this.currentForm = null;
 }, {
   onEditSuccess: function(ajax) {
-    arguments.callee.super(ajax);
+    arguments.callee.$super(ajax);
     
     $$('.role a').each(this.initAddNewHourlyRateDC);
   },

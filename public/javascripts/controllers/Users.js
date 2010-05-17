@@ -1,5 +1,5 @@
 var Users = $E(Resources, function() {
-  arguments.callee.super('user');
+  arguments.callee.$super('user');
   
   this.initForm();
   this.updateSelect();
@@ -38,14 +38,14 @@ var Users = $E(Resources, function() {
   },
   
   onEditSuccess: function(ajax) {
-    arguments.callee.super(ajax);
+    arguments.callee.$super(ajax);
     
     this.initForm();
     this.updateSelect();
   },
 
   onAddNewSuccess: function(ajax) {
-    arguments.callee.super(ajax);
+    arguments.callee.$super(ajax);
 
     this.initForm();
     this.updateSelect();

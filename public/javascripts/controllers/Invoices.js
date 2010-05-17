@@ -1,5 +1,5 @@
 var Invoices = $E(Resources, function() {
-  arguments.callee.super('invoice');
+  arguments.callee.$super('invoice');
   
   this.pendingRowDC = this.pendingRow.bind(this);
   this.refreshRowDC = this.refreshRow.bind(this);
@@ -13,13 +13,13 @@ var Invoices = $E(Resources, function() {
   filters.third().onclick = this.onPendingFilter.bind(this);
 }, {
   onAddNewSuccess: function(ajax) {
-    arguments.callee.super(ajax);
+    arguments.callee.$super(ajax);
     
     this.initForm();
   },
   
   onEditSuccess: function(ajax) {
-    arguments.callee.super(ajax);
+    arguments.callee.$super(ajax);
     
     this.initForm();
   },
