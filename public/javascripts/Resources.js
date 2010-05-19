@@ -1,11 +1,11 @@
 var Resources = function(name, plural) {
   this.name = name;
   this.plural = plural;
-  this.onEditDC = this.onEdit.bind(this);
-  this.onRemoveDC = this.onRemove.bind(this);
+  this.onEditDC = this.onEdit.bind(this, true);
+  this.onRemoveDC = this.onRemove.bind(this, true);
   this.onEditSuccessD = $D(this, this.onEditSuccess);
   this.onDeleteSuccessD = $D(this, this.onDeleteSuccess);
-  this.onAddNewDC = this.onAddNew.bind(this);
+  this.onAddNewDC = this.onAddNew.bind(this, true);
   this.initActionsDC = this.initActions.bind(this);
   this.onAddNewSuccessD = $D(this, this.onAddNewSuccess);
   this.listing = $$('.listing').first();
@@ -27,22 +27,22 @@ Resources.prototype = {
     remove && (remove.onclick = this.onRemoveDC);
   },
   
-  onEdit: function(e) {
-    $get(e.currentTarget.href, null, this.onEditSuccessD);
+  onEdit: function(a) {
+    $get(a.href, null, this.onEditSuccessD);
     
     return false;
   },
   
-  onRemove: function(e) {
+  onRemove: function(a) {
     if (confirm('Really remove this ' + this.name + '?')) {
-      this.doRemove(e);
+      this.doRemove(a);
     }
     
     return false;
   },
   
-  doRemove: function(e) {
-    $del(e.currentTarget.href, null, this.onDeleteSuccessD);
+  doRemove: function(a) {
+    $del(a.href, null, this.onDeleteSuccessD);
   },
   
   onEditSuccess: function(ajax) {
@@ -68,8 +68,8 @@ Resources.prototype = {
     this.sideForm.down('h2 span a').first().onclick = this.onAddNewDC;
   },
   
-  onAddNew: function(e) {
-    $get(e.currentTarget.href, null, this.onAddNewSuccessD);
+  onAddNew: function(a) {
+    $get(a.href, null, this.onAddNewSuccessD);
     
     return false;
   },

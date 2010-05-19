@@ -5,15 +5,15 @@ var ActivitiesCalendar = function() {
   if (this.editor) {
     this.template = $('activity_template');
     
-    this.onEditDC = this.onEdit.bind(this);
-    this.onDeleteDC = this.onDelete.bind(this);
+    this.onEditDC = this.onEdit.bind(this, true);
+    this.onDeleteDC = this.onDelete.bind(this, true);
     this.onEditSuccessD = $D(this, this.onEditSuccess);
     this.onDeleteSuccessD = $D(this, this.onDeleteSuccess);
     this.userId = $('user_id').value;
     this.timeSpentInjectDC = this.timeSpentInject.bind(this);
     this.initActivityActionsDC = this.initActivityActions.bind(this);
-    this.onDayOffDC = this.onDayOff.bind(this);
-    this.onRevertDayOffDC = this.onRevertDayOff.bind(this);
+    this.onDayOffDC = this.onDayOff.bind(this, true);
+    this.onRevertDayOffDC = this.onRevertDayOff.bind(this, true);
     this.onDayOffSuccessD = $D(this, this.onDayOffSuccess);
     this.onRevertDayOffSuccessD = $D(this, this.onRevertDayOffSuccess);
     
@@ -65,7 +65,7 @@ ActivitiesCalendar.prototype = {
     var element = mc.element;
     
     if (element.hasClass('active')) {
-      if (!e.relatedTarget.descendantOf(this.details, true)) {
+      if (!e.toElement.descendantOf(this.details, true)) {
         this.hideDetails();
       }
       else {
@@ -78,7 +78,7 @@ ActivitiesCalendar.prototype = {
   },
   
   onDetailsOut: function(e, mc) {
-    if (e.relatedTarget != this.detailsCell) {
+    if (e.toElement != this.detailsCell) {
       this.hideDetails();
     }
       
@@ -112,24 +112,22 @@ ActivitiesCalendar.prototype = {
     links.second().onclick = this.onDeleteDC;
   },
   
-  onEdit: function(e) {
-    var link = e.currentTarget;
-    
-    $get(link.href, null, this.onEditSuccessD);
+  onEdit: function(a) {
+    $get(a.href, null, this.onEditSuccessD);
     
     return false;
   },
   
-  onDelete: function(e) {
+  onDelete: function(a) {
     if (confirm('Really remove this activity?')) {
-      this.doRemove(e);
+      this.doDelete(a);
     }
     
     return false;
   },
   
-  doRemove: function(e) {
-    $del(e.currentTarget.href, null, this.onDeleteSuccessD);
+  doDelete: function(a) {
+    $del(a.href, null, this.onDeleteSuccessD);
   },
   
   onEditSuccess: function(ajax) {
@@ -251,9 +249,7 @@ ActivitiesCalendar.prototype = {
     return mem + DateUtils.hmToMinutes(i.trim());
   },
   
-  onDayOff: function(e) {
-    var a = e.currentTarget;
-    
+  onDayOff: function(a) {
     $post(a.href, {date: a.up('td').id, user_id: this.userId}, this.onDayOffSuccessD);
     
     return false;
@@ -268,9 +264,7 @@ ActivitiesCalendar.prototype = {
     this.revertDayOffTag.replace(this.cellDayOffLink(cell), true).onclick = this.onRevertDayOffDC;
   },
   
-  onRevertDayOff: function(e) {
-    var a = e.currentTarget;
-    
+  onRevertDayOff: function(a) {
     $del(a.href, {date: a.up('td').id, user_id: this.userId}, this.onRevertDayOffSuccessD);
     
     return false;
