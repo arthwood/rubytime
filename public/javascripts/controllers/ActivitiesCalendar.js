@@ -67,11 +67,11 @@ ActivitiesCalendar.prototype = {
     if (element.hasClass('active')) {
       var related = mc.targets(e, false).related;
       
-      if (!(related == this.details || related.descendantOf(this.details))) {
-        this.hideDetails();
+      if (related.selfOrDescendant(this.details)) {
+        this.detailsCell = element;
       }
       else {
-        this.detailsCell = element;
+        this.hideDetails();
       }
     }
     else if (this.editor) {
