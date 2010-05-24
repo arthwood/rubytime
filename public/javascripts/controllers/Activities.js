@@ -122,9 +122,9 @@ var Activities = $E(Resources, function() {
   },
   
   onProjectsSuccess: function(ajax) {
-    var selectAllOption = $B('option', {value: ''}, 'All projects...');
+    var option = new ElementBuilder('option', {value: ''}, 'All projects...');
     
-    this.filterProject.setContent(selectAllOption + this.buildProjectOptions(eval(ajax.getResponseText())));
+    this.filterProject.setContent(option.toString() + this.buildProjectOptions(eval(ajax.getResponseText())));
   },
   
   buildProjectOptions: function(data) {
@@ -132,7 +132,9 @@ var Activities = $E(Resources, function() {
   },
   
   projectToOption: function(i, idx) {
-    return $B('option', {value: i.id}, i.name);
+    var option = new ElementBuilder('option', {value: i.id}, i.name);
+    
+    return option.toString();
   },
 
   /**
