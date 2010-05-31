@@ -5,20 +5,14 @@ set :rails_env, 'production'
 set :deploy_via, :remote_cache
 set :keep_releases, 3
 set :use_sudo, false
-
 set :scm, :git
+set :git_enable_submodules, true
 
 server "arthwood@rubytime.arthwood.com", :app, :web, :db, :primary => true
 
 after "deploy:update_code", "deploy:link_configuration_files"
 
  namespace :deploy do
-   task :start do
-   end
-   
-   task :stop do
-   end
-   
    task :restart, :roles => :app, :except => { :no_release => true } do
      run "restart-app rubytime"
    end
