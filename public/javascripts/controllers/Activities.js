@@ -6,7 +6,7 @@ var Activities = $E(Resources, function() {
   this.filterUserSelect = $('activity_filter_user_id');
   
   if (this.filterUserSelect) {
-    this.filterUserSelect.onchange = this.onUserSelect.bind(this);
+    this.filterUserSelect.onchange = this.onUserSelect.bind(this, true);
     this.filterProject = $('activity_filter_project_id');
   }
   
@@ -15,7 +15,7 @@ var Activities = $E(Resources, function() {
   this.toggleUsers = $('toggle_users');
   
   if (this.toggleUsers) {
-    this.toggleUsers.onclick = this.onToggleUsers.bind(this);
+    this.toggleUsers.onclick = this.onToggleUsers.bind(this, true);
   }
   
   this.onProjectsSuccessD = $D(this, this.onProjectsSuccess);
@@ -24,13 +24,13 @@ var Activities = $E(Resources, function() {
   this.filterDateFrom = $('activity_filter_from');
   this.filterDateTo = $('activity_filter_to');
   this.period = $('activity_filter_period');
-  this.period.onchange = this.onPeriod.bind(this);
+  this.period.onchange = this.onPeriod.bind(this, true);
   this.initSelectAllDC = this.initSelectAll.bind(this);
-  this.onSelectAllChangeDC = this.onSelectAllChange.bind(this);
+  this.onSelectAllChangeDC = this.onSelectAllChange.bind(this, true);
   this.selectActivityDC = this.selectActivity.bind(this);
-  this.onCreateInvoiceFormSubmitDC = this.onCreateInvoiceFormSubmit.bind(this);
+  this.onCreateInvoiceFormSubmitDC = this.onCreateInvoiceFormSubmit.bind(this, true);
   this.onCreateInvoiceFormSubmitSuccessD = $D(this, this.onCreateInvoiceFormSubmitSuccess);
-  this.onAddToInvoiceFormSubmitDC = this.onAddToInvoiceFormSubmit.bind(this);
+  this.onAddToInvoiceFormSubmitDC = this.onAddToInvoiceFormSubmit.bind(this, true);
   this.onAddToInvoiceFormSubmitSuccessD = $D(this, this.onAddToInvoiceFormSubmitSuccess);
   this.selectCheckedDC = this.selectChecked.bind(this);
   this.checkboxToActivityIdDC = this.checkboxToActivityId.bind(this);
@@ -86,9 +86,7 @@ var Activities = $E(Resources, function() {
     return chb.up('table').down('.activity input[type=checkbox,name=select]');
   },
   
-  onSelectAllChange: function(e) {
-    var chb = e.currentTarget;
-    
+  onSelectAllChange: function(chb) {
     this.selectActivityDC.delegate.args = [chb.checked];
     
     this.getCheckboxes(chb).each(this.selectActivityDC);
@@ -109,12 +107,11 @@ var Activities = $E(Resources, function() {
     }
   },
   
-  onUserSelect: function(e) {
-    $get('projects.json', {user_id: e.currentTarget.value}, this.onProjectsSuccessD);
+  onUserSelect: function(select) {
+    $get('projects.json', {user_id: select.value}, this.onProjectsSuccessD);
   },
   
-  onPeriod: function(e) {
-    var select = e.currentTarget;
+  onPeriod: function(select) {
     var arr = (select.selectedIndex > 0) ? select.value.split('/') : ['', ''];
     
     this.filterDateFrom.value = arr.first();
@@ -122,9 +119,9 @@ var Activities = $E(Resources, function() {
   },
   
   onProjectsSuccess: function(ajax) {
-    var selectAllOption = $B('option', {value: ''}, 'All projects...');
+    var option = new ElementBuilder('option', {value: ''}, 'All projects...');
     
-    this.filterProject.setContent(selectAllOption + this.buildProjectOptions(eval(ajax.getResponseText())));
+    this.filterProject.setContent(option.toString() + this.buildProjectOptions(eval(ajax.getResponseText())));
   },
   
   buildProjectOptions: function(data) {
@@ -132,7 +129,9 @@ var Activities = $E(Resources, function() {
   },
   
   projectToOption: function(i, idx) {
-    return $B('option', {value: i.id}, i.name);
+    var option = new ElementBuilder('option', {value: i.id}, i.name);
+    
+    return option.toString();
   },
 
   /**
@@ -149,15 +148,15 @@ var Activities = $E(Resources, function() {
     this.search();
   },
   
-  onCreateInvoiceFormSubmit: function(e) {
-    return this.onInvoiceFormSubmit(e);
+  onCreateInvoiceFormSubmit: function(form) {
+    return this.onInvoiceFormSubmit(form);
   },
   
-  onAddToInvoiceFormSubmit: function(e) {
-    return this.onInvoiceFormSubmit(e);
+  onAddToInvoiceFormSubmit: function(form) {
+    return this.onInvoiceFormSubmit(form);
   },
   
-  onInvoiceFormSubmit: function(e) {
+  onInvoiceFormSubmit: function(form) {
     var activityIds = this.selectedActivityIds();
     
     if (activityIds.empty()) {
@@ -165,8 +164,6 @@ var Activities = $E(Resources, function() {
       
       return false;
     }
-    
-    var form = e.currentTarget;
     
     $post(form.action, form.serialize().merge({activity_ids: activityIds}), this.onCreateInvoiceFormSubmitSuccessD);
     
@@ -209,8 +206,7 @@ var Activities = $E(Resources, function() {
     $('activity_' + id).addClass('invalid');
   },
   
-  onToggleUsers: function(e) {
-    var a = e.currentTarget;
+  onToggleUsers: function(a) {
     var label = this.usersVisible ? 'show users' : 'hide users';
     var dc = this.usersVisible ? ElementUtils.hideDC : ElementUtils.showDC;
     

@@ -11,8 +11,8 @@ namespace :db do
     
     @user = User.new(:login => 'admin', :name => 'Artur Bilski', :email => 'artur.bilski@llp.pl', :role_id => 2,
       :password => 'asdf1234', :password_confirmation => 'asdf1234')
-    user.active = true
-    user.admin = true
-    user.save
+    @user.active = true
+    @user.admin = true
+    @user.save
   end
 end

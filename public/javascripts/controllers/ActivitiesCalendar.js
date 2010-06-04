@@ -65,7 +65,7 @@ ActivitiesCalendar.prototype = {
     var element = mc.element;
     
     if (element.hasClass('active')) {
-      var related = mc.targets(e, false).related;
+      var related = mc.getTargets(e, false).related;
       
       if (related.selfOrDescendant(this.details)) {
         this.detailsCell = element;
@@ -80,7 +80,7 @@ ActivitiesCalendar.prototype = {
   },
   
   onDetailsOut: function(e, mc) {
-    if (mc.targets(e, false).related != this.detailsCell) {
+    if (mc.getTargets(e, false).related != this.detailsCell) {
       this.hideDetails();
     }
       

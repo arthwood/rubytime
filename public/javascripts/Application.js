@@ -1,5 +1,5 @@
 var Application = function() {
-  this.flash = new Flash();
+  this.flash = new Flash($('flash'), '/images/flash');
   this.datePicker = new DatePicker(1);
   this.onResize = new CustomEvent('Application::onResize');
 
