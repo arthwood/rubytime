@@ -4,7 +4,15 @@
   .left
     .listing.activities
       .clearfix
-        = link_to 'hide users', '#', :id => :toggle_users, :style => 'display: none' if admin_or_client?
+        - if admin_or_client?
+          #activities_actions{:style => 'display: none'}
+            = link_to 'hide users', '#'
+            %span.divider
+              |
+            = link_to image_tag('csv.png'), export_activities_url(:format => :csv), :title => 'Export to CSV'
+            %span.divider
+              |
+            = link_to image_tag('pdf.png'), export_activities_url(:format => :pdf), :title => 'Export to PDF'
         %h1.left
           List of activities
       #results

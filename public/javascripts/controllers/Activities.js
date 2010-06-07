@@ -1,7 +1,7 @@
 var Activities = $E(Resources, function() {
   this.results = $('results');
   this.filterForm = $$('.filter form').first();
-  this.filterForm.onsubmit = this.onFilter.bind(this);
+  this.filterForm.onsubmit = this.onFilter.bind(this, true);
   this.onFilterSuccessD = $D(this, this.onFilterSuccess);
   this.filterUserSelect = $('activity_filter_user_id');
   
@@ -12,10 +12,17 @@ var Activities = $E(Resources, function() {
   
   this.usersVisible = true;
   
-  this.toggleUsers = $('toggle_users');
+  this.actions = $('activities_actions');
   
-  if (this.toggleUsers) {
+  if (this.actions) {
+    var links = this.actions.down('a');
+    
+    this.toggleUsers = links.first();
     this.toggleUsers.onclick = this.onToggleUsers.bind(this, true);
+    this.exportCSV = links.second();
+    this.exportPDF = links.third();
+    this.exportCSV.onclick = this.exportPDF.onclick = this.onExport.bind(this, true);
+    this.trToIdDC = this.trToId.bind(this);
   }
   
   this.onProjectsSuccessD = $D(this, this.onProjectsSuccess);
@@ -44,7 +51,7 @@ var Activities = $E(Resources, function() {
   this.onAddNew = null;
   this.onAddNewSuccess = null;
 }, {
-  onFilter: function(e) {
+  onFilter: function(f) {
     this.search();
     
     return false;
@@ -57,7 +64,10 @@ var Activities = $E(Resources, function() {
   onFilterSuccess: function(ajax) {
     this.results.setContent(ajax.getResponseText());
     
-    this.toggleUsers && this.toggleUsers.show();
+    if (this.actions) {
+      this.actions.setVisible(!this.results.firstElement().hasClass('no_results'));
+      this.updateUsersVisibility();
+    }
     
     this.initResults();
   },
@@ -207,15 +217,33 @@ var Activities = $E(Resources, function() {
   },
   
   onToggleUsers: function(a) {
-    var label = this.usersVisible ? 'show users' : 'hide users';
-    var dc = this.usersVisible ? ElementUtils.hideDC : ElementUtils.showDC;
-    
-    a.setContent(label);
-    $$('.users').each(dc);
-    
     this.usersVisible = !this.usersVisible;
+    this.updateUsersVisibility();
     
     return false;
+  },
+  
+  updateUsersVisibility: function() {
+    var label = this.usersVisible ? 'hide users' : 'show users';
+    var dc = this.usersVisible ? ElementUtils.showDC : ElementUtils.hideDC;
+    
+    this.toggleUsers.setContent(label);
+    $$('.users').each(dc);
+  },
+  
+  onExport: function(a) {
+    var url = a.href.split('?').first();
+    var ids = this.results.down('tr.activity').map(this.trToIdDC);
+    var idsQuery = ArtJs.ObjectUtils.toQueryString({ids: ids});
+    var hideUsers = Number(!this.usersVisible);
+    
+    a.href = url + '?' + idsQuery + '&hide_users=' + hideUsers;
+    
+    return true;
+  },
+  
+  trToId: function(i) {
+    return i.id.split('_').second();
   }
 });
 

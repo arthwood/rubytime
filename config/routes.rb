@@ -18,7 +18,8 @@ ActionController::Routing::Routes.draw do |map|
     :search_missed => :post, 
     :invoice => :post, 
     :day_off => :post, 
-    :revert_day_off => :delete
+    :revert_day_off => :delete,
+    :export => :get,
   }
   map.resources :projects, :has_many => :hourly_rates
   map.resources :invoices

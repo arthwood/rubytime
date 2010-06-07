@@ -1,6 +1,3 @@
-require 'fastercsv'
-require 'reports/activity_report'
-
 class Invoice < ActiveRecord::Base
   validates_presence_of :name
   
@@ -10,18 +7,12 @@ class Invoice < ActiveRecord::Base
   has_many :activities, :dependent => :nullify, :include => [:project, :user]
   
   default_scope :order => :name
-
+  
   def to_csv
-    FasterCSV.generate do |csv|
-      csv << ['Date', 'Project', 'Person', 'Time Spent', 'Comments', 'Price']
-      activities.each do |i|
-        csv << i.to_csv_row
-      end
-      csv << [nil, nil, nil, nil, 'Total:', "#{Activity.total_value(activities)}"]
-    end
+    Activity.to_csv(activities)
   end
   
   def to_pdf
-    ActivityReport.new.to_pdf(activities, name)
+    Activity.to_pdf(activities, name, false)
   end
 end

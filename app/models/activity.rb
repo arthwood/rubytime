@@ -1,3 +1,6 @@
+require 'fastercsv'
+require 'reports/activity_report'
+
 class Activity < ActiveRecord::Base
   belongs_to :user
   belongs_to :project
@@ -100,7 +103,7 @@ class Activity < ActiveRecord::Base
   end
   
   def to_csv_row
-    [date, project.name, user.name, format_time_spent_decimal(minutes), comments, 
+    [date, project.client.name, project.name, user.name, format_time_spent_decimal(minutes), comments, 
       format_currency(hourly_rate.currency, total_value)
     ]
   end
@@ -122,6 +125,20 @@ class Activity < ActiveRecord::Base
   
   def self.total_time(activities)
     activities.inject(0, &TIME_SPENT_BLOCK)
+  end
+  
+  def self.to_csv(activities)
+    FasterCSV.generate do |csv|
+      csv << ['Date', 'Client', 'Project', 'Person', 'Time Spent', 'Comments', 'Price']
+      activities.sort_by{|i| i.project.client.name}.each do |i|
+        csv << i.to_csv_row
+      end
+      csv << [nil, nil, nil, nil, 'Total:', "#{total_value(activities)}"]
+    end
+  end
+  
+  def self.to_pdf(activities, title, hide_users)
+    ActivityReport.new.to_pdf(activities, title, hide_users)
   end
   
   protected

@@ -1,10 +1,25 @@
 class ActivitiesController < ApplicationController
   before_filter :login_required, :only => [:search, :calendar]
   before_filter :editor_required, :except => [:index, :search, :calendar]
-
+  
   def index
     redirect_to login_url and return unless logged_in?
     set_filter
+  end
+  
+  def export
+    @activities = Activity.find(params[:ids], :include => [:project, :user])
+    @filename = 'activities_report'
+    @hide_users = (params[:hide_users] == '1')
+    
+    respond_to do |format|
+     format.csv {
+       send_data Activity.to_csv(@activities), :type => :csv, :filename => "#{@filename}.csv"
+     }
+     format.pdf {
+       send_data Activity.to_pdf(@activities, 'Activities', @hide_users), :type => :pdf, :filename => "#{@filename}.pdf" 
+     }
+    end
   end
   
   def search

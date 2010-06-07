@@ -15,42 +15,33 @@ class ActivityReport < Prawn::Document
   end
   
   def my_box(title, size, width, left, top)
-    bounding_box([left, bounds.height - top], :width => width) do
+    bounding_box([left, top], :width => width) do
       text title, :size => size
       yield
     end
   end
   
-  def to_pdf(activities, title)
+  def to_pdf(activities, title, hide_users)
     text title, :size => 16
     
     fill_color '000000'
     
-    mb = 20
-    
-    client_top = 30
-    
     render_items(activities, Activity::GROUP_BY_CLIENT_BLOCK) do |client, client_activities|
-      my_box("Client: #{client.name}", 12, 420, 0, client_top) do
-        project_top = 20
+      my_box("Client: #{client.name}", 12, 420, 0, cursor - 20) do
         render_items(client_activities, Activity::GROUP_BY_PROJECT_BLOCK) do |project, project_activities|
-          my_box("Project: #{project.name}", 12, 400, 20, project_top) do
-            role_top = 20
+          my_box("Project: #{project.name}", 12, 400, 20, cursor - 10) do
             render_items(project_activities, Activity::GROUP_BY_ROLE_BLOCK) do |role, role_activities|
-              my_box("Role: #{role.name}", 11, 380, 20, role_top) do
-                user_top = 20
-                render_items(role_activities, Activity::GROUP_BY_USER_BLOCK) do |user, user_activities|
-                  user_box(user_activities, user, user_top)
-                  user_top = bounds.height + mb
+              my_box("Role: #{role.name}", 11, 380, 20, cursor - 10) do
+                unless hide_users
+                  render_items(role_activities, Activity::GROUP_BY_USER_BLOCK) do |user, user_activities|
+                    user_box(user_activities, user, cursor - 10)
+                  end
                 end
               end
-              role_top = bounds.height + mb
             end
           end
-          project_top = bounds.height + mb
         end
       end
-      client_top = bounds.height + mb
     end
     
     move_down 20

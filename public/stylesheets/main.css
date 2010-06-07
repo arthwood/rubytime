@@ -296,8 +296,16 @@ p.reset_password {
 .listing.activities {
   width:560px;
 }
-#toggle_users {
+#activities_actions {
   float: right;
+}
+#activities_actions .divider {
+  vertical-align: middle;
+  margin: 0 6px;
+}
+#activities_actions img,
+#activities_actions a {
+  vertical-align: middle;
 }
 table.base {
   width: 100%;
