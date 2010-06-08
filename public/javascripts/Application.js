@@ -1,6 +1,6 @@
 var Application = function() {
   this.flash = new Flash($('flash'), '/images/flash');
-  this.datePicker = new DatePicker(1);
+  this.datePicker = new DatePicker($('main'), 1, new Point(1998, 2016));
   this.onResize = new CustomEvent('Application::onResize');
 
   window.onresize = this._onResize.bind(this);
