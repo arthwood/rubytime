@@ -12,17 +12,15 @@
       = i.label :period, 'Select period'
     .input
       = i.select :period, daterange_options(@filter.period), :include_blank => 'Select...'
-  .item.clearfix.datepicker
+  .item.clearfix
     .label
       = i.label :from, 'from'
     .input
-      = i.text_field :from, :readOnly => true
-      = image_tag 'datepicker/cal.gif'
-  .item.clearfix.datepicker
+      = i.text_field :from, :class => :datepicker
+  .item.clearfix
     .label
       = i.label :to, 'to'
     .input
-      = i.text_field :to, :readOnly => true
-      = image_tag 'datepicker/cal.gif'
+      = i.text_field :to, :class => :datepicker
   .item.last
     = i.submit 'Submit', :class => :no_label

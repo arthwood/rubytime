@@ -20,11 +20,10 @@
       = i.label :notes
     .input
       = i.text_area :notes
-  .item.clearfix.datepicker
+  .item.clearfix
     .label
       = i.label :issued_at
     .input
-      = i.text_field :issued_at, :readOnly => true
-      = image_tag 'datepicker/cal.gif'
+      = i.text_field :issued_at, :class => :datepicker
   .item.last
     = submit_tag((create_mode ? 'Create' : 'Save'), :class => :no_label)

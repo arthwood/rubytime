@@ -227,6 +227,12 @@ form .error {
 #flash span {
   vertical-align: middle;
 }
+input[type=text].datepicker {
+  width: 100px;
+}
+img.datepicker {
+  vertical-align: middle;
+}
 .datepicker_calendar {
   z-index: 2;
 }
