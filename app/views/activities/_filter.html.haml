@@ -1,7 +1,7 @@
 %h2
   Filter
 
-- form_for @filter, :url => search_activities_url, :html => {:method => :post, :id => nil, :class => nil} do |i|
+- form_for :activity_filter, :url => search_activities_url, :html => {:method => :post, :id => nil, :class => nil} do |i|
   - if admin_or_client?
     .item.clearfix
       .label

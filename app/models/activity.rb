@@ -1,4 +1,3 @@
-require 'fastercsv'
 require 'reports/activity_report'
 
 class Activity < ActiveRecord::Base
