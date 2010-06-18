@@ -187,7 +187,7 @@ class ActivitiesController < ApplicationController
   end
   
   protected
-
+  
   def set_filter
     @filter = ActivityFilter.new(@params_filter)
     
