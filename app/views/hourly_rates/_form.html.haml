@@ -5,13 +5,12 @@
 
 - form_for :hourly_rate, :url => url, :html => html do |i|
   = i.hidden_field :role_id
-  .item.clearfix.datepicker
+  .item.clearfix
     .label
       = i.label :date, 'Takes effect at'
     .input
       - date = @hourly_rate.date
-      = i.text_field :date, :value => date && format_date(date), :readOnly => true
-      = image_tag 'datepicker/cal.gif'
+      = i.text_field :date, :value => date && format_date(date), :class => :datepicker, :readOnly => true
       = error_field(i, :date)
   .item.clearfix
     .label

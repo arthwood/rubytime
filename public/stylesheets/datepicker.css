@@ -1,7 +1,7 @@
-.datepicker input {
+input.datepicker {
   width: 100px;
 }
-.datepicker img {
+img.datepicker {
   vertical-align: middle;
 }
 .datepicker_calendar {
