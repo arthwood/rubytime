@@ -52,10 +52,10 @@ class Activity < ActiveRecord::Base
     conditions['projects.client_id'] = client_id unless client_id.blank?
     scope = (invoice_filter.blank? && :all) || invoice_filter.to_sym
     from, to = filter.from, filter.to
-    from = from.blank? ? nil : Date.parse(from)
-    to = to.blank? ? nil : Date.parse(to)
+    from = from.blank? ? Date.parse : Date.parse(from)
+    to = to.blank? ? Date.current : Date.parse(to)
     
-    conditions[:date] = Range.new(from, to) if from || to
+    conditions[:date] = Range.new(from, to)
     joins = %q{
       LEFT OUTER JOIN users ON (users.id = user_id)
       LEFT OUTER JOIN projects ON (projects.id = project_id)
