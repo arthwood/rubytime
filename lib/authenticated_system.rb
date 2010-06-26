@@ -170,8 +170,7 @@ module AuthenticatedSystem
 
     def valid_remember_cookie?
       return nil unless @current_user
-      (@current_user.remember_token?) && 
-        (cookies[:auth_token] == @current_user.remember_token)
+      (@current_user.remember_token?) && (cookies[:auth_token] == @current_user.remember_token)
     end
     
     # Refresh the cookie auth token if it exists, create it otherwise
