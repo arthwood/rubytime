@@ -6,13 +6,13 @@ var NewActivity = function() {
   this.addNewActivity = $$('.add_activity').first();
   this.addNewActivity.onclick = this.onAddNewActivity.bind(this);
   
-  this.onNewActivityDC = this.onNewActivity.bind(this);
+  this.onNewActivityDC = this.onNewActivity.bind(this, true);
   this.onNewActivitySuccessD = $D(this, this.onNewActivitySuccess);
-  this.onCancelNewActivityDC = this.onCancelNewActivity.bind(this);
+  this.onCancelNewActivityDC = this.onCancelNewActivity.bind(this, true);
   
-  this.onEditActivityDC = this.onEditActivity.bind(this);
+  this.onEditActivityDC = this.onEditActivity.bind(this, true);
   this.onEditActivitySuccessD = $D(this, this.onEditActivitySuccess);
-  this.onCancelEditActivityDC = this.onCancelEditActivity.bind(this);
+  this.onCancelEditActivityDC = this.onCancelEditActivity.bind(this, true);
   
   this.initNewForm();
   
@@ -53,28 +53,27 @@ NewActivity.prototype = {
   },
   
   updateContainerPosition: function() {
-    var w = this.container.getSize().x;
-    var rect = this.menu.getLayout();
+    var w = this.container.getSize(true).x;
+    var rect = this.menu.getBounds();
     
     this.container.setPosition(rect.getRightBottom().sub(new Point(w, 0)));
   },
   
   onAddNewActivity: function(e) {
     this.controller && this.newActivityUserId && (this.newActivityUserId.value = this.controller.userId);
-    this.container.show();
-    this.updateContainerPosition();
+    this.displayContainer();
     
     return false;
   },
   
-  onCancelNewActivity: function(e) {
+  onCancelNewActivity: function(a) {
     app.datePicker.calendar.hide();
     this.container.hide();
     
     return false;
   },
   
-  onCancelEditActivity: function(e) {
+  onCancelEditActivity: function(a) {
     app.datePicker.calendar.hide();
     this.restoreForm();
     
@@ -97,13 +96,11 @@ NewActivity.prototype = {
     }
     
     this.newForm.hide();
-    this.container.show();
+    this.displayContainer();
     this.initEditForm();
   },
   
-  onNewActivity: function(e) {
-    var form = e.currentTarget;
-    
+  onNewActivity: function(form) {
     $post(form.action, form.serialize(), this.onNewActivitySuccessD);
     
     return false;
@@ -126,9 +123,7 @@ NewActivity.prototype = {
     }
   },
   
-  onEditActivity: function(e) {
-    var form = e.currentTarget;
-    
+  onEditActivity: function(form) {
     $put(form.action, form.serialize(), this.onEditActivitySuccessD);
     
     return false;
@@ -149,6 +144,11 @@ NewActivity.prototype = {
       this.initEditForm();
       app.flash.show('error', 'There were errors while updating the activity');
     }
+  },
+  
+  displayContainer: function() {
+    this.container.show();
+    this.updateContainerPosition();
   }
 };
 
