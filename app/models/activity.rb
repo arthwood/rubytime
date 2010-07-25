@@ -1,4 +1,5 @@
 require 'reports/activity_report'
+require 'fastercsv'
 
 class Activity < ActiveRecord::Base
   belongs_to :user
@@ -103,7 +104,7 @@ class Activity < ActiveRecord::Base
   
   def to_csv_row
     [date, project.client.name, project.name, user.name, format_time_spent_decimal(minutes), comments, 
-      format_currency(hourly_rate.currency, total_value)
+      hourly_rate && format_currency(hourly_rate.currency, total_value)
     ]
   end
   

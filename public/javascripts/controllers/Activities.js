@@ -235,6 +235,7 @@ var Activities = $E(Resources, function() {
     var url = a.href.split('?').first();
     var ids = this.results.down('tr.activity').map(this.trToIdDC);
     var idsQuery = ArtJs.ObjectUtils.toQueryString({ids: ids});
+    
     var hideUsers = Number(!this.usersVisible);
     
     a.href = url + '?' + idsQuery + '&hide_users=' + hideUsers;

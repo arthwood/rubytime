@@ -11,7 +11,8 @@ class ActivityReport < Prawn::Document
   }
   
   ACTIVITY_DATA_ROW_MAPPING = Proc.new do |i| 
-    [i.date, format_time_spent_decimal(i.minutes), i.comments, i.invoiced_at, format_currency_hr(i.hourly_rate)]
+    hr = i.hourly_rate
+    [i.date, format_time_spent_decimal(i.minutes), i.comments, i.invoiced_at, hr && format_currency_hr(hr)]
   end
   
   def my_box(title, size, width, left, top)
