@@ -1,3 +1,4 @@
+.bundle/config
 .idea/*
 config/database.yml
 log/*
