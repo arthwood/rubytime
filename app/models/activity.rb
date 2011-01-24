@@ -1,8 +1,8 @@
-require 'reports/activity_report'
+require 'activity_report'
 require 'fastercsv'
 
 class Activity < ActiveRecord::Base
-  belongs_to :user
+  belongs_to :user_mailer
   belongs_to :project
   belongs_to :invoice
   
@@ -11,14 +11,15 @@ class Activity < ActiveRecord::Base
   validates_format_of :time_spent, :with => /^\d{1,2}:\d{2}$/
   validate :time_spent_values
   
-  named_scope :for_projects, lambda {|p| {:conditions => {:project_id => p}}}
-  named_scope :for_day, lambda {|date| {:conditions => {:date => date}}}
-  named_scope :invoiced, :conditions => 'invoice_id IS NOT NULL'
-  named_scope :not_invoiced, :conditions => 'invoice_id IS NULL'
+  scope :for_projects, lambda {|p| {:conditions => {:project_id => p}}}
+  scope :for_day, lambda {|date| {:conditions => {:date => date}}}
+  scope :invoiced, where('invoice_id IS NOT NULL')
+  scope :not_invoiced, where('invoice_id IS NULL')
   
   default_scope :order => 'DATE DESC'
   
   after_save :check_day_off
+  after_validation :set_minutes
   
   GROUP_BY_CLIENT_BLOCK = Proc.new {|i| i.project.client}
   GROUP_BY_PROJECT_BLOCK = Proc.new {|i| i.project}
@@ -33,7 +34,7 @@ class Activity < ActiveRecord::Base
   end
   
   def time_spent
-    @time_spent || format_time_spent(minutes)
+    @time_spent || Rubytime::Util.format_time_spent(minutes)
   end
   
   def time_spent=(v)
@@ -103,7 +104,7 @@ class Activity < ActiveRecord::Base
   end
   
   def to_csv_row
-    [date, project.client.name, project.name, user.name, format_time_spent_decimal(minutes), comments, 
+    [date, project.client.name, project.name, user.name, Rubytime::Util.format_time_spent_decimal(minutes), comments, 
       hourly_rate && format_currency(hourly_rate.currency, total_value)
     ]
   end
@@ -143,7 +144,7 @@ class Activity < ActiveRecord::Base
   
   protected
   
-  def after_validation
+  def set_minutes
     if @time_spent
       arr = @time_spent.split(':')
       self.minutes = 60 * arr.first.to_i + arr.last.to_i

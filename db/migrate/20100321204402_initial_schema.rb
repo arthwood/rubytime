@@ -18,8 +18,7 @@ class InitialSchema < ActiveRecord::Migration
       t.string :login, :limit => 40, :null => false
       t.string :name, :limit => 100, :null => false
       t.string :email, :limit => 100, :null => false
-      t.string :crypted_password, :limit => 40, :null => false
-      t.string :salt, :limit => 40, :null => false
+      t.string :password_hash, :limit => 40, :null => false
       t.datetime :created_at
       t.datetime :updated_at
       t.string :remember_token, :limit => 40

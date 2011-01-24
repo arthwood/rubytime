@@ -88,7 +88,10 @@ module ApplicationHelper
   end
   
   def daterange(label, from, to)
-    ["#{label} (#{format_date(from, '/')} - #{format_date(to, '/')})", "#{format_date(from)}/#{format_date(to)}"]
+    [
+      "#{label} (#{Rubytime::Util.format_date(from, '/')} - #{Rubytime::Util.format_date(to, '/')})", 
+      "#{Rubytime::Util.format_date(from)}/#{Rubytime::Util.format_date(to)}"
+    ]
   end
   
   def activity_field_id(name)

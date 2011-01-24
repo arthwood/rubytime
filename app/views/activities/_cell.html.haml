@@ -3,4 +3,4 @@
 %p.total
   Total:
   %span
-    = format_time_spent(activities.inject(0) {|mem, i| mem + i.minutes})
+    = Rubytime::Util.format_time_spent(activities.inject(0) {|mem, i| mem + i.minutes})

@@ -7,29 +7,31 @@ class SessionsController < ApplicationController
     @login = s[:login]
     @password = s[:password]
     @remember_me = s[:remember_me] 
-    logout_keeping_session!
-    user = User.authenticate(@login, @password)
     
-    if user
+    user = User.find_by_login(@login)
+    
+    if user.password == s[:password]
       reset_session
       self.current_user = user
-      new_cookie_flag = (@remember_me.to_i == 1)
-      handle_remember_cookie! new_cookie_flag
-      redirect_back_or_default(root_url)
+      #new_cookie_flag = (@remember_me.to_i == 1)
       flash[:info] = 'Logged in successfully'
+      
+      redirect_back_or(root_url)
     else
       note_failed_signin
+      
       render :action => :new
     end
   end
-
+  
   def destroy
-    logout_killing_session!
     flash[:info] = 'You have been logged out.'
-    redirect_back_or_default(root_url)
+    
+    redirect_back_or(root_url)
   end
-
-protected
+  
+  protected
+  
   # Track failed login attempts
   def note_failed_signin
     flash[:error] = "Couldn't log you in as '#{@login}'"

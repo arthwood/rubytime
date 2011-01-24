@@ -1,5 +1,4 @@
-.bundle/config
-.idea/*
-config/database.yml
-log/*
-db/schema.rb
+.bundle
+db/*.sqlite3
+log/*.log
+tmp/**/*

@@ -1,14 +1,7 @@
-# Filters added to this controller apply to all controllers in the application.
-# Likewise, all the methods added will be available for all controllers.
-
 class ApplicationController < ActionController::Base
-  helper :all # include all helpers, all the time
-  protect_from_forgery # See ActionController::RequestForgeryProtection for details
-
-  # Scrub sensitive parameters from your log
-  # filter_parameter_logging :password
+  protect_from_forgery
   
-  include AuthenticatedSystem
+  include RubytimeHelper
   
   before_filter :init_activity
   
@@ -16,5 +9,33 @@ class ApplicationController < ActionController::Base
   
   def init_activity
     @activity = Activity.new
+  end
+  
+  def redirect_back_or(default, options = {})
+    redirect_to(session[:return_to] || params[:return_to] || default)
+    
+    session[:return_to] = nil
+  end
+  
+  def store_location(url = nil)
+    session[:return_to] = url || request.referer
+  end
+  
+  def login_required
+    unauthorized unless logged_in?
+  end
+  
+  def admin_required
+    unauthorized unless logged_in? && current_user.admin?
+  end
+  
+  def unauthorized(path = root_path)
+    flash[:notice] = 'You need to sign in to perform this action.'
+    
+    redirect_to(path)
+  end
+  
+  def clear_session
+    session.delete(:user_id)
   end
 end

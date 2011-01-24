@@ -12,7 +12,7 @@
     
 %table.calendar{:cellspacing => 1}
   %caption
-    = link_to '<< Previous', calendar_activities_path(:current => @current.last_month, :user_id => user_id)
+    = link_to '<< Previous', calendar_activities_path(:current => @current.prev_month, :user_id => user_id)
     %span= @current.strftime('%B %Y')
     = link_to 'Next >>', calendar_activities_path(:current => @current.next_month, :user_id => user_id)
   %tr

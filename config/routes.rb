@@ -1,35 +1,38 @@
-ActionController::Routing::Routes.draw do |map|
-  map.resources :projects
+Rubytime::Application.routes.draw do
+  resources :projects
   
-  map.logout '/logout', :controller => :sessions, :action => :destroy
-  map.login '/login', :controller => :sessions, :action => :new
-  map.register '/register', :controller => :users, :action => :create
-  map.signup '/signup', :controller => :users, :action => :new
-  map.reset '/reset/:key', :controller => :users, :action => :reset
+  resources :users do
+    collection do
+      get :request_password
+      post :do_request_password
+    end
+  end
   
-  map.resources :users, :collection => {:request_password => :get, :do_request_password => :post}
+  resource :sessions
   
-  map.resource :sessions
+  resources :activities do
+    collection do
+      get :calendar, :missed, :export
+      post :search, :invoice, :day_off
+      delete :revert_day_off
+    end
+  end
   
-  map.resources :activities, :collection => {
-    :calendar => :get, 
-    :search => :post, 
-    :missed => :get, 
-    :search_missed => :post, 
-    :invoice => :post, 
-    :day_off => :post, 
-    :revert_day_off => :delete,
-    :export => :get,
-  }
-  map.resources :projects, :has_many => :hourly_rates
-  map.resources :invoices
-  map.resources :clients
-  map.resources :roles
-  map.resources :currencies
-  map.resources :settings
+  resources :projects do
+    resources :hourly_rates
+  end
   
-  map.root :controller => :activities
+  resources :invoices
+  resources :clients
+  resources :roles
+  resources :currencies
+  resources :settings
   
-  map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
+  root :to => 'activities#index'
+  
+  match '/logout' => 'sessions#destroy', :as => :logout
+  match '/login' => 'sessions#new', :as => :login
+  match '/register' => 'users#create', :as => :register
+  match '/signup' => 'users#new', :as => :signup
+  match '/reset/:key' => 'users#reset', :as => :reset
 end
