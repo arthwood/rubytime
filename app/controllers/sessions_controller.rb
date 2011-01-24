@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
     
     user = User.find_by_login(@login)
     
-    if user.password == s[:password]
+    if user.present? && user.password == s[:password]
       reset_session
       self.current_user = user
       #new_cookie_flag = (@remember_me.to_i == 1)
