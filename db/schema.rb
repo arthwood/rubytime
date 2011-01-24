@@ -115,7 +115,7 @@ ActiveRecord::Schema.define(:version => 20100325151534) do
     t.string   "login",                     :limit => 40,                     :null => false
     t.string   "name",                      :limit => 100,                    :null => false
     t.string   "email",                     :limit => 100,                    :null => false
-    t.string   "password_hash",             :limit => 40,                     :null => false
+    t.string   "password_hash",                                               :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "remember_token",            :limit => 40
