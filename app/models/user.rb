@@ -16,6 +16,8 @@ class User < ActiveRecord::Base
   
   validates_inclusion_of :active, :in => [true, false]
   
+  validate :password_validation
+  
   belongs_to :client
   belongs_to :role
   
@@ -30,6 +32,8 @@ class User < ActiveRecord::Base
   scope :clients, where('client_id IS NOT NULL')
   scope :not_admins, where('admin = 0')
   scope :admins, where('admin = 1')
+  
+  attr_accessor :password_confirmation
   
   def password
     @password ||= Password.new(password_hash)
@@ -54,5 +58,13 @@ class User < ActiveRecord::Base
 
   def editor?
     admin? || employee?
+  end
+  
+  private
+  
+  def password_validation
+    unless password == password_hash || password == Password.new(password_confirmation)
+      errors.add(:password, "doesn't match it's confirmation")
+    end
   end
 end

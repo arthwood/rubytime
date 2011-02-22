@@ -44,8 +44,9 @@ module ApplicationHelper
     yes ? 'yes' : 'no'
   end
   
-  def error_field(form, attr)
-    error_message_on(form.object_name, attr, :css_class => :error)
+  def error_field(record, attr)
+    errors = record.errors[attr]
+    content_tag(:div, errors, :class => :error) unless errors.empty?
   end
   
   def row_class(i)
@@ -72,7 +73,13 @@ module ApplicationHelper
     create_mode = object.new_record?
     name = object.class.name.downcase
     
-    create_mode ? "Add new #{name}" : "Edit #{name} " + content_tag(:span, "(or #{link_to('add new', polymorphic_path(object, :action => :new))})")
+    if create_mode 
+      "Add new #{name}"
+    else
+      link = link_to('add new', new_polymorphic_path(object))
+      span = content_tag(:span, "(or #{link})")
+      ("Edit #{name} #{span}")
+    end
   end
   
   def daterange_options(selected = nil)

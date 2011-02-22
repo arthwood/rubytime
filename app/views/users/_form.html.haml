@@ -9,60 +9,60 @@
       = i.label :group, 'Type'
     .input
       = i.select :group, [['Employee', 0], ["Client's User", 1]]
-      = error_field(i, :type)
+      = error_field(@user, :type)
   .item.clearfix{:style => 'display: none'}
     .label
       = i.label :role_id, 'Role'
     .input
       = i.select :role_id, options_from_collection_for_select(Role.all, :id, :name, @user.role_id)
-      = error_field(i, :role_id)
+      = error_field(@user, :role_id)
   .item.clearfix{:style => 'display: none'}
     .label
       = i.label :client_id, 'Client'
     .input
       = i.select :client_id, options_from_collection_for_select(Client.all, :id, :name, @user.client_id)
-      = error_field(i, :client_id)
+      = error_field(@user, :client_id)
   .item.clearfix
     .label
       = i.label :name
     .input
       = i.text_field :name
-      = error_field(i, :name)
+      = error_field(@user, :name)
   .item.clearfix
     .label
       = i.label :login
     .input
       = i.text_field :login
-      = error_field(i, :login)
+      = error_field(@user, :login)
   .item.clearfix
     .label
       = i.label :email
     .input
       = i.text_field :email
-      = error_field(i, :email)
+      = error_field(@user, :email)
   .item.clearfix
     .label
       = i.label :password
     .input
       = i.password_field :password
-      = error_field(i, :password)
+      = error_field(@user, :password)
   .item.clearfix
     .label
       = i.label :password_confirmation
     .input
       = i.password_field :password_confirmation
-      = error_field(i, :password_confirmation)
+      = error_field(@user, :password_confirmation)
   .item.clearfix
     .label
       = i.label :active
     .input
       = i.check_box :active
-      = error_field(i, :active)
+      = error_field(@user, :active)
   .item.clearfix
     .label
       = i.label :admin
     .input
       = i.check_box :admin
-      = error_field(i, :admin)
+      = error_field(@user, :admin)
   .item.last
     = submit_tag((create_mode ? 'Create' : 'Save'), :class => :no_label)

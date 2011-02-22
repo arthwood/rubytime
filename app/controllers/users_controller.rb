@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   before_filter :admin_required, :except => [:do_request_password, :reset]
   
   def index
-    @user = User.new
+    @user = User.new(:password => '')
     @admins = User.admins
     @employees = User.employees.not_admins
     @clients_users = User.clients.not_admins

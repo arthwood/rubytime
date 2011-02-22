@@ -8,26 +8,26 @@
         = i.label :user_id, 'User', :for => activity_field_id(:user_id)
       .input
         = i.select :user_id, options_from_collection_for_select(User.employees, :id, :name, @activity.user_id), {}, :id => activity_field_id(:user_id)
-        = error_field(i, :user_id)
+        = error_field(@activity, :user_id)
   .item.clearfix
     .label
       = i.label :project_id, 'Project', :for => activity_field_id(:project_id)
     .input
       = i.select :project_id, options_from_collection_for_select(Project.all, :id, :name, @activity.project_id), {}, :id => activity_field_id(:project_id)
-      = error_field(i, :project_id)
+      = error_field(@activity, :project_id)
   .item.clearfix
     .label
       = i.label :date, 'Date', :for => activity_field_id(:date)
     .input
       - date = @activity.date
       = i.text_field :date, :id => activity_field_id(:date), :value => date && format_date(date), :class => :datepicker, :readOnly => true
-      = error_field(i, :date)
+      = error_field(@activity, :date)
   .item.clearfix
     .label
       = i.label :time_spent, 'Time spent', :for => activity_field_id(:time_spent)
     .input
       = i.text_field :time_spent, :id => activity_field_id(:time_spent)
-      = error_field(i, :time_spent)
+      = error_field(@activity, :time_spent)
     .note.no_label
       e.g. 7:30
   .item.clearfix
@@ -35,7 +35,7 @@
       = i.label :comments, 'Comments', :for => activity_field_id(:comments)
     .input
       = i.text_area :comments, :id => activity_field_id(:comments)
-      = error_field(i, :comments)
+      = error_field(@activity, :comments)
   .item.last
     = i.submit((create_mode ? 'Add' : 'Save'), :class => :no_label)
     or
