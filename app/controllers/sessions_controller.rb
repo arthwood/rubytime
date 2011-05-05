@@ -5,36 +5,41 @@ class SessionsController < ApplicationController
   def create
     s = params[:session]
     @login = s[:login]
-    @password = s[:password]
-    @remember_me = s[:remember_me] 
     
-    user = User.find_by_login(@login)
+    @user = User.find_by_login(@login)
     
-    if user.present? && user.password == s[:password]
-      reset_session
-      self.current_user = user
-      #new_cookie_flag = (@remember_me.to_i == 1)
-      flash[:info] = 'Logged in successfully'
-      
-      redirect_back_or(root_url)
-    else
-      note_failed_signin
+    unless @user.present?
+      note_failed_signin("There's no user '#{@login}'")
       
       render :action => :new
+    else
+      #@remember_me = s[:remember_me]
+      
+      if @user.password == s[:password]
+        reset_session
+        self.current_user = @user
+        flash[:info] = 'Logged in successfully'
+        
+        redirect_back_or(root_url)
+      else
+        note_failed_signin('Invalid password')
+        
+        render :action => :new
+      end
     end
   end
   
   def destroy
+    reset_session
     flash[:info] = 'You have been logged out.'
-    
     redirect_back_or(root_url)
   end
   
   protected
   
   # Track failed login attempts
-  def note_failed_signin
-    flash[:error] = "Couldn't log you in as '#{@login}'"
-    logger.warn "Failed login for '#{@login}' from #{request.remote_ip} at #{Time.now.utc}"
+  def note_failed_signin(message)
+    flash[:error] = message
+    logger.warn "Failed login for '#{@login}' from #{request.remote_ip} at #{Time.now.utc} (#{message})"
   end
 end

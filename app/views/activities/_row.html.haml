@@ -1,12 +1,12 @@
-- invoiced = !activity.invoice_id.nil?
-%tr[activity]{:class => row_class(row_counter), :title => activity.comments}
+- invoiced = activity.invoice_id.present?
+%tr[activity]{:class => row_class(activity_counter), :title => activity.comments}
   - if admin?
     %td.calign.first= check_box_tag :select, 1, false, :id => nil unless invoiced 
   %td.calign= activity.date
   %td.calign= activity.time_spent
   - if admin_or_client?
     %td= (invoice = activity.invoice) && "#{invoice.name} (#{activity.invoiced_at})"
-    %td.calign= (hr = activity.hourly_rate) && format_currency_hr(hr)
+    %td.calign= (hr = activity.hourly_rate) && Rubytime::Util.format_currency_hr(hr)
   - unless client?
     %td.actions.ralign
       - unless invoiced

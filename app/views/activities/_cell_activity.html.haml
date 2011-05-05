@@ -3,7 +3,7 @@
     %span.name
       = (project = activity.project) && project.name
     %span
-      = "(#{content_tag(:span, activity.time_spent, :class => :time)})" 
+      = "(#{content_tag(:span, activity.time_spent, :class => :time)})".html_safe
   %p.comments
     = activity.comments
     

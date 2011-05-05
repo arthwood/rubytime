@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   before_filter :admin_required, :except => [:do_request_password, :reset]
   
   def index
-    @user = User.new(:password => '')
+    @user = User.new
     @admins = User.admins
     @employees = User.employees.not_admins
     @clients_users = User.clients.not_admins
@@ -29,7 +29,9 @@ class UsersController < ApplicationController
     else
       flash.now[:error] = "User couldn't be created"
       @users = User.all
-      @employees, @clients_users = @users.partition {|i| i.employee?}
+      @admins = User.admins
+      @employees = User.employees.not_admins
+      @clients_users = User.clients.not_admins
       
       render :action => :index
     end
@@ -87,7 +89,7 @@ class UsersController < ApplicationController
     else
       @user.reset_login_key!
       UserMailer.deliver_reset(@user)
-      flash[:notice] =  'Password reset email sent.'
+      flash[:notice] = 'Password reset email sent.'
     end
   end
   

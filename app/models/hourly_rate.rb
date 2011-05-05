@@ -5,7 +5,7 @@ class HourlyRate < ActiveRecord::Base
   
   default_scope :order => 'date DESC'
   
-  named_scope :with_role, lambda {|i| {:conditions => {:role_id => i.id}}}
+  scope :with_role, lambda {|i| {:conditions => {:role_id => i.id}}}
   
   def successor
     project.hourly_rates.with_role(role).first(:conditions => "date > '#{date}'", :order => 'date ASC')

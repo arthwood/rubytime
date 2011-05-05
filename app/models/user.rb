@@ -5,18 +5,16 @@ class User < ActiveRecord::Base
   validates_length_of       :login,    :within => 3..40
   validates_uniqueness_of   :login
   validates_format_of       :login, :with => /\A\w[\w\.\-_@]+\z/
-
   validates_format_of       :name, :with => /\A[^[:cntrl:]\\<>\/&]*\z/, :allow_nil => true
   validates_length_of       :name, :maximum => 100
-
   validates_presence_of     :email
   validates_length_of       :email, :within => 6..100 #r@a.wk
   validates_uniqueness_of   :email
   validates_format_of       :email, :with => /\A[\w\.%\+\-]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2}|com|org|net|edu|gov|mil|biz|info|mobi|name|aero|jobs|museum)\z/i
-  
-  validates_inclusion_of :active, :in => [true, false]
-  
-  validate :password_validation
+  validates_inclusion_of    :active, :in => [true, false]
+  validates_presence_of     :password_hash
+  validates_presence_of     :password_confirmation, :if => :password_hash_changed?
+  validates_confirmation_of :password, :if => :password_hash_changed?
   
   belongs_to :client
   belongs_to :role
@@ -36,7 +34,11 @@ class User < ActiveRecord::Base
   attr_accessor :password_confirmation
   
   def password
-    @password ||= Password.new(password_hash)
+    if password_hash.nil?
+      @password = nil
+    else
+      @password ||= Password.new(password_hash)
+    end 
   end
 
   def password=(new_password)
@@ -58,13 +60,5 @@ class User < ActiveRecord::Base
 
   def editor?
     admin? || employee?
-  end
-  
-  private
-  
-  def password_validation
-    unless password == password_hash || password == Password.new(password_confirmation)
-      errors.add(:password, "doesn't match it's confirmation")
-    end
   end
 end

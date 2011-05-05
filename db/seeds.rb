@@ -4,4 +4,6 @@
 # Examples:
 #
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
-#   Mayor.create(:name => 'Daley', :city => cities.first)
+admin = User.new(CONFIG[:admin])
+admin.password_confirmation = CONFIG[:admin][:password]
+admin.save!

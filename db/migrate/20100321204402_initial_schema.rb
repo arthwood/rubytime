@@ -1,5 +1,14 @@
 class InitialSchema < ActiveRecord::Migration
   def self.up
+    create_table :sessions do |t|
+      t.string :session_id, :null => false
+      t.text :data
+      t.timestamps
+    end
+
+    add_index :sessions, :session_id
+    add_index :sessions, :updated_at
+    
     create_table :roles do |t|
       t.string :name, :limit => 40, :null => false
       t.boolean :can_manage_financial_data, :null => false, :default => false
@@ -27,6 +36,7 @@ class InitialSchema < ActiveRecord::Migration
       t.boolean :admin, :null => false, :default => false
       t.references :role
       t.references :client
+      t.string :login_key
     end
     
     add_index :users, :login, :unique => true
@@ -67,6 +77,8 @@ class InitialSchema < ActiveRecord::Migration
       t.references :user, :null => false
       t.references :invoice
       t.date :invoiced_at
+      t.decimal :value, :precision => 8, :scale => 2
+      t.references :currency
       t.timestamps
     end
     
@@ -105,8 +117,9 @@ class InitialSchema < ActiveRecord::Migration
       t.string :free_days_access_key, :size => 50, :null => false
     end
   end
-
+  
   def self.down
+    drop_table :sessions
     drop_table :roles
     drop_table :clients
     drop_table :users

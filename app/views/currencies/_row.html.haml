@@ -1,9 +1,9 @@
-%tr{:class => row_class(row_counter)}
+%tr{:class => row_class(currency_counter)}
   %td= currency.name
   %td= currency.plural
   %td.calign= currency.symbol
   %td.calign= verbalize(currency.prefix)
-  %td= format_currency(currency, '45.99')
+  %td= Rubytime::Util.format_currency(currency, '45.99')
   %td.actions.ralign
     = link_to image_tag('pencil.png'), edit_currency_url(currency)
     = link_to image_tag('cross.png'), currency_url(currency)

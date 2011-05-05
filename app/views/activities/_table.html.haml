@@ -16,7 +16,7 @@
       %td.ralign{:colspan => admin? ? 2 : 1}
         Total:
       %td.calign
-        = format_time_spent(Activity.total_time(activities))
+        = Rubytime::Util.format_time_spent(Activity.total_time(activities))
       %td{:colspan => admin? ? 2 : 1}
         = Activity.total_value(activities) 
 

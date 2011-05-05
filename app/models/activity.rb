@@ -1,10 +1,11 @@
 require 'activity_report'
-require 'fastercsv'
+require 'csv'
 
 class Activity < ActiveRecord::Base
-  belongs_to :user_mailer
+  belongs_to :user
   belongs_to :project
   belongs_to :invoice
+  belongs_to :currency
   
   validates_presence_of :comments, :date, :project_id, :user_id
   validates_uniqueness_of :project_id, :scope => [:date, :user_id], :message => 'activity for this project already exists at that day'
@@ -105,7 +106,7 @@ class Activity < ActiveRecord::Base
   
   def to_csv_row
     [date, project.client.name, project.name, user.name, Rubytime::Util.format_time_spent_decimal(minutes), comments, 
-      hourly_rate && format_currency(hourly_rate.currency, total_value)
+      hourly_rate && Rubytime::Util.format_currency(hourly_rate.currency, total_value)
     ]
   end
   
@@ -116,7 +117,7 @@ class Activity < ActiveRecord::Base
   def self.total_value(activities)
     by_currency = activities.reject {|i| i.hourly_rate.nil?}.group_by(&GROUP_BY_CURRENCY_BLOCK)
     by_currency.map do |k, v|
-      format_currency(k, v.inject(0) {|mem, i| mem + i.total_value})
+      Rubytime::Util.format_currency(k, v.inject(0) {|mem, i| mem + i.total_value})
     end.join(' + ')
   end
   
@@ -129,7 +130,7 @@ class Activity < ActiveRecord::Base
   end
   
   def self.to_csv(activities)
-    FasterCSV.generate do |csv|
+    CSV.generate do |csv|
       csv << ['Date', 'Client', 'Project', 'Person', 'Time Spent', 'Comments', 'Price']
       activities.sort_by{|i| i.project.client.name}.each do |i|
         csv << i.to_csv_row

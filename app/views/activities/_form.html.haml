@@ -20,7 +20,7 @@
       = i.label :date, 'Date', :for => activity_field_id(:date)
     .input
       - date = @activity.date
-      = i.text_field :date, :id => activity_field_id(:date), :value => date && format_date(date), :class => :datepicker, :readOnly => true
+      = i.text_field :date, :id => activity_field_id(:date), :value => date && Rubytime::Util.format_date(date), :class => :datepicker, :readOnly => true
       = error_field(@activity, :date)
   .item.clearfix
     .label

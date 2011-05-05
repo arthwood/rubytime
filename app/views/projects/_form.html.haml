@@ -9,19 +9,19 @@
       = i.label :name
     .input
       = i.text_field :name
-      = error_field(i, :name)
+      = error_field(@project, :name)
   .item.clearfix
     .label
       = i.label :description
     .input
       = i.text_field :description
-      = error_field(i, :description)
+      = error_field(@project, :description)
   .item.clearfix
     .label
       = i.label :client_id, 'Client'
     .input
       = i.select :client_id, options_from_collection_for_select(Client.all, :id, :name, @project.client_id)
-      = error_field(i, :client_id)
+      = error_field(@project, :client_id)
   .item.clearfix
     .label
       = i.label :active

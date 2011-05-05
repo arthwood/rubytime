@@ -29,6 +29,10 @@ class ApplicationController < ActionController::Base
     unauthorized unless logged_in? && current_user.admin?
   end
   
+  def editor_required
+    unauthorized unless logged_in? && current_user.editor?
+  end
+  
   def unauthorized(path = root_path)
     flash[:notice] = 'You need to sign in to perform this action.'
     

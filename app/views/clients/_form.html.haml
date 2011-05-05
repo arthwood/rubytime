@@ -3,68 +3,67 @@
 %h2
   = form_header(@client) 
 
-- form_tag (create_mode ? clients_url : client_url(@client)), :method => (create_mode ? :post : :put) do
-  - fields_for :client do |i|
-    .item.clearfix
-      .label
-        = i.label :name
-      .input
-        = i.text_field :name
-        = error_field(i, :name)
-    .item.clearfix
-      .label
-        = i.label :email
-      .input
-        = i.text_field :email
-    .item.clearfix
-      .label
-        = i.label :description
-      .input
-        = i.text_area :description
-    .item.clearfix
-      .label
-        = i.label :active
-      .input
-        = i.check_box :active
+= form_for @client, (create_mode ? clients_url : client_url(@client)), :method => (create_mode ? :post : :put) do |i|
+  .item.clearfix
+    .label
+      = i.label :name
+    .input
+      = i.text_field :name
+      = error_field(@client, :name)
+  .item.clearfix
+    .label
+      = i.label :email
+    .input
+      = i.text_field :email
+  .item.clearfix
+    .label
+      = i.label :description
+    .input
+      = i.text_area :description
+  .item.clearfix
+    .label
+      = i.label :active
+    .input
+      = i.check_box :active
   - if create_mode
     %p
       Default user for client:
-    - fields_for :user do |i|
+    = fields_for @user do |i|
       .item.clearfix
         .label
           = i.label :name
         .input
           = i.text_field :name
-          = error_field(i, :name)
+          = error_field(@user, :name)
       .item.clearfix
         .label
           = i.label :login
         .input
           = i.text_field :login
-          = error_field(i, :login)
+          = error_field(@user, :login)
       .item.clearfix
         .label
           = i.label :email
         .input
           = i.text_field :email
-          = error_field(i, :email)
+          = error_field(@user, :email)
       .item.clearfix
         .label
           = i.label :password
         .input
           = i.password_field :password
-          = error_field(i, :password)
+          = error_field(@user, :password)
       .item.clearfix
         .label
           = i.label :password_confirmation
         .input
           = i.password_field :password_confirmation
-          = error_field(i, :password_confirmation)
+          = error_field(@user, :password_confirmation)
       .item.clearfix
         .label
           = i.label :active
         .input
           = i.check_box :active
-        
+
   .item.last
     = submit_tag((create_mode ? 'Create' : 'Save'), :class => :no_label)

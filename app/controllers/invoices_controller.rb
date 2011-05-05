@@ -14,7 +14,7 @@ class InvoicesController < ApplicationController
   
   def show
     @invoice = Invoice.find(params[:id])
-    @filename = "invoice_#{@invoice.client.name}_#{format_date(Date.current)}"
+    @filename = "invoice_#{@invoice.client.name}_#{Rubytime::Util.format_date(Date.current)}"
     
     respond_to do |format|
      format.csv {
@@ -23,7 +23,7 @@ class InvoicesController < ApplicationController
      format.pdf {
        send_data @invoice.to_pdf, :type => :pdf, :filename => "#{@filename}.pdf" 
      }
-    end  
+    end
   end
   
   def create

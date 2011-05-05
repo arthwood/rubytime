@@ -46,7 +46,7 @@ module ApplicationHelper
   
   def error_field(record, attr)
     errors = record.errors[attr]
-    content_tag(:div, errors, :class => :error) unless errors.empty?
+    content_tag(:div, errors.first, :class => :error) unless errors.empty?
   end
   
   def row_class(i)
@@ -77,8 +77,8 @@ module ApplicationHelper
       "Add new #{name}"
     else
       link = link_to('add new', new_polymorphic_path(object))
-      span = content_tag(:span, "(or #{link})")
-      ("Edit #{name} #{span}")
+      span = content_tag(:span, "(or #{link})".html_safe)
+      "Edit #{name} #{span}".html_safe
     end
   end
   

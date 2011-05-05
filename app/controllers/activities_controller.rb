@@ -4,7 +4,7 @@ class ActivitiesController < ApplicationController
   
   def index
     redirect_to login_url and return unless logged_in?
-    set_filter
+    set_activity_filter(nil)
   end
   
   def export
@@ -23,9 +23,7 @@ class ActivitiesController < ApplicationController
   end
   
   def search
-    @params_filter = params[:activity_filter]
-    
-    set_filter
+    set_activity_filter(params[:filter])
     
     @activities = Activity.search(@filter)
     
@@ -70,12 +68,11 @@ class ActivitiesController < ApplicationController
   end
   
   def missed
-    set_missed_activities_filter
+    set_missed_activity_filter(nil)
   end
   
   def search_missed
-    @params_filter = params[:missed_activity_filter]
-    set_missed_activities_filter
+    set_missed_activity_filter(params[:filter])
     @results = Activity.search_missed(@filter)
     
     render :partial => 'activities/missed/results'
@@ -141,7 +138,7 @@ class ActivitiesController < ApplicationController
     
     @activities = Activity.find(activity_ids)
     t = Date.current
-    hourly_rates = HourlyRate.all(:order => 'date DESC')
+    hourly_rates = @client.projects.map(&:hourly_rates).flatten.sort_by(&:date)
     activity_and_hr = @activities.map do |i|
       {:activity => i, :hr => hourly_rates.detect {|j| 
         j.role_id == i.user.role_id && j.project_id == i.project_id && j.date <= t
@@ -163,7 +160,6 @@ class ActivitiesController < ApplicationController
         hr = i[:hr]
         activity.update_attributes(:invoice_id => invoice_id, :invoiced_at => date, :value => hr.value, :currency_id => hr.currency_id)
       end
-      
     else
       json[:error] = "Some of the activities don't have hourly rates defined"
       json[:bad_activities] = bad_activities.map {|i| i[:activity].id}
@@ -188,8 +184,8 @@ class ActivitiesController < ApplicationController
   
   protected
   
-  def set_filter
-    @filter = ActivityFilter.new(@params_filter)
+  def set_activity_filter(data)
+    @filter = ActivityFilter.new(data)
     
     if current_user.admin?
       @users = User.employees
@@ -206,8 +202,8 @@ class ActivitiesController < ApplicationController
     end
   end
   
-  def set_missed_activities_filter
-    @filter = MissedActivityFilter.new(@params_filter)
+  def set_missed_activity_filter(data)
+    @filter = MissedActivityFilter.new(data)
     
     if current_user.admin?
       @users = User.employees
@@ -218,6 +214,6 @@ class ActivitiesController < ApplicationController
   
   def set_activity
     @activity = current_user.admin? ? Activity.find_by_id(params[:id]) : current_user.activities.find_by_id(params[:id])
-    @found = !@activity.nil?
+    @found = @activity.present?
   end
 end

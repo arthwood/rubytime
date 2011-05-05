@@ -10,16 +10,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100325151534) do
+ActiveRecord::Schema.define(:version => 20100321204402) do
 
   create_table "activities", :force => true do |t|
-    t.text     "comments",                   :null => false
-    t.date     "date",                       :null => false
-    t.integer  "minutes",     :default => 0, :null => false
-    t.integer  "project_id",                 :null => false
-    t.integer  "user_id",                    :null => false
+    t.text     "comments",                                                 :null => false
+    t.date     "date",                                                     :null => false
+    t.integer  "minutes",                                   :default => 0, :null => false
+    t.integer  "project_id",                                               :null => false
+    t.integer  "user_id",                                                  :null => false
     t.integer  "invoice_id"
     t.date     "invoiced_at"
+    t.decimal  "value",       :precision => 8, :scale => 2
+    t.integer  "currency_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
