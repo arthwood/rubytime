@@ -29,9 +29,17 @@ class Activity < ActiveRecord::Base
   GROUP_BY_DATE_BLOCK = Proc.new {|i| i.date}
   GROUP_BY_CURRENCY_BLOCK = Proc.new {|i| i.hourly_rate.currency}
   TIME_SPENT_BLOCK = Proc.new {|mem, i| mem + i.minutes}
+  HIDDEN_JSON_FIELDS = [:created_at, :updated_at]
   
   def as_json(options = {})
-    super(:include => [:project, :user], :methods => :time_spent)
+    super(
+      :include => {
+        :project => {}, 
+        :user => {:except => User::HIDDEN_JSON_FIELDS},
+        :invoice => {:except => User::HIDDEN_JSON_FIELDS}
+      }, 
+      :except => HIDDEN_JSON_FIELDS, :methods => :time_spent
+    )
   end
   
   def time_spent
@@ -43,20 +51,20 @@ class Activity < ActiveRecord::Base
   end
   
   # filter example:
-  # {:project_id => 2, :date => {:from => '06-04-2010', :to => '21-04-2010'}, :invoice_filter => 'all', :user_id => 3}}
+  # {:project_id => 2, :client_id => 3, :user_id => 3, :from => '06-04-2010', :to => '21-04-2010', :invoice_filter => 'all'}}
   def self.search(filter)
     project_id = filter.project_id
     user_id = filter.user_id
     client_id = filter.client_id
     invoice_filter = filter.invoice_filter
     conditions = {}
-    conditions[:project_id] = project_id unless project_id.blank?
-    conditions[:user_id] = user_id unless user_id.blank?
-    conditions['projects.client_id'] = client_id unless client_id.blank?
-    scope = (invoice_filter.blank? && :all) || invoice_filter.to_sym
+    conditions[:project_id] = project_id if project_id.present?
+    conditions[:user_id] = user_id if user_id.present?
+    conditions['projects.client_id'] = client_id if client_id.present?
+    scope = invoice_filter.present? ? invoice_filter.to_sym : :all
     from, to = filter.from, filter.to
-    from = from.blank? ? Date.parse : Date.parse(from)
-    to = to.blank? ? Date.current : Date.parse(to)
+    from = from.present? ? Date.parse(from) : Date.parse
+    to = to.present? ? Date.parse(to) : Date.current
     
     conditions[:date] = Range.new(from, to)
     joins = %q{
@@ -79,29 +87,30 @@ class Activity < ActiveRecord::Base
     end
   end
   
-  WEEKENDS = [0, 6]
-  
   def self.search_missed(filter)
     user_id = filter.user_id
     conditions = {}
-    conditions[:user_id] = user_id unless user_id.blank?
+    conditions[:user_id] = user_id if user_id.present?
     from, to = filter.from, filter.to
-    date_range = (from.blank? || to.blank?) \
-      ? Date.current.beginning_of_month..Date.current.end_of_month \
-      : Date.parse(from)..Date.parse(to)
+    date_range = (from.present? && to.present?) \
+      ? Date.parse(from)..Date.parse(to) \
+      : Date.current.beginning_of_month..Date.current.end_of_month
     conditions[:date] = date_range
     joins = %q{
       LEFT OUTER JOIN users ON (users.id = user_id)
     }
     
-    @days = date_range.to_a.reject {|i| WEEKENDS.include?(i.wday)}
+    @days = date_range.to_a.reject {|i| i.saturday? || i.sunday?}
     @activities = all(:conditions => conditions, :joins => joins, :order => 'date DESC')
-    
-    @users = user_id.blank? ? User.employees.all : [User.find(user_id)]
+    @users = user_id.present? ? [User.find(user_id)] : User.employees.all
     @user_activities = @activities.group_by(&GROUP_BY_USER_BLOCK)
-    @users.inject({}) do |mem, i|
-      mem[i] = @days - (@user_activities[i] || []).map(&:date); mem
-    end.reject {|k, v| v.empty?}
+    
+    {}.tap do |result|
+      @users.each do |i|
+        value = @days - (@user_activities[i] || []).map(&:date)
+        result[i] = value unless value.empty?
+      end
+    end
   end
   
   def to_csv_row

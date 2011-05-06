@@ -10,8 +10,7 @@
         - total = Activity.total_value(role_activities)
         = "(#{total.blank? ? 'Hourly rate not set!' : total})"
       .users
-        - by_users = role_activities.group_by(&Activity::GROUP_BY_USER_BLOCK)
-        - by_users.each_pair do |user, user_activities|
+        - role_activities.group_by(&Activity::GROUP_BY_USER_BLOCK).each_pair do |user, user_activities|
           .user[user]
             %h4
               = user.name

@@ -33,6 +33,8 @@ class User < ActiveRecord::Base
   
   attr_accessor :password_confirmation
   
+  HIDDEN_JSON_FIELDS = [:password_hash, :remember_token, :remember_token_expires_at, :login_key, :created_at, :updated_at]
+  
   def password
     if password_hash.nil?
       @password = nil
