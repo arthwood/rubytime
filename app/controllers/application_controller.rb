@@ -38,8 +38,4 @@ class ApplicationController < ActionController::Base
     
     redirect_to(path)
   end
-  
-  def clear_session
-    session.delete(:user_id)
-  end
 end

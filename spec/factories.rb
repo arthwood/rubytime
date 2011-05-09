@@ -71,7 +71,7 @@ FactoryGirl.define do
   
   factory :activity do
     comments "working on Graphy GEM"
-    date 1.month.ago
+    date 1.week.ago
     minutes 435
     project
     user
@@ -81,13 +81,35 @@ FactoryGirl.define do
     invoice
     invoiced_at 1.day.ago
     value 40
-    currency { Factory(:pound) }
+    currency_id 1
   end
   
   factory :pound, :class => :currency do
+    id 1
     name "pound"
     plural "pounds"
     symbol "p"
     prefix true
+  end
+  
+  factory :dollar, :class => :currency do
+    id 2
+    name "dollar"
+    plural "dollars"
+    symbol "$"
+    prefix true
+  end
+  
+  factory :hourly_rate do
+    project
+    role_id 1
+    date 2.weeks.ago
+    value 40.00
+    currency_id 1
+  end
+  
+  factory :free_day do
+    user
+    date 1.day.ago
   end
 end

@@ -6,20 +6,5 @@ class HourlyRate < ActiveRecord::Base
   default_scope :order => 'date DESC'
   
   scope :with_role, lambda {|i| {:conditions => {:role_id => i.id}}}
-  
-  def successor
-    project.hourly_rates.with_role(role).first(:conditions => "date > '#{date}'", :order => 'date ASC')
-  end
-  
-  def self.current(role)
-    with_role(role).at_day(Date.current)
-  end
-  
-  def self.at_day(day)
-    first(:conditions => "date <= '#{day}'")
-  end
-  
-  def self.between_days(range)
-    all(:conditions => {:date => range})
-  end
+  scope :at_day, lambda {|i| {:conditions => "date <= '#{i}'", :order => {:date => :desc}, :limit => 1}}
 end

@@ -47,7 +47,7 @@ class ActivityReport < Prawn::Document
     
     move_down 20
     
-    text "Total: #{Activity.total_value(activities)}", :size => 14
+    text "Total: #{total_value(activities)}", :size => 14
     
     render
   end
@@ -61,8 +61,8 @@ class ActivityReport < Prawn::Document
       font_size 10
       data = [['Date', 'Time', 'Comments', 'Invoiced', 'Hourly rate']]
       data.concat(items.map(&ACTIVITY_DATA_ROW_MAPPING))
-      minutes = items.inject(0, &Activity::TIME_SPENT_BLOCK)
-      data << ['Total:', Rubytime::Util.format_time_spent_decimal(minutes), nil, nil, Activity.total_value(items)]
+      minutes = Activity.total_time(items)
+      data << ['Total:', Rubytime::Util.format_time_spent_decimal(minutes), nil, nil, total_value(items)]
       table data, TABLE_OPTIONS
     end
   end

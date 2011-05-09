@@ -27,8 +27,6 @@ class Activity < ActiveRecord::Base
   GROUP_BY_ROLE_BLOCK = Proc.new {|i| i.user.role}
   GROUP_BY_USER_BLOCK = Proc.new {|i| i.user}
   GROUP_BY_DATE_BLOCK = Proc.new {|i| i.date}
-  GROUP_BY_CURRENCY_BLOCK = Proc.new {|i| i.hourly_rate.currency}
-  TIME_SPENT_BLOCK = Proc.new {|mem, i| mem + i.minutes}
   HIDDEN_JSON_FIELDS = [:created_at, :updated_at]
   
   def as_json(options = {})
@@ -107,7 +105,7 @@ class Activity < ActiveRecord::Base
     
     {}.tap do |result|
       @users.each do |i|
-        value = @days - (@user_activities[i] || []).map(&:date)
+        value = @days - (@user_activities[i] || []).map(&:date) - i.free_days.map(&:date)
         result[i] = value unless value.empty?
       end
     end
@@ -123,19 +121,22 @@ class Activity < ActiveRecord::Base
     hourly_rate.value.to_f * (minutes / 60.0)
   end
   
-  def self.total_value(activities)
-    by_currency = activities.reject {|i| i.hourly_rate.nil?}.group_by(&GROUP_BY_CURRENCY_BLOCK)
-    by_currency.map do |k, v|
-      Rubytime::Util.format_currency(k, v.inject(0) {|mem, i| mem + i.total_value})
-    end.join(' + ')
+  def hourly_rate
+    project.hourly_rates.with_role(user.role).at_day(date).first
   end
   
-  def hourly_rate
-    project.hourly_rates.with_role(user.role).at_day(invoiced_at || Date.current)
+  def self.total_value(activities)
+    activities.select {|i| 
+      i.hourly_rate.present?
+    }.group_by {|i| 
+      i.hourly_rate.currency
+    }.map do |k, v|
+      Rubytime::Util.format_currency(k, v.sum(&:total_value))
+    end
   end
   
   def self.total_time(activities)
-    activities.inject(0, &TIME_SPENT_BLOCK)
+    activities.sum(&:minutes)
   end
   
   def self.to_csv(activities)
