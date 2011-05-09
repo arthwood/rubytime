@@ -252,7 +252,7 @@ ActivitiesCalendar.prototype = {
   },
   
   onDayOff: function(a) {
-    $post(a.href, {date: a.up('td').id, user_id: this.userId}, this.onDayOffSuccessD);
+    $post(a.href, {date: a.up('td').id, user_id: this.userId, authenticity_token: env.token}, this.onDayOffSuccessD);
     
     return false;
   },
@@ -267,7 +267,7 @@ ActivitiesCalendar.prototype = {
   },
   
   onRevertDayOff: function(a) {
-    $del(a.href, {date: a.up('td').id, user_id: this.userId}, this.onRevertDayOffSuccessD);
+    $del(a.href, {date: a.up('td').id, user_id: this.userId, authenticity_token: env.token}, this.onRevertDayOffSuccessD);
     
     return false;
   },
