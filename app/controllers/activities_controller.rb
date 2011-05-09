@@ -125,7 +125,7 @@ class ActivitiesController < ApplicationController
     
     @activity.destroy if @found
     
-    render :json => {:activity => @activity.to_json, :success => @found}
+    render :json => {:activity => @activity, :success => @found}
   end
   
   def invoice
