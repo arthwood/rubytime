@@ -42,22 +42,18 @@ class User < ActiveRecord::Base
       @password ||= Password.new(password_hash)
     end 
   end
-
+  
   def password=(new_password)
     @password = Password.create(new_password)
     self.password_hash = @password
   end
   
-  def group
-    employee? ? 0 : 1
-  end
-  
   def employee?
-    client_id.nil?
+    client_id.blank?
   end
   
   def client?
-    !client_id.nil?
+    client_id.present?
   end
 
   def editor?
