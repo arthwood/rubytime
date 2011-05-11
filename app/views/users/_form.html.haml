@@ -3,7 +3,7 @@
 %h2
   = form_header(@user)
 
-- form_for :user, :url => (create_mode ? users_url : user_url(@user)), :html => {:method => (create_mode ? :post : :put)} do |i|
+= form_for :user, :url => (create_mode ? users_url : user_url(@user)), :html => {:method => (create_mode ? :post : :put)} do |i|
   .item.clearfix
     .label
       = i.label :group, 'Type'

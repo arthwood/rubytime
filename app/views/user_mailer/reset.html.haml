@@ -1,7 +1,7 @@
 == Reset your RubyTime password #{@user.name}
 
-Someone has requested a reset of your RubyTime account password.  If that wasn't you then ignore this email.
+Someone has requested a reset of your RubyTime account password. If that wasn't you then ignore this email.
 
 Please visit the link below to sign in.
 
-= link_to reset_users_url(:key => @user.login_key)
+= link_to 'Log In', reset_users_url(:key => @user.login_key)

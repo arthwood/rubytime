@@ -1,7 +1,7 @@
 %h1
   List of admins
 
-- if @admins.empty?
+- if collection.empty?
   %p
     No admins found.
 - else
@@ -11,4 +11,4 @@
       %th Role
       %th Active
       %th.actions.ralign &nbsp;
-    = render :partial => 'admin_row', :collection => @admins, :as => :user
+    = render :partial => 'admin_row', :collection => collection, :as => :user

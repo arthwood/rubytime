@@ -3,8 +3,8 @@
     = render :partial => 'form'
   .left
     .listing
-      = render :partial => 'listing_admins'
+      = render :partial => 'admins', :object => @admins, :as => :collection
     .listing
-      = render :partial => 'listing_employees'
+      = render :partial => 'employees', :object => @employees, :as => :collection
     .listing
-      = render :partial => 'listing_clients_users'
+      = render :partial => 'clients_users', :object => @clients_users, :as => :collection

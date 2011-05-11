@@ -86,4 +86,33 @@ describe User do
       it { should_not be_employee }
     end
   end
+  
+  describe "#group" do
+    context "when user is employee" do
+      subject { Factory(:user) }
+      
+      it "should return 0" do
+        subject.group.should == 0
+      end
+    end
+    
+    context "when user is client" do
+      subject { Factory(:client_user) }
+      
+      it "should return 1" do
+        subject.group.should == 1
+      end
+    end
+  end
+  
+  describe "create_login_key" do
+    context "when login_key is not set" do
+      subject { Factory(:user) }
+      
+      it "should create new one" do
+        subject.create_login_key.should be_true
+        subject.login_key.should_not be_nil
+      end
+    end
+  end
 end

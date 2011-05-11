@@ -25,7 +25,6 @@ describe Activity do
       it "should return basic data" do
         result = subject.to_json
         
-        result.should =~ /{"activity":{(.*)}}/
         result.should =~ /"comments":"#{subject.comments}"/
         result.should =~ /"date":"(.*)"/
         result.should =~ /"id":#{subject.id}/

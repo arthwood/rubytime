@@ -1,7 +1,7 @@
 %h1
   List of employees
 
-- if @employees.empty?
+- if collection.empty?
   %p
     No employees found.
 - else
@@ -11,4 +11,4 @@
       %th Role
       %th Active
       %th.actions.ralign &nbsp;
-    = render :partial => 'employee_row', :collection => @employees, :as => :user
+    = render :partial => 'employee_row', :collection => collection, :as => :user

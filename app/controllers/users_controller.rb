@@ -1,15 +1,13 @@
 class UsersController < ApplicationController
-  before_filter :admin_required, :except => [:do_request_password, :reset]
+  before_filter :admin_required, :except => [:request_password, :do_request_password, :reset]
   
   def index
-    @user = User.new
-    @admins = User.admins
-    @employees = User.employees.not_admins
-    @clients_users = User.clients.not_admins
+    set_new_user
+    set_list_data
   end
   
   def new
-    @user = User.new
+    set_new_user
     
     render :partial => 'form'
   end
@@ -28,10 +26,8 @@ class UsersController < ApplicationController
       redirect_to users_url
     else
       flash.now[:error] = "User couldn't be created"
-      @users = User.all
-      @admins = User.admins
-      @employees = User.employees.not_admins
-      @clients_users = User.clients.not_admins
+      set_new_user
+      set_list_data
       
       render :action => :index
     end
@@ -60,8 +56,7 @@ class UsersController < ApplicationController
     else
       flash.now[:error] = "User couldn't be updated"
       
-      @users = User.all
-      @employees, @clients_users = @users.partition {|i| i.employee?}
+      set_list_data
       
       render :action => :index
     end
@@ -70,13 +65,19 @@ class UsersController < ApplicationController
   def destroy
     @user = User.find(params[:id])
     @user.destroy
-    @users = User.all
     
-    partial = @user.employee? ? 'listing_employees' : 'listing_clients_users'
+    partial, collection = if @user.employee?
+      ['employees', User.employees.not_admins]
+    else
+      ['clients_users', User.clients.not_admins]
+    end
     
-    render :json => {:html => render_to_string(:partial => partial), :success => true} 
+    render :json => {
+      :html => render_to_string(:partial => partial, :object => collection, :as => :collection), 
+      :success => true
+    } 
   end
-
+  
   def do_request_password
     data = params[:reset_password]
     email = data[:email]
@@ -84,13 +85,13 @@ class UsersController < ApplicationController
     
     if @user.nil?
       flash[:error] = "I could not find a user with the email address '#{email}'. Did you type it correctly?"
-      
-      redirect_to login_url
     else
-      @user.reset_login_key!
-      UserMailer.deliver_reset(@user)
-      flash[:notice] = 'Password reset email sent.'
+      @user.create_login_key
+      UserMailer.reset(@user).deliver
+      flash[:info] = 'Password reset email sent.'
     end
+    
+    redirect_to login_url
   end
   
   def reset
@@ -98,11 +99,24 @@ class UsersController < ApplicationController
     @user = User.find_by_login_key(@key)
     
     if @user
+      @user.clear_login_key
       self.current_user = @user
       redirect_to root_url
     else
-      flash[:notice] = "Provided key in the URL is wrong: #{@key}"
+      flash[:error] = "Provided key in the URL is wrong: #{@key}"
       redirect_to login_url
     end
+  end
+  
+  private
+  
+  def set_new_user
+    @user = User.new
+  end
+  
+  def set_list_data
+    @admins = User.admins
+    @employees = User.employees.not_admins
+    @clients_users = User.clients.not_admins
   end
 end
