@@ -1,8 +1,6 @@
 require 'spec_helper'
 
-def login_as_admin
-  subject.stubs(:admin_required).returns(true)
-end
+include SharedMethods
 
 def create_list_data
   let!(:admin) { Factory(:admin) }
@@ -13,38 +11,13 @@ end
 describe UsersController do
   include RubytimeHelper
   
-  shared_examples_for "render index" do
-    it "should render index" do
-      response.should render_template(:index)
-    end
-  end
-  
   shared_examples_for "index redirection" do
     it "should redirect to :index" do
       response.should be_redirect
       response.should redirect_to(users_path)
     end
   end
-  
-  shared_examples_for "flash info" do
-    it "should set flash[:info]" do
-      flash[:info].should_not be_blank
-    end
-  end
-  
-  shared_examples_for "flash error" do
-    it "should set flash[:error]" do
-      flash[:error].should_not be_blank
-    end
-  end
-  
-  shared_examples_for "render form" do
-    it "should render 'form' partial" do
-      response.should be_success
-      response.should render_template(:form)
-    end
-  end
-  
+
   shared_examples_for "new user" do
     it "should set @user variable" do
       var = assigns(:user)
@@ -142,7 +115,6 @@ describe UsersController do
       
       it_should_behave_like "flash error"
       it_should_behave_like "render index"
-      it_should_behave_like "new user"
       it_should_behave_like "list data"
     end
   end

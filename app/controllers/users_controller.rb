@@ -26,7 +26,6 @@ class UsersController < ApplicationController
       redirect_to users_url
     else
       flash.now[:error] = "User couldn't be created"
-      set_new_user
       set_list_data
       
       render :action => :index

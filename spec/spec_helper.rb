@@ -25,3 +25,34 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 end
+
+module SharedMethods
+  def login_as_admin
+    subject.stubs(:admin_required).returns(true)
+  end
+end
+
+shared_examples_for "flash info" do
+  it "should set flash[:info]" do
+    flash[:info].should_not be_blank
+  end
+end
+
+shared_examples_for "flash error" do
+  it "should set flash[:error]" do
+    flash[:error].should_not be_blank
+  end
+end
+
+shared_examples_for "render form" do
+  it "should render 'form' partial" do
+    response.should be_success
+    response.should render_template(:form)
+  end
+end
+
+shared_examples_for "render index" do
+  it "should render index" do
+    response.should render_template(:index)
+  end
+end

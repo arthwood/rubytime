@@ -2,13 +2,13 @@ class ClientsController < ApplicationController
   before_filter :admin_required
   
   def index
-    @clients = Client.all
-    @client = Client.new
+    set_list_data
+    set_new_client
     @user = User.new
   end
   
   def new
-    @client = Client.new
+    set_new_client
     
     render :partial => 'form'
   end
@@ -25,8 +25,7 @@ class ClientsController < ApplicationController
       redirect_to clients_url
     else
       flash.now[:error] = "Client and its User couldn't be created"
-      
-      @clients = Client.all
+      set_list_data
       
       render :action => :index
     end
@@ -51,7 +50,7 @@ class ClientsController < ApplicationController
     else
       flash.now[:error] = "Client couldn't be updated"
       
-      @clients = Client.all
+      set_list_data
       
       render :action => :index
     end
@@ -60,8 +59,19 @@ class ClientsController < ApplicationController
   def destroy
     @client = Client.find(params[:id])
     @client.destroy
-    @clients = Client.all
+    
+    set_list_data
     
     render :json => {:html => render_to_string(:partial => 'listing'), :success => true} 
+  end
+  
+  private
+  
+  def set_new_client
+    @client = Client.new
+  end
+  
+  def set_list_data
+    @clients = Client.all
   end
 end
