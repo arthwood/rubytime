@@ -239,15 +239,6 @@ img.datepicker {
 form.login {
   padding: 20px 0;
 }
-form.reset_password .item > label {
-  width: 40px;
-}
-form.reset_password .item .no_label {
-  margin-left: 46px;
-}
-p.reset_password {
-  width: 500px;
-}
 .user_info {
   margin: 78px 18px 0 0;
   color: #40A0CF;
