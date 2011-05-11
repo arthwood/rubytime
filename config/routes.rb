@@ -1,9 +1,8 @@
 Rubytime::Application.routes.draw do
-  resources :projects
-  
   resources :users do
     collection do
       get :request_password
+      get :reset
       post :do_request_password
     end
   end
