@@ -14,8 +14,8 @@ group :development do
 end
 
 group :development, :test do
-  gem 'rspec', '2.5.0', :require => nil
-  gem 'rspec-rails', '2.5.0', :require => nil
+  gem 'rspec', '2.5.0'
+  gem 'rspec-rails', '2.5.0'
 end
 
 group :test do
