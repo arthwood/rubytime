@@ -33,6 +33,8 @@ class User < ActiveRecord::Base
   
   attr_accessor :password_confirmation
   
+  attr_protected :login_key, :password_hash
+  
   HIDDEN_JSON_FIELDS = [:password_hash, :remember_token, :remember_token_expires_at, :login_key, :created_at, :updated_at]
   
   def password
@@ -48,6 +50,10 @@ class User < ActiveRecord::Base
     self.password_hash = @password
   end
   
+  def group
+    employee? ? 0 : 1
+  end
+  
   def employee?
     client_id.blank?
   end
@@ -58,5 +64,20 @@ class User < ActiveRecord::Base
 
   def editor?
     admin? || employee?
+  end
+  
+  def create_login_key
+    set_login_key(SecureRandom.hex(16))
+  end
+  
+  def clear_login_key
+    set_login_key(nil)
+  end
+  
+  private
+  
+  def set_login_key(value)
+    self.login_key = value
+    save
   end
 end
