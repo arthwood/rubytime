@@ -6,5 +6,6 @@ CONFIG = {
     :password => 'asdf1234',
     :active => true,
     :admin => true
-  }
+  },
+  :hostname => 'localhost:3000'
 }
