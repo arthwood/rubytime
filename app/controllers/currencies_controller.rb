@@ -2,12 +2,12 @@ class CurrenciesController < ApplicationController
   before_filter :admin_required
   
   def index
-    @currencies = Currency.all
-    @currency = Currency.new
+    set_list_data
+    set_new_currency
   end
   
   def new
-    @currency = Currency.new
+    set_new_currency
     
     render :partial => 'form'
   end
@@ -21,7 +21,7 @@ class CurrenciesController < ApplicationController
     else
       flash.now[:error] = "Currency couldn't be created"
       
-      @currencies = Currency.all
+      set_list_data
       
       render :action => :index
     end
@@ -40,18 +40,29 @@ class CurrenciesController < ApplicationController
       flash[:info] = 'Currency was successfully updated.'
       redirect_to currencies_url
     else
-      @currencies = Currency.all
+      set_list_data
       flash.now[:error] = "Currency couldn't be updated"
       
       render :action => :index
     end
   end
-
+  
   def destroy
     @currency = Currency.find(params[:id])
     @currency.destroy
-    @currencies = Currency.all
+    
+    set_list_data
     
     render :json => {:html => render_to_string(:partial => 'listing'), :success => true} 
+  end
+  
+  private
+  
+  def set_new_currency
+    @currency = Currency.new
+  end
+  
+  def set_list_data
+    @currencies = Currency.all
   end
 end

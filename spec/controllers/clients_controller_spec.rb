@@ -32,7 +32,6 @@ describe ClientsController do
   describe "create" do
     let!(:user_count) { User.count }
     let!(:client_count) { Client.count }
-
     
     before { login_as_admin }
     
