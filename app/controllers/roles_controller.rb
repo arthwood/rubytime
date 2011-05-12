@@ -2,12 +2,12 @@ class RolesController < ApplicationController
   before_filter :admin_required
   
   def index
-    @roles = Role.all
-    @role = Role.new
+    set_list
+    set_new
   end
 
   def new
-    @role = Role.new
+    set_new
     
     render :partial => 'form'
   end
@@ -21,7 +21,7 @@ class RolesController < ApplicationController
     else
       flash.now[:error] = "Role couldn't be created"
       
-      @roles = Role.all
+      set_list
       
       render :action => :index
     end
@@ -40,8 +40,9 @@ class RolesController < ApplicationController
       flash[:info] = 'Role was successfully updated.'
       redirect_to roles_url
     else
-      @roles = Role.all
       flash.now[:error] = "Role couldn't be updated"
+      
+      set_list
       
       render :action => :index
     end
@@ -50,8 +51,19 @@ class RolesController < ApplicationController
   def destroy
     @role = Role.find(params[:id])
     @role.destroy
-    @roles = Role.all
+    
+    set_list
     
     render :json => {:html => render_to_string(:partial => 'listing'), :success => true} 
+  end
+  
+  private
+  
+  def set_new
+    @role = Role.new
+  end
+  
+  def set_list
+    @roles = Role.all
   end
 end

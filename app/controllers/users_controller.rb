@@ -2,12 +2,12 @@ class UsersController < ApplicationController
   before_filter :admin_required, :except => [:request_password, :do_request_password, :reset]
   
   def index
-    set_new_user
-    set_list_data
+    set_new
+    set_list
   end
   
   def new
-    set_new_user
+    set_new
     
     render :partial => 'form'
   end
@@ -26,7 +26,7 @@ class UsersController < ApplicationController
       redirect_to users_url
     else
       flash.now[:error] = "User couldn't be created"
-      set_list_data
+      set_list
       
       render :action => :index
     end
@@ -55,7 +55,7 @@ class UsersController < ApplicationController
     else
       flash.now[:error] = "User couldn't be updated"
       
-      set_list_data
+      set_list
       
       render :action => :index
     end
@@ -109,11 +109,11 @@ class UsersController < ApplicationController
   
   private
   
-  def set_new_user
+  def set_new
     @user = User.new
   end
   
-  def set_list_data
+  def set_list
     @admins = User.admins
     @employees = User.employees.not_admins
     @clients_users = User.clients.not_admins

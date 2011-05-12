@@ -3,11 +3,11 @@ class CurrenciesController < ApplicationController
   
   def index
     set_list_data
-    set_new_currency
+    set_new
   end
   
   def new
-    set_new_currency
+    set_new
     
     render :partial => 'form'
   end
@@ -58,7 +58,7 @@ class CurrenciesController < ApplicationController
   
   private
   
-  def set_new_currency
+  def set_new
     @currency = Currency.new
   end
   
