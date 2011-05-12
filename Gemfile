@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.6'
+gem 'rails', '3.0.7'
 gem 'haml'
 gem 'mysql2', '0.2.6'
 gem 'prawn'
@@ -14,8 +14,8 @@ group :development do
 end
 
 group :development, :test do
-  gem 'rspec', '2.5.0'
-  gem 'rspec-rails', '2.5.0'
+  gem 'rspec', '2.6.0'
+  gem 'rspec-rails', '2.6.0'
 end
 
 group :test do
