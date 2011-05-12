@@ -3,8 +3,6 @@ require 'spec_helper'
 include SharedMethods
 
 describe CurrenciesController do
-  include RubytimeHelper
-  
   describe "index" do
     let!(:currency) { Factory(:dollar) }
     

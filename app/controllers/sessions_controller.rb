@@ -5,16 +5,9 @@ class SessionsController < ApplicationController
   def create
     s = params[:session]
     @login = s[:login]
-    
     @user = User.find_by_login(@login)
     
-    unless @user.present?
-      note_failed_signin("There's no user '#{@login}'")
-      
-      render :action => :new
-    else
-      #@remember_me = s[:remember_me]
-      
+    if @user.present?
       if @user.password == s[:password]
         reset_session
         self.current_user = @user
@@ -26,6 +19,10 @@ class SessionsController < ApplicationController
         
         render :action => :new
       end
+    else
+      note_failed_signin("There's no user '#{@login}'")
+      
+      render :action => :new
     end
   end
   

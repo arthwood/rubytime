@@ -51,6 +51,12 @@ shared_examples_for "render form" do
   end
 end
 
+shared_examples_for "render new" do
+  it "should render index" do
+    response.should render_template(:new)
+  end
+end
+
 shared_examples_for "render index" do
   it "should render index" do
     response.should render_template(:index)
@@ -85,3 +91,8 @@ shared_examples_for "redirection" do |type|
   end
 end
 
+shared_examples_for "root redirection" do
+  it "should redirect to root" do
+    response.should redirect_to(root_url)
+  end
+end

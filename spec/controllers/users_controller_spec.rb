@@ -3,8 +3,6 @@ require 'spec_helper'
 include SharedMethods
 
 describe UsersController do
-  include RubytimeHelper
-  
   describe "index" do
     let!(:admin) { Factory(:admin) }
     let!(:employee) { Factory(:user) }
@@ -220,7 +218,7 @@ describe UsersController do
       end
       
       it "should login user" do
-        current_user.should eql(user)
+        subject.current_user.should eql(user)
       end
       
       it "should redirect to root_url" do

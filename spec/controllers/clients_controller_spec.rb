@@ -3,8 +3,6 @@ require 'spec_helper'
 include SharedMethods
 
 describe ClientsController do
-  include RubytimeHelper
-  
   describe "index" do
     let!(:client) { Factory(:client) }
     

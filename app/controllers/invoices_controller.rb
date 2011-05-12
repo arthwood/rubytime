@@ -2,12 +2,12 @@ class InvoicesController < ApplicationController
   before_filter :admin_required
   
   def index
-    @invoices = Invoice.all
-    @invoice = Invoice.new
+    set_list
+    set_new
   end
   
   def new
-    @invoice = Invoice.new
+    set_new
     
     render :partial => 'form'
   end
@@ -35,7 +35,7 @@ class InvoicesController < ApplicationController
     else
       flash.now[:error] = "Invoice couldn't be created"
       
-      @invoices = Invoice.all
+      set_list
       
       render :action => :index
     end
@@ -54,8 +54,9 @@ class InvoicesController < ApplicationController
       flash[:info] = 'Invoice was successfully updated.'
       redirect_to invoices_url
     else
-      @currencies = Invoice.all
       flash.now[:error] = "Invoice couldn't be updated"
+      
+      set_list
       
       render :action => :index
     end
@@ -64,8 +65,19 @@ class InvoicesController < ApplicationController
   def destroy
     @invoice = Invoice.find(params[:id])
     @invoice.destroy
-    @invoices = Invoice.all
+    
+    set_list
     
     render :json => {:html => render_to_string(:partial => 'listing'), :success => true} 
+  end
+  
+  private
+  
+  def set_new
+    @invoice = Invoice.new
+  end
+  
+  def set_list
+    @invoices = Invoice.all
   end
 end

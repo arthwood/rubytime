@@ -3,8 +3,6 @@ require 'spec_helper'
 include SharedMethods
 
 describe RolesController do
-  include RubytimeHelper
-  
   describe "index" do
     let!(:role) { Factory(:developer) }
     
