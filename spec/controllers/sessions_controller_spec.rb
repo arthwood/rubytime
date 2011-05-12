@@ -71,31 +71,30 @@ describe SessionsController do
     end
   end
   
-=begin
   describe "destroy" do
-    render_views
+    before { login_as_user }
     
-    let!(:invoice) { Factory(:invoice) }
-    
-    before do
-      login_as_admin
-      delete :destroy, :id => invoice.id
+    describe "cleaning session" do
+      let(:session_data) { "some data" }
+      
+      before do 
+        session[:some_data] = session_data
+        
+        delete :destroy
+      end
+      
+      it "should clear the session" do
+        session[:some_data].should be_nil
+      end
     end
     
-    it "should delete invoice" do
-      expect {invoice.reload}.to raise_error(ActiveRecord::RecordNotFound)
-    end
-    
-    it "should response with valid json" do
-      result = response.body
+    describe "other actions" do
+      before do
+        delete :destroy
+      end
       
-      match = result.match(/{"html":"(.*)","success":true}/)
-      html = match[1]
-      
-      match.should_not be_nil
-      html.should_not =~ /<td>#{invoice.name}<\/td>/
-      html.should include('No invoices found')
+      it_should_behave_like "flash info"
+      it_should_behave_like "root redirection"
     end
   end
-=end
 end

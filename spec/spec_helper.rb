@@ -27,6 +27,10 @@ RSpec.configure do |config|
 end
 
 module SharedMethods
+  def login_as_user
+    subject.stubs(:login_required).returns(true)
+  end
+  
   def login_as_admin
     subject.stubs(:admin_required).returns(true)
   end
