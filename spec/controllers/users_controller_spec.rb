@@ -2,58 +2,13 @@ require 'spec_helper'
 
 include SharedMethods
 
-def create_list_data
-  let!(:admin) { Factory(:admin) }
-  let!(:employee) { Factory(:user) }
-  let!(:client_user) { Factory(:client_user) }
-end
-
 describe UsersController do
   include RubytimeHelper
   
-  shared_examples_for "index redirection" do
-    it "should redirect to :index" do
-      response.should be_redirect
-      response.should redirect_to(users_path)
-    end
-  end
-
-  shared_examples_for "new user" do
-    it "should set @user variable" do
-      var = assigns(:user)
-      var.should be_an_instance_of(User)
-      var.should be_new_record
-    end
-  end
-  
-  shared_examples_for "existing user" do
-    it "should set proper @user variable" do
-      assigns(:user).should eql(user)
-    end
-  end
-  
-  shared_examples_for "list data" do
-    it "should set @admins variable" do
-      var = assigns(:admins)
-      var.should be_an_instance_of(ActiveRecord::Relation)
-      var.should include(admin)
-    end
-    
-    it "should set @employees variable" do
-      var = assigns(:employees)
-      var.should be_an_instance_of(ActiveRecord::Relation)
-      var.should include(employee)
-    end
-    
-    it "should set @clients_users variable" do
-      var = assigns(:clients_users)
-      var.should be_an_instance_of(ActiveRecord::Relation)
-      var.should include(client_user)
-    end
-  end
-  
   describe "index" do
-    create_list_data
+    let!(:admin) { Factory(:admin) }
+    let!(:employee) { Factory(:user) }
+    let!(:client_user) { Factory(:client_user) }
     
     before do
       login_as_admin
@@ -61,8 +16,10 @@ describe UsersController do
     end
     
     it_should_behave_like "render index"
-    it_should_behave_like "new user"
-    it_should_behave_like "list data"
+    it_should_behave_like "new resource", :user
+    it_should_behave_like "list of", :admins, ActiveRecord::Relation, :admin
+    it_should_behave_like "list of", :employees, ActiveRecord::Relation, :employee
+    it_should_behave_like "list of", :clients_users, ActiveRecord::Relation, :client_user
   end
   
   describe "new" do
@@ -71,7 +28,7 @@ describe UsersController do
       get :new
     end
     
-    it_should_behave_like "new user"
+    it_should_behave_like "new resource", :user
     it_should_behave_like "render form"
   end
   
@@ -98,24 +55,26 @@ describe UsersController do
         }
       end
       
-      it "should render create user" do
+      it "should create user" do
         User.count.should eql(count + 1)
       end
       
       it_should_behave_like "flash info"
-      it_should_behave_like "index redirection"
+      it_should_behave_like "redirection", :users
     end
     
     context "with invalid data" do
-      create_list_data
-      
       before do
         get :create, :user => {}
       end
       
+      it "should not create user" do
+        User.count.should eql(count)
+      end
+      
       it_should_behave_like "flash error"
       it_should_behave_like "render index"
-      it_should_behave_like "list data"
+      it_should_behave_like "list of", :admins, ActiveRecord::Relation
     end
   end
   
@@ -128,7 +87,7 @@ describe UsersController do
     end
     
     it_should_behave_like "render form"
-    it_should_behave_like "existing user"
+    it_should_behave_like "existing resource", :user
   end
   
   describe "update" do
@@ -152,12 +111,10 @@ describe UsersController do
       end
       
       it_should_behave_like "flash info"
-      it_should_behave_like "index redirection"
+      it_should_behave_like "redirection", :users
     end
     
     context "with invalid data" do
-      create_list_data
-      
       let!(:old_email) { user.email }
       
       before do
@@ -166,17 +123,13 @@ describe UsersController do
         }
       end
       
-      it "should not user data" do
+      it "should not update user data" do
         user.reload.email.should eql(old_email)
       end
       
       it_should_behave_like "flash error"
-      it_should_behave_like "list data"
+      it_should_behave_like "list of", :employees, ActiveRecord::Relation, :user
       it_should_behave_like "render index"
-      
-      it "@employees collection should include user" do
-        assigns(:employees).should include(user)
-      end
     end
   end
   

@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
   include BCrypt
   
   validates_presence_of     :login
-  validates_length_of       :login,    :within => 3..40
+  validates_length_of       :login, :within => 3..40
   validates_uniqueness_of   :login
   validates_format_of       :login, :with => /\A\w[\w\.\-_@]+\z/
   validates_format_of       :name, :with => /\A[^[:cntrl:]\\<>\/&]*\z/, :allow_nil => true

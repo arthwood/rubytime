@@ -56,3 +56,32 @@ shared_examples_for "render index" do
     response.should render_template(:index)
   end
 end
+
+shared_examples_for "new resource" do |type|
+  it "should set @#{type} variable" do
+    var = assigns(type)
+    var.should be_an_instance_of(type.to_s.camelize.constantize)
+    var.should be_new_record
+  end
+end
+
+shared_examples_for "existing resource" do |type|
+  it "should set proper @#{type} variable" do
+    assigns(type).should eql(method(type).call)
+  end
+end
+
+shared_examples_for "list of" do |type, coll_type = Array, resource = nil|
+  it "@#{type}" do
+    var = assigns(type)
+    var.should be_an_instance_of(coll_type)
+    var.should include(method(resource).call) if resource.present?
+  end
+end
+
+shared_examples_for "redirection" do |type|
+  it "should redirect to #{type}" do
+    response.should redirect_to(type)
+  end
+end
+

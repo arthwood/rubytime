@@ -48,7 +48,10 @@ class ClientsController < ApplicationController
       flash[:info] = 'Succesfully updated Client!'
       redirect_to clients_url
     else
-      flash.now[:error] = "Client couldn't be updated"
+      flash.now[:error] = [].tap do |i|
+        i << "Client couldn't be updated." unless @client.valid?
+        i << "User couldn't be updated." unless @user.valid?
+      end.join(' ')
       
       set_list_data
       
