@@ -13,12 +13,12 @@ class ActivitiesController < ApplicationController
     @hide_users = (params[:hide_users] == '1')
     
     respond_to do |format|
-     format.csv {
-       send_data Activity.to_csv(@activities), :type => :csv, :filename => "#{@filename}.csv"
-     }
-     format.pdf {
-       send_data Activity.to_pdf(@activities, 'Activities', @hide_users), :type => :pdf, :filename => "#{@filename}.pdf" 
-     }
+      format.csv {
+        send_data Activity.to_csv(@activities), :type => :csv, :filename => "#{@filename}.csv"
+      }
+      format.pdf {
+        send_data Activity.to_pdf(@activities, 'Activities', @hide_users), :type => :pdf, :filename => "#{@filename}.pdf" 
+      }
     end
   end
   
@@ -40,11 +40,11 @@ class ActivitiesController < ApplicationController
     user_id = params[:user_id]
     
     if current_user.admin?
-      @user = user_id.blank? ? current_user : User.find(user_id)
+      @user = user_id.present? ? User.find(user_id) : current_user
       @users = User.employees
     elsif current_user.client?
       @users = current_user.client.collaborators
-      @user = @users.detect {|i| i.id.to_s == user_id} || @users.first
+      @user = user_id.present? ? @users.detect {|i| i.id.to_s == user_id} : @users.first
     else
       @user = current_user
       @users = [@user]
@@ -60,9 +60,8 @@ class ActivitiesController < ApplicationController
       @days_off = []
     end
     
-    @days_off_hash = @days_off.inject({}) {|mem, i| mem[i.date] = i; mem}
-    
-    @current = (current = params[:current]).blank? ? Date.current : Date.parse(current)
+    @days_off_hash = Hash[@days_off.map {|i| [i.date, i] }]
+    @current = (current = params[:current]).present? ? Date.parse(current) : Date.current
     @first_day = @current.at_beginning_of_month
     @rows = (@first_day.wday + @current.end_of_month.mday - 1) / 7
   end
@@ -189,15 +188,15 @@ class ActivitiesController < ApplicationController
     
     if current_user.admin?
       @users = User.employees
-      user = (user_id = @filter.user_id).blank? ? nil : User.find(user_id)
+      user = (user_id = @filter.user_id).present? ? User.find(user_id) : nil
       @projects = user ? user.projects : Project.all
       @clients = Client.all
     elsif current_user.client?
       @filter.client_id = current_user.client_id
-      @filter.project_id = nil unless current_user.client.project_ids.include?(@filter.project_id.to_i)
       @projects = current_user.client.projects
       @users = current_user.client.collaborators
     else
+      @filter.user_id = current_user.id
       @projects = current_user.projects
     end
   end

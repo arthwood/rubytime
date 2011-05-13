@@ -27,12 +27,13 @@ RSpec.configure do |config|
 end
 
 module SharedMethods
-  def login_as_user
-    subject.stubs(:login_required).returns(true)
-  end
-  
-  def login_as_admin
-    subject.stubs(:admin_required).returns(true)
+  # type {admin, editor, user}
+  def login_as(type, user = nil)
+    unless user.nil? || type == :user || user.send("#{type}?")
+      raise ArgumentError.new("Cannot login #{user} as #{type}")
+    end
+    
+    subject.stub!(:current_user).and_return(user || Factory(type))
   end
 end
 
@@ -48,22 +49,9 @@ shared_examples_for "flash error" do
   end
 end
 
-shared_examples_for "render form" do
-  it "should render 'form' partial" do
-    response.should be_success
-    response.should render_template(:form)
-  end
-end
-
-shared_examples_for "render new" do
-  it "should render index" do
-    response.should render_template(:new)
-  end
-end
-
-shared_examples_for "render index" do
-  it "should render index" do
-    response.should render_template(:index)
+shared_examples_for "render template" do |type|
+  it "should render #{type}" do
+    response.should render_template(type)
   end
 end
 
@@ -98,5 +86,17 @@ end
 shared_examples_for "root redirection" do
   it "should redirect to root" do
     response.should redirect_to(root_url)
+  end
+end
+
+shared_examples_for "login page redirection" do
+  it "should redirect to login page" do
+    response.should redirect_to(login_url)
+  end
+end
+
+shared_examples_for "not setting a variable" do |var|
+  it "should not set #{var}" do
+    assigns(var).should be_nil
   end
 end

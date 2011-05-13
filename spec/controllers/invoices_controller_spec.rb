@@ -7,23 +7,23 @@ describe InvoicesController do
     let!(:invoice) { Factory(:invoice) }
     
     before do
-      login_as_admin
+      login_as(:admin)
       get :index
     end
     
     it_should_behave_like "new resource", :invoice
-    it_should_behave_like "render index"
+    it_should_behave_like "render template", :index
     it_should_behave_like "list of", :invoices, Array, :invoice
   end
   
   describe "new" do
     before do
-      login_as_admin
+      login_as(:admin)
       get :new
     end
     
     it_should_behave_like "new resource", :invoice
-    it_should_behave_like "render form"
+    it_should_behave_like "render template", :form
   end
   
   describe "create" do
@@ -32,7 +32,7 @@ describe InvoicesController do
     let!(:admin) { Factory(:admin) }
     
     before do
-      login_as_admin
+      login_as(:admin)
       subject.stubs(:current_user).returns(admin)
     end
     
@@ -68,7 +68,7 @@ describe InvoicesController do
       end
       
       it_should_behave_like "flash error"
-      it_should_behave_like "render index"
+      it_should_behave_like "render template", :index
       it_should_behave_like "new resource", :invoice
       it_should_behave_like "list of", :invoices
     end
@@ -78,11 +78,11 @@ describe InvoicesController do
     let!(:invoice) { Factory(:invoice) }
     
     before do
-      login_as_admin
+      login_as(:admin)
       get :edit, :id => invoice.id
     end
     
-    it_should_behave_like "render form"
+    it_should_behave_like "render template", :form
     it_should_behave_like "existing resource", :invoice
   end
   
@@ -90,7 +90,7 @@ describe InvoicesController do
     let!(:invoice) { Factory(:invoice) }
     
     before do
-      login_as_admin
+      login_as(:admin)
     end
     
     context "with valid data" do
@@ -121,7 +121,7 @@ describe InvoicesController do
       
       it_should_behave_like "flash error"
       it_should_behave_like "list of", :invoices, Array, :invoice
-      it_should_behave_like "render index"
+      it_should_behave_like "render template", :index
     end
   end
   
@@ -131,7 +131,7 @@ describe InvoicesController do
     let!(:invoice) { Factory(:invoice) }
     
     before do
-      login_as_admin
+      login_as(:admin)
       delete :destroy, :id => invoice.id
     end
     

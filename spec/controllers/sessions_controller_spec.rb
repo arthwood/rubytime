@@ -53,7 +53,7 @@ describe SessionsController do
         end
         
         it_should_behave_like "flash error"
-        it_should_behave_like "render new"
+        it_should_behave_like "render template", :new
       end
     
       context "password invalid" do
@@ -66,13 +66,13 @@ describe SessionsController do
         end
         
         it_should_behave_like "flash error"
-        it_should_behave_like "render new"
+        it_should_behave_like "render template", :new
       end
     end
   end
   
   describe "destroy" do
-    before { login_as_user }
+    before { login_as(:user) }
     
     describe "cleaning session" do
       let(:session_data) { "some data" }

@@ -11,7 +11,7 @@ class Client < ActiveRecord::Base
   has_many :users, :dependent => :destroy
   has_many :invoices
   has_many :projects
-
+  
   default_scope :order => :name
   
   def collaborators

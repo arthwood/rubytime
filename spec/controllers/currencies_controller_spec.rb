@@ -7,29 +7,29 @@ describe CurrenciesController do
     let!(:currency) { Factory(:dollar) }
     
     before do
-      login_as_admin
+      login_as(:admin)
       get :index
     end
     
     it_should_behave_like "new resource", :currency
-    it_should_behave_like "render index"
+    it_should_behave_like "render template", :index
     it_should_behave_like "list of", :currencies, Array, :currency
   end
   
   describe "new" do
     before do
-      login_as_admin
+      login_as(:admin)
       get :new
     end
     
     it_should_behave_like "new resource", :currency
-    it_should_behave_like "render form"
+    it_should_behave_like "render template", :form
   end
   
   describe "create" do
     let!(:count) { Currency.count }
     
-    before { login_as_admin }
+    before { login_as(:admin) }
     
     context "with valid data" do
       before do
@@ -59,7 +59,7 @@ describe CurrenciesController do
       end
       
       it_should_behave_like "flash error"
-      it_should_behave_like "render index"
+      it_should_behave_like "render template", :index
       it_should_behave_like "new resource", :currency
       it_should_behave_like "list of", :currencies
     end
@@ -69,20 +69,18 @@ describe CurrenciesController do
     let!(:currency) { Factory(:dollar) }
     
     before do
-      login_as_admin
+      login_as(:admin)
       get :edit, :id => currency.id
     end
     
-    it_should_behave_like "render form"
+    it_should_behave_like "render template", :form
     it_should_behave_like "existing resource", :currency
   end
   
   describe "update" do
     let!(:currency) { Factory(:dollar) }
     
-    before do
-      login_as_admin
-    end
+    before { login_as(:admin) }
     
     context "with valid data" do
       let(:name) { 'zloty' }
@@ -112,7 +110,7 @@ describe CurrenciesController do
       
       it_should_behave_like "flash error"
       it_should_behave_like "list of", :currencies, Array, :currency
-      it_should_behave_like "render index"
+      it_should_behave_like "render template", :index
     end
   end
   
@@ -122,7 +120,7 @@ describe CurrenciesController do
     let!(:currency) { Factory(:dollar) }
     
     before do
-      login_as_admin
+      login_as(:admin)
       delete :destroy, :id => currency.id
     end
     
