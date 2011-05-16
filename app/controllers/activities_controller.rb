@@ -38,22 +38,24 @@ class ActivitiesController < ApplicationController
   
   def calendar
     user_id = params[:user_id]
+    date = params[:date]
+    @date = date.present? ? Date.parse(date) : Date.current
     
     if current_user.admin?
-      @user = user_id.present? ? User.find(user_id) : current_user
+      @user = user_id.present? ? User.find_by_id(user_id) : current_user
       @users = User.employees
     elsif current_user.client?
       @users = current_user.client.collaborators
-      @user = user_id.present? ? @users.detect {|i| i.id.to_s == user_id} : @users.first
+      # TODO: change to "@users.find" when collaborators can be used as collection
+      @user = user_id.present? ? @users.detect {|i| i.id == user_id} : @users.first
     else
       @user = current_user
       @users = [@user]
     end
     
     if @user
-      @activities = current_user.client? \
-        ? @user.activities.for_projects(current_user.client.projects) \
-        : @user.activities
+      @activities = @user.activities.for_day(@date)
+      @activities = @activities.for_projects(current_user.client.projects) if current_user.client?
       @days_off = @user.free_days
     else
       @activities = []
@@ -61,9 +63,13 @@ class ActivitiesController < ApplicationController
     end
     
     @days_off_hash = Hash[@days_off.map {|i| [i.date, i] }]
-    @current = (current = params[:current]).present? ? Date.parse(current) : Date.current
-    @first_day = @current.at_beginning_of_month
-    @rows = (@first_day.wday + @current.end_of_month.mday - 1) / 7
+    @first_day = @date.beginning_of_month
+    @n = @date.end_of_month.mday
+    @fwd = @first_day.wday
+    @wd = 1
+    @k = 7
+    @k0 = (@fwd - @wd + @k) % @k
+    @rows = ((@k0 + @n) / @k.to_f).ceil
   end
   
   def missed

@@ -13,7 +13,7 @@ class Activity < ActiveRecord::Base
   validate :time_spent_values
   
   scope :for_projects, lambda {|p| {:conditions => {:project_id => p}}}
-  scope :for_day, lambda {|date| {:conditions => {:date => date}}}
+  scope :for_day, lambda {|date| {:conditions => {:date => date.beginning_of_month..date.end_of_month}}}
   scope :invoiced, where('invoice_id IS NOT NULL')
   scope :not_invoiced, where('invoice_id IS NULL')
   

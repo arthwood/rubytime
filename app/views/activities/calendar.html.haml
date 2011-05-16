@@ -4,7 +4,7 @@
   - options = {:class => :right}
   - options[:style] = 'display: none' unless admin_or_client?
   - form_tag calendar_activities_path, options do
-    = hidden_field_tag :current, @current
+    = hidden_field_tag :date, @date
     = select_tag :user_id, options_from_collection_for_select(@users, :id, :name, user_id)
     = submit_tag :ok
   %h1.left
@@ -12,9 +12,9 @@
     
 %table.calendar{:cellspacing => 1}
   %caption
-    = link_to '<< Previous', calendar_activities_path(:current => @current.prev_month, :user_id => user_id)
-    %span= @current.strftime('%B %Y')
-    = link_to 'Next >>', calendar_activities_path(:current => @current.next_month, :user_id => user_id)
+    = link_to '<< Previous', calendar_activities_path(:date => @date.prev_month, :user_id => user_id)
+    %span= @date.strftime('%B %Y')
+    = link_to 'Next >>', calendar_activities_path(:date => @date.next_month, :user_id => user_id)
   %tr
     %th Mon
     %th Tue
@@ -25,28 +25,11 @@
     %th Sun
   
   - groups = @activities.group_by(&Activity::GROUP_BY_DATE_BLOCK)
-  - 0.upto(@rows) do |row|
+  - 0.upto(@rows - 1) do |row|
     %tr
       - 0.upto(6) do |col|
-        - day = @first_day.advance(:days => row * 7 + col + 1 - @first_day.wday)
-        - activities = groups[day] || []
-        - has_activity = !activities.empty?
-        - enabled = @first_day.month == day.month
-        - weekend = col > 4
-        - day_off = @days_off_hash[day]
-        - classes = [:cell]
-        - classes << (weekend && :weekend || enabled && :enabled || :disabled)
-        - classes << :active if has_activity
-        - classes << :day_off if day_off
-        
-        %td{:class => classes.join(' '), :id => day.strftime('%Y-%m-%d')}
-          %p.mday
-            = day.mday
-          - if editor?
-            .day_off_icon{:style => 'display: none'}
-              = (day_off.nil? ? day_off_tag : revert_day_off_tag) if enabled && !has_activity && !weekend
-          .content{:style => 'display: none'}
-            = render :partial => 'cell', :object => activities, :locals => {:activities => activities}
+        = render :partial => 'calendar_table_cell', :locals => {:row => row, :col => col, :groups => groups}
+
 #activity_details.cell{:style => 'display: none'}
 
 - if editor?

@@ -6,12 +6,11 @@ shared_examples_for "filter" do |skip = []|
   it "should set activity filter" do
     var = assigns(:filter)
     var.should be_instance_of(ActivityFilter)
-    (%w(user_id project_id client_id period from to invoice_filter) - skip).all? {|i| var.send(i).blank?}.should be_true
+    (ActivityFilter::FIELDS - skip).all? {|i| var.send(i).blank?}.should be_true
   end
 end
 
 describe ActivitiesController do
-=begin
   describe "index" do
     context "when not logged in" do
       before do
@@ -22,12 +21,12 @@ describe ActivitiesController do
     end
     
     context "when logged in" do
-      context "as normal user" do
+      context "as a regular user" do
         let!(:activity) { Factory(:activity) }
         let!(:user) { activity.user }
         
         before do
-          subject.stub!(:current_user).and_return(user)
+          login_as(:user, user)
           
           get :index
         end
@@ -38,7 +37,7 @@ describe ActivitiesController do
           var.should include(activity.project)
         end
         
-        it_should_behave_like "filter"
+        it_should_behave_like "filter", [:user_id]
         it_should_behave_like "not setting a variable", :users
         it_should_behave_like "not setting a variable", :clients
         it_should_behave_like "render template", :index
@@ -51,7 +50,7 @@ describe ActivitiesController do
         let!(:project) { Factory(:project) }
         
         before do
-          subject.stub!(:current_user).and_return(user)
+          login_as(:user, user)
           
           get :index
         end
@@ -84,12 +83,12 @@ describe ActivitiesController do
         let!(:client_user) { Factory(:client_user, :client => project.client) }
         
         before do
-          subject.stub!(:current_user).and_return(client_user)
+          login_as(:client, client_user)
           
           get :index
         end
         
-        it_should_behave_like "filter", %w(client_id project_id) 
+        it_should_behave_like "filter", [:client_id, :project_id] 
         
         it "set filter fields" do
           var = assigns(:filter)
@@ -132,12 +131,12 @@ describe ActivitiesController do
       end
     end
   end
-
+  
   describe "search" do
     let!(:my_activity) { Factory(:activity) }
     let!(:other_activity) { Factory(:activity) }
     
-    context "normal user" do
+    context "regular user" do
       before { login_as(:user, my_activity.user) }
       
       context "when searching by my project" do
@@ -231,7 +230,7 @@ describe ActivitiesController do
       end
     end
   end
-=end
+  
   describe "calendar" do
     context "get" do
       context "for admin user" do
@@ -266,36 +265,190 @@ describe ActivitiesController do
       end
       
       context "for client user" do
-        let!(:employee_1) { Factory(:user) }
-        let!(:employee_2) { Factory(:user) }
         let!(:client_user) { Factory(:client_user) }
-        let!(:project) { Factory(:project, :client => client_user.client) }
-        let!(:activity_1) { Factory(:activity, :user => employee_1, :project => project, :date => Date.current) }
-        let!(:activity_2) { Factory(:activity, :user => employee_2, :project => project, :date => Date.current) }
+        
+        context "with no collaborators" do
+          before do
+            login_as(:user, client_user)
+          
+            get :calendar
+          end
+          
+          it "should set first collaborator as @user" do
+            assigns(:user).should be_nil 
+          end
+          
+          it "should set all collaborators as @users" do
+            assigns(:users).should be_empty
+          end
+          
+          it "should set user activities as @activities" do
+            assigns(:activities).should be_empty
+          end
+        end
+        
+        context "with any collaborators" do
+          let!(:employee_1) { Factory(:user) }
+          let!(:employee_2) { Factory(:user) }
+          let!(:project) { Factory(:project, :client => client_user.client) }
+          let!(:activity_1) { Factory(:activity, :user => employee_1, :project => project, :date => Date.current) }
+          let!(:activity_2) { Factory(:activity, :user => employee_2, :project => project, :date => Date.current) }
+        
+          before do
+            login_as(:user, client_user)
+          
+            get :calendar
+          end
+        
+          it "should set first collaborator as @user" do
+            assigns(:user).should eql(employee_1) 
+          end
+        
+          it "should set all collaborators as @users" do
+            var = assigns(:users)
+            var.size.should eql(2)
+            var.should include(employee_1, employee_2)
+          end
+        
+          it "should set user activities as @activities" do
+            var = assigns(:activities)
+            var.size.should eql(1)
+            var.should include(activity_1)
+          end
+        end
+      end
+      
+      context "for regular user" do
+        let!(:user) { Factory(:user) }
+        let!(:activity) { Factory(:activity, :user => user, :date => '2011-05-17') }
+        let!(:free_day) { Factory(:free_day, :date => '2011-05-16', :user => user) }
         
         before do
-          login_as(:user, client_user)
+          login_as(:user, user)
           
           get :calendar
         end
         
-        it "should set first collaborator as @user" do
-          assigns(:user).should eql(employee_1) 
+        it "should set current user as @user" do
+          assigns(:user).should eql(subject.current_user) 
         end
         
-        it "should set all collaborators as @users" do
+        it "should set collection with only this user as @users" do
           var = assigns(:users)
-          var.size.should eql(2)
-          var.should include(employee_1, employee_2)
+          var.size.should eql(1)
+          var.should include(user)
         end
         
         it "should set user activities as @activities" do
           var = assigns(:activities)
           var.size.should eql(1)
-          var.should include(activity_1)
+          var.should include(activity)
         end
         
-        it_should_behave_like "render template", :calendar
+        it "should set @days_off_hash" do
+          var = assigns(:days_off_hash)
+          var[free_day.date].should eql(free_day)
+        end
+        
+        it "should set @date" do
+          assigns(:date).should eql(Date.current)
+        end
+        
+        it "should set @first_day" do
+          assigns(:first_day).should eql(Date.current.beginning_of_month)
+        end
+        
+        it "should set calendat params" do
+          assigns(:rows).should eql(6)
+          assigns(:k0).should eql(6)
+        end
+      end
+    end
+    
+    context "post" do
+      context "for admin user" do
+        let!(:admin) { Factory(:admin) }
+        let!(:activity) { Factory(:activity, :date => Date.current) }
+        let!(:employee) { activity.user }
+        
+        context "when requested user exists" do
+          before do
+            login_as(:admin, admin)
+          
+            post :calendar, :user_id => employee.id
+          end
+        
+          it "should set requested user as @user" do
+            assigns(:user).should eql(employee)
+          end
+        
+          it "should set user's activities as @activities" do
+            var = assigns(:activities)
+            var.size.should eql(1)
+            var.should include(activity)
+          end
+        end
+        
+        context "when requested user does not exists" do
+          before do
+            login_as(:admin, admin)
+          
+            post :calendar, :user_id => 'xxx'
+          end
+        
+          it "should set nil as @user" do
+            assigns(:user).should be_nil
+          end
+        
+          it "should set empty collection as @activities" do
+            assigns(:activities).should be_empty
+          end
+        end
+      end
+      
+      context "for client user" do
+        let!(:client_user) { Factory(:client_user) }
+        let!(:my_employee) { Factory(:user) }
+        let!(:other_employee) { Factory(:user) }
+        let!(:project) { Factory(:project, :client => client_user.client) }
+        let!(:activity_1) { Factory(:activity, :user => my_employee, :project => project, :date => Date.current) }
+        let!(:activity_2) { Factory(:activity, :user => other_employee, :date => Date.current) }
+        
+        context "when requested user is client's collaborator" do
+          before do
+            login_as(:client, client_user)
+            
+            post :calendar, :user_id => my_employee.id
+          end
+          
+          it "should set my_employee as @user" do
+            assigns(:user).should eql(my_employee)
+          end
+          
+          it "should set all collaborators as @users" do
+            var = assigns(:users)
+            var.size.should eql(1)
+            var.should include(my_employee)
+          end
+          
+          it "should set user activities as @activities" do
+            var = assigns(:activities)
+            var.size.should eql(1)
+            var.should include(activity_1)
+          end
+        end
+        
+        context "when requested user is not client's collaborator" do
+          before do
+            login_as(:user, client_user)
+          
+            post :calendar, :user_id => other_employee.id
+          end
+          
+          it "should set nil as @user" do
+            assigns(:user).should be_nil
+          end
+        end
       end
     end
   end

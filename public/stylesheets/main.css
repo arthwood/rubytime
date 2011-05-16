@@ -362,6 +362,11 @@ table.calendar td.active {
 table.calendar td.weekend {
   background-color: #CFFFDF;
 }
+table.calendar td.weekend.disabled {
+  color: #DDD;
+  background-image: none;
+  background-color: #CFFFDF;
+}
 table.calendar td.day_off {
   background: url('/images/day_off_bg.png') no-repeat 50% 50%;
 }

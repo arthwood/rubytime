@@ -1,7 +1,7 @@
 - create_mode = @activity.new_record?
 - @prefix = create_mode ? 'new' : 'edit'
 
-- form_for :activity, :url => (create_mode ? activities_url : activity_url(@activity)), :html => {:method => (create_mode ? :post : :put)} do |i|
+= form_for :activity, :url => (create_mode ? activities_url : activity_url(@activity)), :html => {:method => (create_mode ? :post : :put)} do |i|
   - if admin?
     .item.clearfix
       .label
