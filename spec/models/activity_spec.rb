@@ -56,7 +56,7 @@ describe Activity do
       end
       
       it "should return both activity_1 and activity_2" do
-        result = Activity.search(filter)
+        result = subject.class.search(filter)
         result.size.should == 2
         result.should include(activity_1, activity_2)
       end
@@ -75,7 +75,7 @@ describe Activity do
       end
       
       it "should return only one activity" do
-        result = Activity.search(filter)
+        result = subject.class.search(filter)
         result.size.should == 1
         result.should include(activity_1)
       end
@@ -87,7 +87,7 @@ describe Activity do
       end
       
       it "should return only one activity" do
-        result = Activity.search(filter)
+        result = subject.class.search(filter)
         result.size.should == 1
         result.should include(activity_1)
       end
@@ -105,7 +105,7 @@ describe Activity do
       
       context "when there are no activities" do
         it "should return all days of current month without weekends" do
-          result = Activity.search_missed(filter)
+          result = subject.class.search_missed(filter)
           result.keys.should == [user]
           result[user].should == days
         end
@@ -115,7 +115,7 @@ describe Activity do
         let!(:activity) { Factory(:activity, :user => user, :date => days[0]) }
         
         it "should not include activity date" do
-          result = Activity.search_missed(filter)
+          result = subject.class.search_missed(filter)
           result[user].should_not include(activity.date)
         end
         
@@ -123,7 +123,7 @@ describe Activity do
           let!(:free_day) { Factory(:free_day, :user => user, :date => days[1]) }
           
           it "should not include free day" do
-            result = Activity.search_missed(filter)
+            result = subject.class.search_missed(filter)
             result[user].should_not include(free_day.date)
           end
         end

@@ -32,7 +32,7 @@ describe ClientsController do
     let!(:user_count) { User.count }
     let!(:client_count) { Client.count }
     
-    before { login_as(:admin, admin) }
+    before { login_as(admin) }
     
     context "with valid data" do
       before do

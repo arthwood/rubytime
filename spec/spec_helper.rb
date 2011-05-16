@@ -28,12 +28,8 @@ end
 
 module SharedMethods
   # type {admin, editor, user}
-  def login_as(type, user = nil)
-    unless user.nil? || type == :user || user.send("#{type}?")
-      raise ArgumentError.new("Cannot login #{user} as #{type}")
-    end
-    
-    subject.stub!(:current_user).and_return(user || Factory(type))
+  def login_as(user)
+    subject.stub!(:current_user).and_return(user.is_a?(Symbol) ? Factory(user) : user)
   end
 end
 

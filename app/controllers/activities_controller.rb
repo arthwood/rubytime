@@ -1,6 +1,6 @@
 class ActivitiesController < ApplicationController
   before_filter :login_required, :only => [:search, :calendar]
-  before_filter :editor_required, :except => [:index, :search, :calendar]
+  before_filter :editor_required, :except => [:index, :search, :calendar, :missed, :search_missed]
   
   def index
     redirect_to login_url and return unless logged_in?
@@ -28,9 +28,9 @@ class ActivitiesController < ApplicationController
     @activities = Activity.search(@filter)
     
     if current_user.admin?
-      filter_client_id = @filter.client_id.to_i
+      filter_client_id = @filter.client_id
       @client = @clients.detect {|i| i.id == filter_client_id}
-      @invoices = @client && @client.invoices || Invoice.all
+      @invoices = @client.present? ? @client.invoices : Invoice.all
     end
     
     render :partial => 'results'
@@ -195,10 +195,10 @@ class ActivitiesController < ApplicationController
     if current_user.admin?
       @users = User.employees
       user = (user_id = @filter.user_id).present? ? User.find(user_id) : nil
-      @projects = user ? user.projects : Project.all
+      @projects = user.present? ? user.projects : Project.all
       @clients = Client.all
     elsif current_user.client?
-      @filter.client_id = current_user.client_id
+      @filter.client_id = current_user.client.id
       @projects = current_user.client.projects
       @users = current_user.client.collaborators
     else
@@ -214,6 +214,9 @@ class ActivitiesController < ApplicationController
       @users = User.employees
     elsif current_user.client?
       @users = current_user.client.collaborators
+      @filter.user_id = nil unless @filter.user_id.blank? || @users.map(&:id).include?(@filter.user_id)
+    else
+      @filter.user_id = current_user.id
     end
   end
   

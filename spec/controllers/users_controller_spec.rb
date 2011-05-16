@@ -36,7 +36,7 @@ describe UsersController do
     let!(:client) { Factory(:client) }
     let!(:count) { User.count }
     
-    before { login_as(:admin, admin) }
+    before { login_as(admin) }
     
     context "with valid data" do
       before do

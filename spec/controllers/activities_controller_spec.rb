@@ -2,11 +2,11 @@ require 'spec_helper'
 
 include SharedMethods
 
-shared_examples_for "filter" do |skip = []|
-  it "should set activity filter" do
+shared_examples_for "filter" do |klass, skip = []|
+  it "should set filter" do
     var = assigns(:filter)
-    var.should be_instance_of(ActivityFilter)
-    (ActivityFilter::FIELDS - skip).all? {|i| var.send(i).blank?}.should be_true
+    var.should be_instance_of(klass)
+    (klass::FIELDS - skip).all? {|i| var.send(i).blank?}.should be_true
   end
 end
 
@@ -26,7 +26,7 @@ describe ActivitiesController do
         let!(:user) { activity.user }
         
         before do
-          login_as(:user, user)
+          login_as(user)
           
           get :index
         end
@@ -37,7 +37,7 @@ describe ActivitiesController do
           var.should include(activity.project)
         end
         
-        it_should_behave_like "filter", [:user_id]
+        it_should_behave_like "filter", ActivityFilter, [:user_id]
         it_should_behave_like "not setting a variable", :users
         it_should_behave_like "not setting a variable", :clients
         it_should_behave_like "render template", :index
@@ -50,12 +50,12 @@ describe ActivitiesController do
         let!(:project) { Factory(:project) }
         
         before do
-          login_as(:user, user)
+          login_as(user)
           
           get :index
         end
         
-        it_should_behave_like "filter"
+        it_should_behave_like "filter", ActivityFilter
         
         it "should set @projects" do
           var = assigns(:projects)
@@ -83,12 +83,12 @@ describe ActivitiesController do
         let!(:client_user) { Factory(:client_user, :client => project.client) }
         
         before do
-          login_as(:client, client_user)
+          login_as(client_user)
           
           get :index
         end
         
-        it_should_behave_like "filter", [:client_id, :project_id] 
+        it_should_behave_like "filter", ActivityFilter, [:client_id, :project_id] 
         
         it "set filter fields" do
           var = assigns(:filter)
@@ -137,7 +137,7 @@ describe ActivitiesController do
     let!(:other_activity) { Factory(:activity) }
     
     context "regular user" do
-      before { login_as(:user, my_activity.user) }
+      before { login_as(my_activity.user) }
       
       context "when searching by my project" do
         before do
@@ -165,7 +165,7 @@ describe ActivitiesController do
     context "client user" do
       let!(:client_user) { Factory(:client_user, :client => my_activity.project.client) }
       
-      before { login_as(:user, client_user) }
+      before { login_as(client_user) }
       
       context "when searching by my project" do
         before do
@@ -240,7 +240,7 @@ describe ActivitiesController do
         let!(:my_activity) { Factory(:activity, :user => admin, :date => Date.current) }
         
         before do
-          login_as(:admin, admin)
+          login_as(admin)
           
           get :calendar
         end
@@ -269,7 +269,7 @@ describe ActivitiesController do
         
         context "with no collaborators" do
           before do
-            login_as(:user, client_user)
+            login_as(client_user)
           
             get :calendar
           end
@@ -278,7 +278,7 @@ describe ActivitiesController do
             assigns(:user).should be_nil 
           end
           
-          it "should set all collaborators as @users" do
+          it "should set empty collection as @users" do
             assigns(:users).should be_empty
           end
           
@@ -295,7 +295,7 @@ describe ActivitiesController do
           let!(:activity_2) { Factory(:activity, :user => employee_2, :project => project, :date => Date.current) }
         
           before do
-            login_as(:user, client_user)
+            login_as(client_user)
           
             get :calendar
           end
@@ -324,7 +324,7 @@ describe ActivitiesController do
         let!(:free_day) { Factory(:free_day, :date => '2011-05-16', :user => user) }
         
         before do
-          login_as(:user, user)
+          login_as(user)
           
           get :calendar
         end
@@ -373,7 +373,7 @@ describe ActivitiesController do
         
         context "when requested user exists" do
           before do
-            login_as(:admin, admin)
+            login_as(admin)
           
             post :calendar, :user_id => employee.id
           end
@@ -391,7 +391,7 @@ describe ActivitiesController do
         
         context "when requested user does not exists" do
           before do
-            login_as(:admin, admin)
+            login_as(admin)
           
             post :calendar, :user_id => 'xxx'
           end
@@ -416,7 +416,7 @@ describe ActivitiesController do
         
         context "when requested user is client's collaborator" do
           before do
-            login_as(:client, client_user)
+            login_as(client_user)
             
             post :calendar, :user_id => my_employee.id
           end
@@ -440,7 +440,7 @@ describe ActivitiesController do
         
         context "when requested user is not client's collaborator" do
           before do
-            login_as(:user, client_user)
+            login_as(client_user)
           
             post :calendar, :user_id => other_employee.id
           end
@@ -452,4 +452,233 @@ describe ActivitiesController do
       end
     end
   end
+  
+  describe "missed" do
+    context "for regular user" do
+      before do
+        login_as(:user)
+        
+        get :missed
+      end
+      
+      it_should_behave_like "filter", MissedActivityFilter, [:user_id]
+      it_should_behave_like "render template", :missed
+    end
+    
+    context "for admin user" do
+      let!(:admin) { Factory(:admin) }
+      let!(:employee) { Factory(:user) }
+      
+      before do
+        login_as(admin)
+        
+        get :missed
+      end
+      
+      it "should set all employees as @users" do
+        var = assigns(:users)
+        var.size.should eql(2)
+        var.should include(admin, employee)
+      end
+      
+      it_should_behave_like "filter", MissedActivityFilter
+    end
+    
+    context "for client user" do
+      let!(:project) { Factory(:project) }
+      let!(:activity) { Factory(:activity, :project => project) }
+      let!(:other_activity) { Factory(:activity) }
+      let!(:client_user) { Factory(:client_user, :client => project.client) }
+      
+      before do
+        login_as(client_user)
+        
+        get :missed
+      end
+      
+      it "should set all collaborators as @users" do
+        var = assigns(:users)
+        var.size.should eql(1)
+        var.should include(activity.user)
+      end
+      
+      it_should_behave_like "filter", MissedActivityFilter
+    end
+  end
+
+  describe "search_missed" do
+    context "for admin" do
+      before do
+        login_as(:admin)
+        
+        post :search_missed, :filter => {}
+      end
+      
+      it_should_behave_like "render template", "activities/missed/_results"
+      it_should_behave_like "filter", MissedActivityFilter
+    end
+    
+    context "for client user" do
+      let!(:client_user) { Factory(:client_user) }
+      let!(:my_employee) { Factory(:user) }
+      let!(:other_employee) { Factory(:user) }
+      let!(:project) { Factory(:project, :client => client_user.client) }
+      let!(:activity_1) { Factory(:activity, :user => my_employee, :project => project) }
+      let!(:activity_2) { Factory(:activity, :user => other_employee) }
+      
+      before { login_as(client_user) }
+      
+      context "when user_id is valid" do
+        before do
+          post :search_missed, :filter => {:user_id => my_employee.id}
+        end
+        
+        it "should set filter.user_id" do
+          assigns(:filter).user_id.should eql(my_employee.id)
+        end
+        
+        it_should_behave_like "render template", "activities/missed/_results"
+        it_should_behave_like "filter", MissedActivityFilter, [:user_id]
+      end
+      
+      context "when user_id is not valid" do
+        before do
+          post :search_missed, :filter => {:user_id => other_employee.id}
+        end
+        
+        it "should nullify filter.user_id" do
+          assigns(:filter).user_id.should be_nil
+        end
+        
+        it_should_behave_like "filter", MissedActivityFilter
+      end
+    end
+    
+    context "for regular user" do
+      let!(:employee) { Factory(:user) }
+      let!(:other_employee) { Factory(:user) }
+      
+      before { login_as(employee) }
+      
+      context "when user_id is valid" do
+        before do
+          post :search_missed, :filter => {:user_id => employee.id}
+        end
+        
+        it "should set filter.user_id" do
+          assigns(:filter).user_id.should eql(employee.id)
+        end
+        
+        it_should_behave_like "render template", "activities/missed/_results"
+        it_should_behave_like "filter", MissedActivityFilter, [:user_id]
+      end
+      
+      context "when user_id is not valid" do
+        before do
+          post :search_missed, :filter => {:user_id => other_employee.id}
+        end
+        
+        it "should set filter.user_id as loggen in user's id" do
+          assigns(:filter).user_id.should eql(employee.id)
+        end
+        
+        it_should_behave_like "filter", MissedActivityFilter, [:user_id]
+      end
+    end
+  end
+  
+  describe "edit" do
+    let!(:activity) { Factory(:activity) }
+    
+    context "for admin user" do
+      before do
+        login_as(:admin)
+        
+        get :edit, :id => activity.id
+      end
+      
+      it_should_behave_like "render template", "_form"
+      it_should_behave_like "existing resource", :activity
+    end
+    
+    context "for regular user" do
+      context "his activity" do
+        before do
+          login_as(activity.user)
+          
+          get :edit, :id => activity.id
+        end
+        
+        it_should_behave_like "render template", "_form"
+        it_should_behave_like "existing resource", :activity
+      end
+      
+      context "other user's activity" do
+        let!(:other_activity) { Factory(:activity) }
+        
+        before do
+          login_as(activity.user)
+          
+          get :edit, :id => other_activity.id
+        end
+        
+        it "should render nothing" do
+          response.body.should be_blank
+        end
+      end
+    end
+  end
+
+    describe "update" do
+      let!(:activity) { Factory(:activity) }
+      let(:date) { activity.date.ago(1.day).to_date }
+      
+      context "for admin user" do
+        before do
+          login_as(:admin)
+          
+          put :update, :id => activity.id, :activity => {:date => date}
+        end
+        
+        it "should update activity" do
+          activity.reload.date.should eql(date)
+        end
+        
+        it "should render json" do
+          result = response.body
+          match = result.match(/{"success":true,"activity":{(.*)}}/)
+          activity_json = match[1]
+          
+          match.should_not be_nil
+          activity_json.should =~ /"id":#{activity.id}/
+        end
+      end
+    
+      context "for regular user" do
+        context "his activity" do
+          before do
+            login_as(activity.user)
+          
+            get :edit, :id => activity.id
+          end
+        
+          it_should_behave_like "render template", "_form"
+          it_should_behave_like "existing resource", :activity
+        end
+      
+        context "other user's activity" do
+          let!(:other_activity) { Factory(:activity) }
+        
+          before do
+            login_as(activity.user)
+          
+            get :edit, :id => other_activity.id
+          end
+        
+          it "should render nothing" do
+            response.body.should be_blank
+          end
+        end
+      end
+    end
 end
