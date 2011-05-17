@@ -628,57 +628,262 @@ describe ActivitiesController do
       end
     end
   end
-
-    describe "update" do
-      let!(:activity) { Factory(:activity) }
-      let(:date) { activity.date.ago(1.day).to_date }
+  
+  describe "create" do
+    let!(:project) { Factory(:project) }
+    let!(:user) { Factory(:user) }
+    let!(:count) { Activity.count }
+    let(:activity_data) do
+      {:project_id => project.id, 
+        :user_id => user.id, 
+        :comments => 'Working on authentication', 
+        :date => '2011-01-19',
+        :time_spent => '6:45'
+      }
+    end
+    
+    context "for admin user" do
+      before do
+        login_as(:admin)
+        
+        post :create, :activity => activity_data
+      end
       
-      context "for admin user" do
-        before do
-          login_as(:admin)
+      it "should create activity" do
+        Activity.count.should eql(count + 1)
+      end
+      
+      it "should render json" do
+        result = response.body
+        match = result.match(/{"success":true,"activity":{(.*)}}/)
+        match.should_not be_nil
+        
+        json = match[1]
+        match = json.match(/"id":(.*)/)
+        match.should_not be_nil
+      end
+    end
+    
+    context "for regular user" do
+      before { login_as(user) }
+      
+      context "his activity" do
+        context "valid data" do
+          before do
+            post :create, :activity => activity_data
+          end
           
-          put :update, :id => activity.id, :activity => {:date => date}
+          it "should create activity" do
+            Activity.count.should eql(count + 1)
+          end
         end
         
-        it "should update activity" do
-          activity.reload.date.should eql(date)
+        context "invalid data" do
+          before do
+            activity_data.delete(:comments)
+            
+            post :create, :activity => activity_data
+          end
+          
+          it "should not create activity" do
+            Activity.count.should eql(count)
+          end
+          
+          it "should render json" do
+            result = response.body
+            match = result.match(/{"success":false,"html":"(.*)"}/)
+            match.should_not be_nil
+          end
+        end
+      end
+      
+      context "other user's activity" do
+        let!(:other_user) { Factory(:user) }
+        
+        before do
+          activity_data[:user_id] = other_user.id
+          
+          post :create, :activity => activity_data
+        end
+        
+        it "should create activity" do
+          Activity.count.should eql(count + 1)
+        end
+        
+        it "should assign current user to this activity" do
+          assigns(:activity).user eql(user)
+        end
+      end
+    end
+  end
+  
+  describe "update" do
+    let!(:activity) { Factory(:activity) }
+    let!(:old_date) { activity.date.to_date }
+    let(:new_date) { old_date.ago(1.day).to_date }
+    
+    context "for admin user" do
+      before do
+        login_as(:admin)
+        
+        put :update, :id => activity.id, :activity => {:date => new_date}
+      end
+      
+      it "should update activity" do
+        activity.reload.date.should eql(new_date)
+      end
+      
+      it "should render json" do
+        result = response.body
+        match = result.match(/{"success":true,"activity":{(.*)}}/)
+        match.should_not be_nil
+        
+        json = match[1]
+        json.should =~ /"id":#{activity.id}/
+      end
+    end
+    
+    context "for regular user" do
+      before { login_as(activity.user) }
+      
+      context "his activity" do
+        context "valid data" do
+          before do
+            put :update, :id => activity.id, :activity => {:date => new_date}
+          end
+          
+          it "should update activity" do
+            activity.reload.date.should eql(new_date)
+          end
+        end
+        
+        context "invalid data" do
+          before do
+            put :update, :id => activity.id, :activity => {:comments => ''}
+          end
+          
+          it "should not update activity" do
+            activity.reload.date.should eql(old_date)
+          end
+          
+          it "should render json" do
+            result = response.body
+            match = result.match(/{"success":false,"html":"(.*)"}/)
+            match.should_not be_nil
+          end
+        end
+      end
+      
+      context "other user's activity" do
+        let!(:other_activity) { Factory(:activity) }
+        
+        before do
+          login_as(activity.user)
+          
+          put :update, :id => other_activity.id, :activity => {:date => new_date}
+        end
+        
+        it "should not update activity" do
+          activity.reload.date.should eql(old_date)
         end
         
         it "should render json" do
           result = response.body
-          match = result.match(/{"success":true,"activity":{(.*)}}/)
-          activity_json = match[1]
-          
+          match = result.match(/{"success":false,"html":"(.*)"}/)
           match.should_not be_nil
-          activity_json.should =~ /"id":#{activity.id}/
-        end
-      end
-    
-      context "for regular user" do
-        context "his activity" do
-          before do
-            login_as(activity.user)
-          
-            get :edit, :id => activity.id
-          end
-        
-          it_should_behave_like "render template", "_form"
-          it_should_behave_like "existing resource", :activity
-        end
-      
-        context "other user's activity" do
-          let!(:other_activity) { Factory(:activity) }
-        
-          before do
-            login_as(activity.user)
-          
-            get :edit, :id => other_activity.id
-          end
-        
-          it "should render nothing" do
-            response.body.should be_blank
-          end
         end
       end
     end
+  end
+  
+  describe "destroy" do
+    let!(:activity) { Factory(:activity) }
+    
+    context "for admin user" do
+      let!(:count) { Activity.count }
+      
+      before do
+        login_as(:admin)
+        
+        delete :destroy, :id => activity.id
+      end
+      
+      it "should delete activity" do
+        Activity.count.should eql(count - 1)
+      end
+      
+      it "should render json" do
+        result = response.body
+        match = result.match(/{"success":true,"activity":{(.*)}}/)
+        match.should_not be_nil
+        
+        json = match[1]
+        match = json.match(/"id":#{activity.id}/)
+        match.should_not be_nil
+      end
+    end
+    
+    context "for regular user" do
+      before { login_as(activity.user) }
+      
+      context "his activity" do
+        let!(:count) { Activity.count }
+        
+        before do
+          delete :destroy, :id => activity.id
+        end
+        
+        it "should delete activity" do
+          Activity.count.should eql(count - 1)
+        end
+      end
+      
+      context "other user's activity" do
+        let!(:other_activity) { Factory(:activity) }
+        let!(:count) { Activity.count }
+        
+        before do
+          delete :destroy, :id => other_activity.id
+        end
+        
+        it "should not delete activity" do
+          Activity.count.should eql(count)
+        end
+      end
+    end
+  end
+  
+  describe "invoice" do
+    let!(:activity) { Factory(:activity) }
+    let!(:client) { activity.project.client }
+    let!(:other_activity) { Factory(:activity) }
+    let!(:hourly_rate) { Factory(:hourly_rate, :project => activity.project) }
+    
+    before { login_as(:admin) }
+    
+    context "new" do
+      let!(:count) { Invoice.count }
+      
+      before do
+        post :invoice, :activity_ids => [activity.id], :invoice_name => 'my invoice'
+      end
+      
+      it "should create new invoice" do
+        Invoice.count.should eql(count + 1)
+      end
+    end
+    
+    context "existing" do
+      let!(:invoice) { Factory(:invoice) }
+      let!(:count) { Invoice.count }
+      
+      before do
+        post :invoice, :activity_ids => [activity.id], :invoice_id => invoice.id
+      end
+      
+      it "should not create new invoice" do
+        Invoice.count.should eql(count)
+      end
+    end
+  end
 end

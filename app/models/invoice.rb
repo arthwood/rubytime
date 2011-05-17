@@ -1,5 +1,6 @@
 class Invoice < ActiveRecord::Base
   validates_presence_of :name
+  validates_presence_of :user_id
   
   belongs_to :client
   belongs_to :user

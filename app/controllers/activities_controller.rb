@@ -1,6 +1,7 @@
 class ActivitiesController < ApplicationController
   before_filter :login_required, :only => [:search, :calendar]
   before_filter :editor_required, :except => [:index, :search, :calendar, :missed, :search_missed]
+  before_filter :admin_required, :only => [:invoice]
   
   def index
     redirect_to login_url and return unless logged_in?
@@ -130,24 +131,33 @@ class ActivitiesController < ApplicationController
     
     @activity.destroy if @found
     
-    render :json => {:activity => @activity, :success => @found}
+    render :json => {:success => @found, :activity => @activity}
   end
   
   def invoice
-    @client = Client.find(params[:client_id])
     activity_ids = params[:activity_ids]
     # new invoice
     invoice_name = params[:invoice_name]
     # existing invoice
     invoice_id = params[:invoice_id]
     
-    @activities = Activity.find(activity_ids)
-    t = Date.current
-    hourly_rates = @client.projects.map(&:hourly_rates).flatten.sort_by(&:date)
+    if invoice_name.blank? && invoice_id.blank?
+      render :json => {:error => %(either "invoice_name" or "invoice_id" is required)} and return
+    end
+    
+    @activities = Activity.find(activity_ids, :include => [:project, :user])
+    @projects = @activities.map(&:project).uniq
+    @clients = @projects.map(&:client).uniq
+    
+    render :json => {:error => "Activities belongs to many clients"} and return unless @clients.size == 1
+    
+    @client = @clients.first
+    date = Date.current
+    hourly_rates = @projects.map(&:hourly_rates).flatten.sort_by(&:date)
     activity_and_hr = @activities.map do |i|
-      {:activity => i, :hr => hourly_rates.detect {|j| 
-        j.role_id == i.user.role_id && j.project_id == i.project_id && j.date <= t
-      }}
+      {:activity => i, :hr => hourly_rates.detect do |j| 
+        j.role == i.user.role && j.project == i.project && j.date <= date
+      end}
     end
     
     bad_activities = activity_and_hr.select {|i| i[:hr].nil?}
@@ -156,7 +166,7 @@ class ActivitiesController < ApplicationController
     
     if success
       @invoice = invoice_id.blank? \
-        ? @client.invoices.create(:name => invoice_name, :user_id => current_user) \
+        ? @client.invoices.create!(:name => invoice_name, :user_id => current_user) \
         : Invoice.find(invoice_id)
       invoice_id = @invoice.id
       date = Date.current
