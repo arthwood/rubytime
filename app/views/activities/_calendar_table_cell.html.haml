@@ -1,0 +1,20 @@
+- day = @first_day.advance(:days => row * 7 + col - @k0)
+- activities = groups[day] || []
+- has_activity = !activities.empty?
+- enabled = @first_day.month == day.month
+- weekend = day.saturday? || day.sunday?
+- day_off = @days_off_hash[day]
+- classes = [:cell]
+- classes << :weekend if weekend
+- classes << (enabled ? :enabled : :disabled)
+- classes << :active if has_activity
+- classes << :day_off if day_off
+
+%td{:class => classes.join(' '), :id => day.strftime('%Y-%m-%d')}
+  %p.mday
+    = day.mday
+  - if editor?
+    .day_off_icon{:style => 'display: none'}
+      = (day_off.nil? ? day_off_tag : revert_day_off_tag) unless !enabled || has_activity || weekend
+  .content{:style => 'display: none'}
+    = render :partial => 'cell', :object => activities, :as => :activities

@@ -3,11 +3,11 @@ var Activities = $E(Resources, function() {
   this.filterForm = $$('.filter form').first();
   this.filterForm.onsubmit = this.onFilter.bind(this, true);
   this.onFilterSuccessD = $D(this, this.onFilterSuccess);
-  this.filterUserSelect = $('activity_filter_user_id');
+  this.filterUserSelect = $('filter_user_id');
   
   if (this.filterUserSelect) {
     this.filterUserSelect.onchange = this.onUserSelect.bind(this, true);
-    this.filterProject = $('activity_filter_project_id');
+    this.filterProject = $('filter_project_id');
   }
   
   this.usersVisible = true;
@@ -28,9 +28,9 @@ var Activities = $E(Resources, function() {
   this.onProjectsSuccessD = $D(this, this.onProjectsSuccess);
   this.projectToOptionDC = this.projectToOption.bind(this);
   
-  this.filterDateFrom = $('activity_filter_from');
-  this.filterDateTo = $('activity_filter_to');
-  this.period = $('activity_filter_period');
+  this.filterDateFrom = $('filter_from');
+  this.filterDateTo = $('filter_to');
+  this.period = $('filter_period');
   this.period.onchange = this.onPeriod.bind(this, true);
   this.initSelectAllDC = this.initSelectAll.bind(this);
   this.onSelectAllChangeDC = this.onSelectAllChange.bind(this, true);

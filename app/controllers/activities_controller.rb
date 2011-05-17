@@ -1,10 +1,10 @@
 class ActivitiesController < ApplicationController
   before_filter :login_required, :only => [:search, :calendar]
-  before_filter :editor_required, :except => [:index, :search, :calendar]
+  before_filter :editor_required, :except => [:index, :search, :calendar, :missed, :search_missed]
   
   def index
     redirect_to login_url and return unless logged_in?
-    set_filter
+    set_activity_filter(nil)
   end
   
   def export
@@ -13,26 +13,24 @@ class ActivitiesController < ApplicationController
     @hide_users = (params[:hide_users] == '1')
     
     respond_to do |format|
-     format.csv {
-       send_data Activity.to_csv(@activities), :type => :csv, :filename => "#{@filename}.csv"
-     }
-     format.pdf {
-       send_data Activity.to_pdf(@activities, 'Activities', @hide_users), :type => :pdf, :filename => "#{@filename}.pdf" 
-     }
+      format.csv {
+        send_data Activity.to_csv(@activities), :type => :csv, :filename => "#{@filename}.csv"
+      }
+      format.pdf {
+        send_data Activity.to_pdf(@activities, 'Activities', @hide_users), :type => :pdf, :filename => "#{@filename}.pdf" 
+      }
     end
   end
   
   def search
-    @params_filter = params[:activity_filter]
-    
-    set_filter
+    set_activity_filter(params[:filter])
     
     @activities = Activity.search(@filter)
     
     if current_user.admin?
-      filter_client_id = @filter.client_id.to_i
+      filter_client_id = @filter.client_id
       @client = @clients.detect {|i| i.id == filter_client_id}
-      @invoices = @client && @client.invoices || Invoice.all
+      @invoices = @client.present? ? @client.invoices : Invoice.all
     end
     
     render :partial => 'results'
@@ -40,42 +38,46 @@ class ActivitiesController < ApplicationController
   
   def calendar
     user_id = params[:user_id]
+    date = params[:date]
+    @date = date.present? ? Date.parse(date) : Date.current
     
     if current_user.admin?
-      @user = user_id.blank? ? current_user : User.find(user_id)
+      @user = user_id.present? ? User.find_by_id(user_id) : current_user
       @users = User.employees
     elsif current_user.client?
       @users = current_user.client.collaborators
-      @user = @users.detect {|i| i.id.to_s == user_id} || @users.first
+      # TODO: change to "@users.find" when collaborators can be used as collection
+      @user = user_id.present? ? @users.detect {|i| i.id == user_id} : @users.first
     else
       @user = current_user
       @users = [@user]
     end
     
     if @user
-      @activities = current_user.client? \
-        ? @user.activities.for_projects(current_user.client.projects) \
-        : @user.activities
+      @activities = @user.activities.for_day(@date)
+      @activities = @activities.for_projects(current_user.client.projects) if current_user.client?
       @days_off = @user.free_days
     else
       @activities = []
       @days_off = []
     end
     
-    @days_off_hash = @days_off.inject({}) {|mem, i| mem[i.date] = i; mem}
-    
-    @current = (current = params[:current]).blank? ? Date.current : Date.parse(current)
-    @first_day = @current.at_beginning_of_month
-    @rows = (@first_day.wday + @current.end_of_month.mday - 1) / 7
+    @days_off_hash = Hash[@days_off.map {|i| [i.date, i] }]
+    @first_day = @date.beginning_of_month
+    @n = @date.end_of_month.mday
+    @fwd = @first_day.wday
+    @wd = 1
+    @k = 7
+    @k0 = (@fwd - @wd + @k) % @k
+    @rows = ((@k0 + @n) / @k.to_f).ceil
   end
   
   def missed
-    set_missed_activities_filter
+    set_missed_activity_filter(nil)
   end
   
   def search_missed
-    @params_filter = params[:missed_activity_filter]
-    set_missed_activities_filter
+    set_missed_activity_filter(params[:filter])
     @results = Activity.search_missed(@filter)
     
     render :partial => 'activities/missed/results'
@@ -128,7 +130,7 @@ class ActivitiesController < ApplicationController
     
     @activity.destroy if @found
     
-    render :json => {:activity => @activity.to_json, :success => @found}
+    render :json => {:activity => @activity, :success => @found}
   end
   
   def invoice
@@ -141,7 +143,7 @@ class ActivitiesController < ApplicationController
     
     @activities = Activity.find(activity_ids)
     t = Date.current
-    hourly_rates = HourlyRate.all(:order => 'date DESC')
+    hourly_rates = @client.projects.map(&:hourly_rates).flatten.sort_by(&:date)
     activity_and_hr = @activities.map do |i|
       {:activity => i, :hr => hourly_rates.detect {|j| 
         j.role_id == i.user.role_id && j.project_id == i.project_id && j.date <= t
@@ -163,7 +165,6 @@ class ActivitiesController < ApplicationController
         hr = i[:hr]
         activity.update_attributes(:invoice_id => invoice_id, :invoiced_at => date, :value => hr.value, :currency_id => hr.currency_id)
       end
-      
     else
       json[:error] = "Some of the activities don't have hourly rates defined"
       json[:bad_activities] = bad_activities.map {|i| i[:activity].id}
@@ -188,36 +189,39 @@ class ActivitiesController < ApplicationController
   
   protected
   
-  def set_filter
-    @filter = ActivityFilter.new(@params_filter)
+  def set_activity_filter(data)
+    @filter = ActivityFilter.new(data)
     
     if current_user.admin?
       @users = User.employees
-      user = (user_id = @filter.user_id).blank? ? nil : User.find(user_id)
-      @projects = user ? user.projects : Project.all
+      user = (user_id = @filter.user_id).present? ? User.find(user_id) : nil
+      @projects = user.present? ? user.projects : Project.all
       @clients = Client.all
     elsif current_user.client?
-      @filter.client_id = current_user.client_id
-      @filter.project_id = nil unless current_user.client.project_ids.include?(@filter.project_id.to_i)
+      @filter.client_id = current_user.client.id
       @projects = current_user.client.projects
       @users = current_user.client.collaborators
     else
+      @filter.user_id = current_user.id
       @projects = current_user.projects
     end
   end
   
-  def set_missed_activities_filter
-    @filter = MissedActivityFilter.new(@params_filter)
+  def set_missed_activity_filter(data)
+    @filter = MissedActivityFilter.new(data)
     
     if current_user.admin?
       @users = User.employees
     elsif current_user.client?
       @users = current_user.client.collaborators
+      @filter.user_id = nil unless @filter.user_id.blank? || @users.map(&:id).include?(@filter.user_id)
+    else
+      @filter.user_id = current_user.id
     end
   end
   
   def set_activity
     @activity = current_user.admin? ? Activity.find_by_id(params[:id]) : current_user.activities.find_by_id(params[:id])
-    @found = !@activity.nil?
+    @found = @activity.present?
   end
 end

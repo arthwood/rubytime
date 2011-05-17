@@ -1,7 +1,7 @@
 - by_clients = list.group_by(&Activity::GROUP_BY_CLIENT_BLOCK)
 
 %h2
-  = "Total: #{Activity.total_value(list)}"
+  = "Total: #{total_value(list)}"
   
 .clients
   - by_clients.each_pair do |client, client_activities|

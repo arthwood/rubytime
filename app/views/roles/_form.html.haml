@@ -9,7 +9,7 @@
       = i.label :name
     .input
       = i.text_field :name
-      = error_field(i, :name)
+      = error_field(@role, :name)
   .item.clearfix
     .label
       = i.label :can_manage_financial_data, 'Can manage financial data?'

@@ -33,7 +33,7 @@ Resources.prototype = {
     return false;
   },
   
-  onRemove: function(a) {
+  onRemove: function(a, e) {
     if (confirm('Really remove this ' + this.name + '?')) {
       this.doRemove(a);
     }
@@ -42,7 +42,7 @@ Resources.prototype = {
   },
   
   doRemove: function(a) {
-    $del(a.href, null, this.onDeleteSuccessD);
+    $del(a.href, {authenticity_token: env.token}, this.onDeleteSuccessD);
   },
   
   onEditSuccess: function(ajax) {

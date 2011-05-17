@@ -203,7 +203,7 @@ form .error {
   float: left;
   cursor: pointer;
   padding: 3px 12px;
-  margin-top: 4px;
+  margin-top: 3px;
   margin-right: 8px;
   color: #A7B2BF;
   background: #0A334F;
@@ -217,7 +217,7 @@ form .error {
   background: white;
   border: 1px solid #999;
   padding: 20px;
-  width: 400px;
+  min-width: 400px;
   z-index: 3;
 }
 #flash img {
@@ -238,15 +238,6 @@ img.datepicker {
 }
 form.login {
   padding: 20px 0;
-}
-form.reset_password .item > label {
-  width: 40px;
-}
-form.reset_password .item .no_label {
-  margin-left: 46px;
-}
-p.reset_password {
-  width: 500px;
 }
 .user_info {
   margin: 78px 18px 0 0;
@@ -369,6 +360,11 @@ table.calendar td.active {
   background: url('/images/comment.png') no-repeat 50% 50%;
 }
 table.calendar td.weekend {
+  background-color: #CFFFDF;
+}
+table.calendar td.weekend.disabled {
+  color: #DDD;
+  background-image: none;
   background-color: #CFFFDF;
 }
 table.calendar td.day_off {

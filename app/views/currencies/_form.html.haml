@@ -9,24 +9,24 @@
       = i.label :name
     .input
       = i.text_field :name
-      = error_field(i, :name)
+      = error_field(@currency, :name)
   .item.clearfix
     .label
       = i.label :plural
     .input
       = i.text_field :plural
-      = error_field(i, :plural)
+      = error_field(@currency, :plural)
   .item.clearfix
     .label
       = i.label :symbol
     .input
       = i.text_field :symbol
-      = error_field(i, :symbol)
+      = error_field(@currency, :symbol)
   .item.clearfix.example
     .label
       Example
     .input
-      = format_currency(@currency, '45.99')
+      = Rubytime::Util.format_currency(@currency, '45.99')
   .item.clearfix
     .label
       = i.label :prefix, 'Prefix?'

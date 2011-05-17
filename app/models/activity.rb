@@ -1,10 +1,11 @@
 require 'activity_report'
-require 'fastercsv'
+require 'csv'
 
 class Activity < ActiveRecord::Base
-  belongs_to :user_mailer
+  belongs_to :user
   belongs_to :project
   belongs_to :invoice
+  belongs_to :currency
   
   validates_presence_of :comments, :date, :project_id, :user_id
   validates_uniqueness_of :project_id, :scope => [:date, :user_id], :message => 'activity for this project already exists at that day'
@@ -12,7 +13,7 @@ class Activity < ActiveRecord::Base
   validate :time_spent_values
   
   scope :for_projects, lambda {|p| {:conditions => {:project_id => p}}}
-  scope :for_day, lambda {|date| {:conditions => {:date => date}}}
+  scope :for_day, lambda {|date| {:conditions => {:date => date.beginning_of_month..date.end_of_month}}}
   scope :invoiced, where('invoice_id IS NOT NULL')
   scope :not_invoiced, where('invoice_id IS NULL')
   
@@ -26,11 +27,17 @@ class Activity < ActiveRecord::Base
   GROUP_BY_ROLE_BLOCK = Proc.new {|i| i.user.role}
   GROUP_BY_USER_BLOCK = Proc.new {|i| i.user}
   GROUP_BY_DATE_BLOCK = Proc.new {|i| i.date}
-  GROUP_BY_CURRENCY_BLOCK = Proc.new {|i| i.hourly_rate.currency}
-  TIME_SPENT_BLOCK = Proc.new {|mem, i| mem + i.minutes}
+  HIDDEN_JSON_FIELDS = [:created_at, :updated_at]
   
   def as_json(options = {})
-    super(:include => [:project, :user], :methods => :time_spent)
+    super(
+      :include => {
+        :project => {}, 
+        :user => {:except => User::HIDDEN_JSON_FIELDS},
+        :invoice => {:except => User::HIDDEN_JSON_FIELDS}
+      }, 
+      :except => HIDDEN_JSON_FIELDS, :methods => :time_spent
+    )
   end
   
   def time_spent
@@ -42,20 +49,20 @@ class Activity < ActiveRecord::Base
   end
   
   # filter example:
-  # {:project_id => 2, :date => {:from => '06-04-2010', :to => '21-04-2010'}, :invoice_filter => 'all', :user_id => 3}}
+  # {:project_id => 2, :client_id => 3, :user_id => 3, :from => '06-04-2010', :to => '21-04-2010', :invoice_filter => 'all'}}
   def self.search(filter)
     project_id = filter.project_id
     user_id = filter.user_id
     client_id = filter.client_id
     invoice_filter = filter.invoice_filter
     conditions = {}
-    conditions[:project_id] = project_id unless project_id.blank?
-    conditions[:user_id] = user_id unless user_id.blank?
-    conditions['projects.client_id'] = client_id unless client_id.blank?
-    scope = (invoice_filter.blank? && :all) || invoice_filter.to_sym
+    conditions[:project_id] = project_id if project_id.present?
+    conditions[:user_id] = user_id if user_id.present?
+    conditions['projects.client_id'] = client_id if client_id.present?
+    scope = invoice_filter.present? ? invoice_filter.to_sym : :all
     from, to = filter.from, filter.to
-    from = from.blank? ? Date.parse : Date.parse(from)
-    to = to.blank? ? Date.current : Date.parse(to)
+    from = from.present? ? Date.parse(from) : Date.parse
+    to = to.present? ? Date.parse(to) : Date.current
     
     conditions[:date] = Range.new(from, to)
     joins = %q{
@@ -78,34 +85,35 @@ class Activity < ActiveRecord::Base
     end
   end
   
-  WEEKENDS = [0, 6]
-  
   def self.search_missed(filter)
     user_id = filter.user_id
     conditions = {}
-    conditions[:user_id] = user_id unless user_id.blank?
+    conditions[:user_id] = user_id if user_id.present?
     from, to = filter.from, filter.to
-    date_range = (from.blank? || to.blank?) \
-      ? Date.current.beginning_of_month..Date.current.end_of_month \
-      : Date.parse(from)..Date.parse(to)
+    date_range = (from.present? && to.present?) \
+      ? Date.parse(from)..Date.parse(to) \
+      : Date.current.beginning_of_month..Date.current.end_of_month
     conditions[:date] = date_range
     joins = %q{
       LEFT OUTER JOIN users ON (users.id = user_id)
     }
     
-    @days = date_range.to_a.reject {|i| WEEKENDS.include?(i.wday)}
+    @days = date_range.to_a.reject {|i| i.saturday? || i.sunday?}
     @activities = all(:conditions => conditions, :joins => joins, :order => 'date DESC')
-    
-    @users = user_id.blank? ? User.employees.all : [User.find(user_id)]
+    @users = user_id.present? ? [User.find(user_id)] : User.employees.all
     @user_activities = @activities.group_by(&GROUP_BY_USER_BLOCK)
-    @users.inject({}) do |mem, i|
-      mem[i] = @days - (@user_activities[i] || []).map(&:date); mem
-    end.reject {|k, v| v.empty?}
+    
+    {}.tap do |result|
+      @users.each do |i|
+        value = @days - (@user_activities[i] || []).map(&:date) - i.free_days.map(&:date)
+        result[i] = value unless value.empty?
+      end
+    end
   end
   
   def to_csv_row
     [date, project.client.name, project.name, user.name, Rubytime::Util.format_time_spent_decimal(minutes), comments, 
-      hourly_rate && format_currency(hourly_rate.currency, total_value)
+      hourly_rate && Rubytime::Util.format_currency(hourly_rate.currency, total_value)
     ]
   end
   
@@ -113,23 +121,26 @@ class Activity < ActiveRecord::Base
     hourly_rate.value.to_f * (minutes / 60.0)
   end
   
-  def self.total_value(activities)
-    by_currency = activities.reject {|i| i.hourly_rate.nil?}.group_by(&GROUP_BY_CURRENCY_BLOCK)
-    by_currency.map do |k, v|
-      format_currency(k, v.inject(0) {|mem, i| mem + i.total_value})
-    end.join(' + ')
+  def hourly_rate
+    project.hourly_rates.with_role(user.role).at_day(date).first
   end
   
-  def hourly_rate
-    project.hourly_rates.with_role(user.role).at_day(invoiced_at || Date.current)
+  def self.total_value(activities)
+    activities.select {|i| 
+      i.hourly_rate.present?
+    }.group_by {|i| 
+      i.hourly_rate.currency
+    }.map do |k, v|
+      Rubytime::Util.format_currency(k, v.sum(&:total_value))
+    end
   end
   
   def self.total_time(activities)
-    activities.inject(0, &TIME_SPENT_BLOCK)
+    activities.sum(&:minutes)
   end
   
   def self.to_csv(activities)
-    FasterCSV.generate do |csv|
+    CSV.generate do |csv|
       csv << ['Date', 'Client', 'Project', 'Person', 'Time Spent', 'Comments', 'Price']
       activities.sort_by{|i| i.project.client.name}.each do |i|
         csv << i.to_csv_row

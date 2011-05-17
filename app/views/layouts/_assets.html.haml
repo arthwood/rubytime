@@ -42,6 +42,6 @@
 - if @c == 'activities' && @a != 'index'
   - mapping = {:calendar => 'ActivitiesCalendar', :missed => 'MissedActivities'}
   = javascript_include_tag "controllers/#{mapping[@a.to_sym]}"
-- else
+- elsif !(@c == 'users' && @a == 'request_password')
   = javascript_include_tag 'Resources'
   = javascript_include_tag "controllers/#{@c.capitalize}"

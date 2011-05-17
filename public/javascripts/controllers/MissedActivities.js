@@ -3,9 +3,9 @@ var MissedActivities = function() {
   this.filterForm = $$('.filter form').first();
   this.filterForm.onsubmit = this.onFilter.bind(this);
   this.onFilterSuccessD = $D(this, this.onFilterSuccess);
-  this.filterDateFrom = $('missed_activity_filter_from');
-  this.filterDateTo = $('missed_activity_filter_to');
-  this.period = $('missed_activity_filter_period');
+  this.filterDateFrom = $('filter_from');
+  this.filterDateTo = $('filter_to');
+  this.period = $('filter_period');
   this.period.onchange = this.onPeriod.bind(this);
 };
 

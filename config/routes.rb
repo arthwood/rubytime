@@ -1,9 +1,8 @@
 Rubytime::Application.routes.draw do
-  resources :projects
-  
   resources :users do
     collection do
       get :request_password
+      get :reset
       post :do_request_password
     end
   end
@@ -13,7 +12,7 @@ Rubytime::Application.routes.draw do
   resources :activities do
     collection do
       get :calendar, :missed, :export
-      post :search, :invoice, :day_off
+      post :calendar, :search, :search_missed, :invoice, :day_off
       delete :revert_day_off
     end
   end
@@ -26,7 +25,6 @@ Rubytime::Application.routes.draw do
   resources :clients
   resources :roles
   resources :currencies
-  resources :settings
   
   root :to => 'activities#index'
   

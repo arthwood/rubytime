@@ -10,20 +10,20 @@
       = i.label :date, 'Takes effect at'
     .input
       - date = @hourly_rate.date
-      = i.text_field :date, :value => date && format_date(date), :class => :datepicker, :readOnly => true
-      = error_field(i, :date)
+      = i.text_field :date, :value => date && Rubytime::Util.format_date(date), :class => :datepicker, :readOnly => true
+      = error_field(@hourly_rate, :date)
   .item.clearfix
     .label
       = i.label :value
     .input
       = i.text_field :value
-      = error_field(i, :value)
+      = error_field(@hourly_rate, :value)
   .item.clearfix
     .label
       = i.label :currency_id
     .input
       = i.select :currency_id, options_from_collection_for_select(Currency.all, :id, :name, @hourly_rate.currency_id)
-      = error_field(i, :currency_id)
+      = error_field(@hourly_rate, :currency_id)
   .item.last
     = i.submit((create_mode ? 'Add' : 'Save'), :class => :no_label)
     or

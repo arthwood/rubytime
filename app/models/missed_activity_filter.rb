@@ -1,3 +1,5 @@
 class MissedActivityFilter < CustomFilter
-  attr_accessor :user_id, :period, :from, :to
+  FIELDS = [:user_id, :period, :from, :to]
+  
+  attr_accessor *FIELDS
 end

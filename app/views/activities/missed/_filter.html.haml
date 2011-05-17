@@ -1,7 +1,7 @@
 %h2
   Filter
 
-- form_for @filter, :url => search_missed_activities_url, :html => {:method => :post, :id => nil, :class => nil} do |i|
+- form_for :filter, :url => search_missed_activities_url, :html => {:method => :post, :id => nil, :class => nil} do |i|
   .item.clearfix
     .label
       = i.label :user_id, 'User'

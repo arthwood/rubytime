@@ -31,10 +31,10 @@ var Users = $E(Resources, function() {
     showSelect.item.show();
   },
   
-  doRemove: function(e) {
-    this.listing = e.currentTarget.up('.listing');
+  doRemove: function(a) {
+    this.listing = a.up('.listing');
     
-    $del(e.currentTarget.href, null, this.onDeleteSuccessD);
+    arguments.callee.$super(a);
   },
   
   onEditSuccess: function(ajax) {

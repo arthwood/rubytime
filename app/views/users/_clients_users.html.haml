@@ -1,7 +1,7 @@
 %h1
   List of clients' users
 
-- if @clients_users.empty?
+- if collection.empty?
   %p
     No client users found.
 - else
@@ -11,4 +11,4 @@
       %th Client
       %th Active
       %th.actions.ralign &nbsp;
-    = render :partial => 'client_user_row', :collection => @clients_users, :as => :user
+    = render :partial => 'client_user_row', :collection => collection, :as => :user
