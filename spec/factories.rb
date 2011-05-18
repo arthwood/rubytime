@@ -66,12 +66,12 @@ FactoryGirl.define do
     name "April 2011"
     user
     client
-    issued_at 2.days.ago
+    issued_at 2.days.ago.to_date
   end
   
   factory :activity do
     comments "working on Graphy GEM"
-    date 1.week.ago
+    date 1.week.ago.to_date
     minutes 435
     project
     user
@@ -79,7 +79,7 @@ FactoryGirl.define do
   
   factory :invoiced_activity, :parent => :activity do
     invoice
-    invoiced_at 1.day.ago
+    invoiced_at 1.day.ago.to_date
     value 40
     currency_id 1
   end
@@ -103,13 +103,13 @@ FactoryGirl.define do
   factory :hourly_rate do
     project
     role_id 1
-    date 2.weeks.ago
+    date 2.weeks.ago.to_date
     value 40.00
     currency_id 1
   end
   
   factory :free_day do
     user
-    date 1.day.ago
+    date 1.day.ago.to_date
   end
 end

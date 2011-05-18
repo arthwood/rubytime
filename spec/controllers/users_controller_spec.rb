@@ -9,15 +9,16 @@ describe UsersController do
     let!(:client_user) { Factory(:client_user) }
     
     before do
-      login_as(:admin)
+      login_as(admin)
+      
       get :index
     end
     
     it_should_behave_like "render template", :index
     it_should_behave_like "new resource", :user
-    it_should_behave_like "list of", :admins, ActiveRecord::Relation, :admin
-    it_should_behave_like "list of", :employees, ActiveRecord::Relation, :employee
-    it_should_behave_like "list of", :clients_users, ActiveRecord::Relation, :client_user
+    it_should_behave_like "list of", :admins, [:admin], ActiveRecord::Relation
+    it_should_behave_like "list of", :employees, [:employee], ActiveRecord::Relation
+    it_should_behave_like "list of", :clients_users, [:client_user], ActiveRecord::Relation
   end
   
   describe "new" do
@@ -73,7 +74,7 @@ describe UsersController do
       
       it_should_behave_like "flash error"
       it_should_behave_like "render template", :index
-      it_should_behave_like "list of", :admins, ActiveRecord::Relation
+      it_should_behave_like "list of", :admins, nil, ActiveRecord::Relation
     end
   end
   
@@ -86,7 +87,7 @@ describe UsersController do
     end
     
     it_should_behave_like "render template", :form
-    it_should_behave_like "existing resource", :user
+    it_should_behave_like "variable", :user
   end
   
   describe "update" do
@@ -127,7 +128,7 @@ describe UsersController do
       end
       
       it_should_behave_like "flash error"
-      it_should_behave_like "list of", :employees, ActiveRecord::Relation, :user
+      it_should_behave_like "list of", :employees, [:user], ActiveRecord::Relation
       it_should_behave_like "render template", :index
     end
   end

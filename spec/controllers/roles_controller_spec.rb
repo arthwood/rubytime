@@ -13,7 +13,7 @@ describe RolesController do
     
     it_should_behave_like "new resource", :role
     it_should_behave_like "render template", :index
-    it_should_behave_like "list of", :roles, Array, :role
+    it_should_behave_like "list of", :roles, [:role]
   end
   
   describe "new" do
@@ -72,7 +72,7 @@ describe RolesController do
     end
     
     it_should_behave_like "render template", :form
-    it_should_behave_like "existing resource", :role
+    it_should_behave_like "variable", :role
   end
   
   describe "update" do
@@ -109,7 +109,7 @@ describe RolesController do
       end
       
       it_should_behave_like "flash error"
-      it_should_behave_like "list of", :roles, Array, :role
+      it_should_behave_like "list of", :roles, [:role]
       it_should_behave_like "render template", :index
     end
   end

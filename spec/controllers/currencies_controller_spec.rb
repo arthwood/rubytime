@@ -13,7 +13,7 @@ describe CurrenciesController do
     
     it_should_behave_like "new resource", :currency
     it_should_behave_like "render template", :index
-    it_should_behave_like "list of", :currencies, Array, :currency
+    it_should_behave_like "list of", :currencies, [:currency]
   end
   
   describe "new" do
@@ -74,7 +74,7 @@ describe CurrenciesController do
     end
     
     it_should_behave_like "render template", :form
-    it_should_behave_like "existing resource", :currency
+    it_should_behave_like "variable", :currency
   end
   
   describe "update" do
@@ -109,7 +109,7 @@ describe CurrenciesController do
       end
       
       it_should_behave_like "flash error"
-      it_should_behave_like "list of", :currencies, Array, :currency
+      it_should_behave_like "list of", :currencies, [:currency]
       it_should_behave_like "render template", :index
     end
   end

@@ -13,7 +13,7 @@ describe InvoicesController do
     
     it_should_behave_like "new resource", :invoice
     it_should_behave_like "render template", :index
-    it_should_behave_like "list of", :invoices, Array, :invoice
+    it_should_behave_like "list of", :invoices, [:invoice]
   end
   
   describe "new" do
@@ -83,7 +83,7 @@ describe InvoicesController do
     end
     
     it_should_behave_like "render template", :form
-    it_should_behave_like "existing resource", :invoice
+    it_should_behave_like "variable", :invoice
   end
   
   describe "update" do
@@ -120,7 +120,7 @@ describe InvoicesController do
       end
       
       it_should_behave_like "flash error"
-      it_should_behave_like "list of", :invoices, Array, :invoice
+      it_should_behave_like "list of", :invoices, [:invoice]
       it_should_behave_like "render template", :index
     end
   end

@@ -14,7 +14,7 @@ describe ClientsController do
     it_should_behave_like "new resource", :client
     it_should_behave_like "new resource", :user
     it_should_behave_like "render template", :index
-    it_should_behave_like "list of", :clients, Array, :client
+    it_should_behave_like "list of", :clients, [:client]
   end
   
   describe "new" do
@@ -96,7 +96,7 @@ describe ClientsController do
     end
     
     it_should_behave_like "render template", :form
-    it_should_behave_like "existing resource", :client
+    it_should_behave_like "variable", :client
   end
   
   describe "update" do
@@ -146,7 +146,7 @@ describe ClientsController do
       end
       
       it_should_behave_like "flash error"
-      it_should_behave_like "list of", :clients, Array, :client
+      it_should_behave_like "list of", :clients, [:client]
       it_should_behave_like "render template", :index
     end
   end

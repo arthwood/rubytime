@@ -13,26 +13,24 @@ describe SessionsController do
       before { session[:some_data] = session_data }
       
       context "with valid data" do
+        before { get :create, :session => {:login => user.login, :password => password} }
+        
         it "should clear the session" do
-          get :create, :session => {:login => user.login, :password => password}
-          
           session[:some_data].should be_nil
         end
       end
       
       context "with invalid data" do
+        before { get :create, :session => {:login => user.login, :password => ''} }
+        
         it "should not clear the session" do
-          get :create, :session => {:login => user.login, :password => ''}
-          
           session[:some_data].should eql(session_data)
         end
       end
     end
     
     context "with valid data" do
-      before do
-        get :create, :session => {:login => user.login, :password => password}
-      end
+      before { get :create, :session => {:login => user.login, :password => password} }
       
       it "should log in user" do
         subject.current_user.should eql(user)
@@ -44,9 +42,7 @@ describe SessionsController do
     
     context "with invalid data" do
       context "user invalid" do
-        before do
-          get :create, :session => {:login => "#{user.login}x", :password => password}
-        end
+        before { get :create, :session => {:login => "#{user.login}x", :password => password} }
         
         it "should not log in" do
           subject.current_user.should be_nil
@@ -57,9 +53,7 @@ describe SessionsController do
       end
     
       context "password invalid" do
-        before do
-          get :create, :session => {:login => user.login, :password => ''}
-        end
+        before { get :create, :session => {:login => user.login, :password => ''} }
         
         it "should not log in" do
           subject.current_user.should be_nil
@@ -77,11 +71,8 @@ describe SessionsController do
     describe "cleaning session" do
       let(:session_data) { "some data" }
       
-      before do 
-        session[:some_data] = session_data
-        
-        delete :destroy
-      end
+      before { session[:some_data] = session_data } 
+      before { delete :destroy }
       
       it "should clear the session" do
         session[:some_data].should be_nil
@@ -89,9 +80,7 @@ describe SessionsController do
     end
     
     describe "other actions" do
-      before do
-        delete :destroy
-      end
+      before { delete :destroy }
       
       it_should_behave_like "flash info"
       it_should_behave_like "root redirection"
