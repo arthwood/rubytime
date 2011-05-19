@@ -3,11 +3,12 @@ require 'spec_helper'
 include SharedMethods
 
 describe CurrenciesController do
+  before { login_as(:admin) }
+  
   describe "index" do
     let!(:currency) { Factory(:dollar) }
     
     before do
-      login_as(:admin)
       get :index
     end
     
@@ -18,7 +19,6 @@ describe CurrenciesController do
   
   describe "new" do
     before do
-      login_as(:admin)
       get :new
     end
     
@@ -28,8 +28,6 @@ describe CurrenciesController do
   
   describe "create" do
     let!(:count) { Currency.count }
-    
-    before { login_as(:admin) }
     
     context "with valid data" do
       before do
@@ -69,7 +67,6 @@ describe CurrenciesController do
     let!(:currency) { Factory(:dollar) }
     
     before do
-      login_as(:admin)
       get :edit, :id => currency.id
     end
     
@@ -79,8 +76,6 @@ describe CurrenciesController do
   
   describe "update" do
     let!(:currency) { Factory(:dollar) }
-    
-    before { login_as(:admin) }
     
     context "with valid data" do
       let(:name) { 'zloty' }
@@ -120,7 +115,6 @@ describe CurrenciesController do
     let!(:currency) { Factory(:dollar) }
     
     before do
-      login_as(:admin)
       delete :destroy, :id => currency.id
     end
     

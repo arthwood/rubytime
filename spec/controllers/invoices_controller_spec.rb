@@ -3,11 +3,14 @@ require 'spec_helper'
 include SharedMethods
 
 describe InvoicesController do
+  let!(:user) { Factory(:admin) }
+  
+  before { login_as(user) }
+  
   describe "index" do
     let!(:invoice) { Factory(:invoice) }
     
     before do
-      login_as(:admin)
       get :index
     end
     
@@ -18,7 +21,6 @@ describe InvoicesController do
   
   describe "new" do
     before do
-      login_as(:admin)
       get :new
     end
     
@@ -29,12 +31,6 @@ describe InvoicesController do
   describe "create" do
     let!(:client) { Factory(:client) }
     let!(:count) { Invoice.count }
-    let!(:admin) { Factory(:admin) }
-    
-    before do
-      login_as(:admin)
-      subject.stubs(:current_user).returns(admin)
-    end
     
     context "with valid data" do
       before do
@@ -51,7 +47,7 @@ describe InvoicesController do
       end
       
       it "should have current_user as an owner" do
-        assigns(:invoice).user.should eql(admin)
+        assigns(:invoice).user.should eql(user)
       end
       
       it_should_behave_like "flash info"
@@ -78,7 +74,6 @@ describe InvoicesController do
     let!(:invoice) { Factory(:invoice) }
     
     before do
-      login_as(:admin)
       get :edit, :id => invoice.id
     end
     
@@ -88,10 +83,6 @@ describe InvoicesController do
   
   describe "update" do
     let!(:invoice) { Factory(:invoice) }
-    
-    before do
-      login_as(:admin)
-    end
     
     context "with valid data" do
       let(:name) { 'Invoice 7' }
@@ -131,7 +122,6 @@ describe InvoicesController do
     let!(:invoice) { Factory(:invoice) }
     
     before do
-      login_as(:admin)
       delete :destroy, :id => invoice.id
     end
     

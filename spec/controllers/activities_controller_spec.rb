@@ -648,8 +648,6 @@ describe ActivitiesController do
     let!(:activity) { Factory(:activity) }
     
     context "for admin user" do
-      let!(:count) { Activity.count }
-      
       before do
         login_as(:admin)
         
@@ -657,7 +655,7 @@ describe ActivitiesController do
       end
       
       it "should delete activity" do
-        Activity.count.should eql(count - 1)
+        expect {activity.reload}.to raise_error(ActiveRecord::RecordNotFound)
       end
       
       it "should render json" do
@@ -675,23 +673,20 @@ describe ActivitiesController do
       before { login_as(activity.user) }
       
       context "his activity" do
-        let!(:count) { Activity.count }
-        
         before { delete :destroy, :id => activity.id }
         
         it "should delete activity" do
-          Activity.count.should eql(count - 1)
+          expect {activity.reload}.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
       
       context "other user's activity" do
         let!(:other_activity) { Factory(:activity) }
-        let!(:count) { Activity.count }
         
         before { delete :destroy, :id => other_activity.id }
         
         it "should not delete activity" do
-          Activity.count.should eql(count)
+          expect {activity.reload}.to_not raise_error(ActiveRecord::RecordNotFound)
         end
       end
     end
@@ -852,7 +847,6 @@ describe ActivitiesController do
     let!(:free_day) { Factory(:free_day) }
     
     context "admin" do
-      let!(:count) { FreeDay.count }
       let!(:user) { Factory(:admin) }
       let(:date) { free_day.date.to_s(:db) }
       
@@ -863,7 +857,7 @@ describe ActivitiesController do
       end
       
       it "should delete free day" do
-        FreeDay.count.should eql(count - 1)
+        expect {free_day.reload}.to raise_error(ActiveRecord::RecordNotFound)
       end
       
       it "should render json" do
@@ -884,8 +878,7 @@ describe ActivitiesController do
         before { post :revert_day_off, :date => date, :user_id => free_day.user.id }
         
         it "should delete free day" do
-          FreeDay.count.should eql(count - 1)
-          user.free_days.count.should eql(my_count - 1)
+          expect {my_free_day.reload}.to raise_error(ActiveRecord::RecordNotFound)
         end
         
         it "should render json" do
@@ -897,8 +890,7 @@ describe ActivitiesController do
         before { post :revert_day_off, :date => date }
         
         it "should delete free day" do
-          FreeDay.count.should eql(count - 1)
-          user.free_days.count.should eql(my_count - 1)
+          expect {my_free_day.reload}.to raise_error(ActiveRecord::RecordNotFound)
         end
         
         it "should render json" do

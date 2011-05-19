@@ -4,21 +4,21 @@ class ProjectsController < ApplicationController
   def index
     respond_to do |format|
       format.html do
-        @projects = Project.all
-        @project = Project.new
+        set_list
+        set_new
       end
       
       format.json do
         user_id = params[:user_id]
         @projects = user_id.blank? ? Project.all : User.find(user_id).projects
         
-        render :json => @projects.to_json
+        render :json => @projects
       end
     end
   end
   
   def new
-    @project = Project.new
+    set_new
     
     render :partial => 'form'
   end
@@ -32,7 +32,7 @@ class ProjectsController < ApplicationController
     else
       flash.now[:error] = "Project couldn't be created"
       
-      @projects = Project.all
+      set_list
       
       render :action => :index
     end
@@ -52,7 +52,7 @@ class ProjectsController < ApplicationController
       flash[:info] = 'Project was successfully updated.'
       redirect_to projects_url
     else
-      @projects = Project.all
+      set_list
       flash.now[:error] = "Project couldn't be updated"
       
       render :action => :index
@@ -62,8 +62,18 @@ class ProjectsController < ApplicationController
   def destroy
     @project = Project.find(params[:id])
     @project.destroy
-    @projects = Project.all
+    set_list
     
     render :json => {:html => render_to_string(:partial => 'listing'), :success => true} 
+  end
+  
+  private
+  
+  def set_new
+    @project = Project.new
+  end
+  
+  def set_list
+    @projects = Project.all
   end
 end

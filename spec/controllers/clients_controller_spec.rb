@@ -3,11 +3,12 @@ require 'spec_helper'
 include SharedMethods
 
 describe ClientsController do
+  before { login_as(:admin) }
+  
   describe "index" do
     let!(:client) { Factory(:client) }
     
     before do
-      login_as(:admin)
       get :index
     end
     
@@ -19,7 +20,6 @@ describe ClientsController do
   
   describe "new" do
     before do
-      login_as(:admin)
       get :new
     end
     
@@ -31,8 +31,6 @@ describe ClientsController do
     let!(:admin) { Factory(:admin) }
     let!(:user_count) { User.count }
     let!(:client_count) { Client.count }
-    
-    before { login_as(admin) }
     
     context "with valid data" do
       before do
@@ -91,7 +89,6 @@ describe ClientsController do
     let!(:client) { Factory(:client) }
     
     before do
-      login_as(:admin)
       get :edit, :id => client.id
     end
     
@@ -102,10 +99,6 @@ describe ClientsController do
   describe "update" do
     let!(:client) { Factory(:client) }
     let!(:user) { Factory(:user, :client => client) }
-    
-    before do
-      login_as(:admin)
-    end
     
     context "with valid data" do
       let(:client_name) { 'Mike' }
@@ -158,7 +151,6 @@ describe ClientsController do
     let!(:user) { Factory(:user, :client => client) }
     
     before do
-      login_as(:admin)
       delete :destroy, :id => client.id
     end
     

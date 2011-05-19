@@ -3,11 +3,12 @@ require 'spec_helper'
 include SharedMethods
 
 describe RolesController do
+  before { login_as(:admin) }
+  
   describe "index" do
     let!(:role) { Factory(:developer) }
     
     before do
-      login_as(:admin)
       get :index
     end
     
@@ -18,7 +19,6 @@ describe RolesController do
   
   describe "new" do
     before do
-      login_as(:admin)
       get :new
     end
     
@@ -28,8 +28,6 @@ describe RolesController do
   
   describe "create" do
     let!(:count) { Role.count }
-    
-    before { login_as(:admin) }
     
     context "with valid data" do
       before do
@@ -67,7 +65,6 @@ describe RolesController do
     let!(:role) { Factory(:developer) }
     
     before do
-      login_as(:admin)
       get :edit, :id => role.id
     end
     
@@ -77,10 +74,6 @@ describe RolesController do
   
   describe "update" do
     let!(:role) { Factory(:developer) }
-    
-    before do
-      login_as(:admin)
-    end
     
     context "with valid data" do
       let(:name) { 'engineer' }
@@ -120,7 +113,6 @@ describe RolesController do
     let!(:role) { Factory(:developer) }
     
     before do
-      login_as(:admin)
       delete :destroy, :id => role.id
     end
     
