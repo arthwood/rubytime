@@ -5,7 +5,6 @@ include SharedMethods
 describe HourlyRatesController do
   before { login_as(:admin) }
   
-=begin
   describe "new" do
     let!(:project) { Factory(:project) }
     let!(:role) { Factory(:developer) }
@@ -105,7 +104,6 @@ describe HourlyRatesController do
       it_should_behave_like "render json", /{"success":false,"html":"(.*)"}/
     end
   end
-=end
   
   describe "destroy" do
     let!(:hourly_rate) { Factory(:hourly_rate) }
