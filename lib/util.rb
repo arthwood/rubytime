@@ -21,7 +21,7 @@ module Rubytime
       end
       
       def format_date(date, separator = '-')
-        date.strftime("%d#{separator}%m#{separator}%Y")
+        date.strftime("%Y#{separator}%m#{separator}%d")
       end
     end
   end

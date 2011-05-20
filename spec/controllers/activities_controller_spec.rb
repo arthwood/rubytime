@@ -11,6 +11,19 @@ shared_examples_for "filter" do |klass, skip = []|
 end
 
 describe ActivitiesController do
+  describe "permissions" do
+    before do
+      get :calendar
+    end
+    
+    it "should store location"do
+      session[:return_to].should_not be_blank
+    end
+    
+    it_should_behave_like "flash error"
+    it_should_behave_like "root redirection"
+  end
+  
   describe "index" do
     context "when not logged in" do
       before do
@@ -21,13 +34,13 @@ describe ActivitiesController do
     end
     
     context "when logged in" do
+      before { login_as(user) }
+      
       context "as a regular user" do
         let!(:activity) { Factory(:activity) }
         let!(:user) { activity.user }
         
         before do
-          login_as(user)
-          
           get :index
         end
         
@@ -38,8 +51,8 @@ describe ActivitiesController do
         end
         
         it_should_behave_like "filter", ActivityFilter, [:user_id]
-        it_should_behave_like "not setting a variable", :users
-        it_should_behave_like "not setting a variable", :clients
+        it_should_behave_like "nil", :users
+        it_should_behave_like "nil", :clients
         it_should_behave_like "render template", :index
       end
       
@@ -48,65 +61,37 @@ describe ActivitiesController do
         let!(:other_admin) { Factory(:admin) }
         let!(:employee) { Factory(:user) }
         let!(:project) { Factory(:project) }
+        let(:client) { project.client }
         
         before do
-          login_as(user)
-          
           get :index
         end
         
         it_should_behave_like "filter", ActivityFilter
-        
-        it "should set @projects" do
-          var = assigns(:projects)
-          var.size.should eql(1)
-          var.should include(project)
-        end
-        
-        it "should set @users" do
-          var = assigns(:users)
-          var.size.should eql(3)
-          var.should include(user, other_admin, employee)
-        end
-        
-        it "should set @clients" do
-          var = assigns(:clients)
-          var.size.should eql(1)
-          var.should include(project.client)
-        end
+        it_should_behave_like "list of", :projects, [:project]
+        it_should_behave_like "list of", :users, [:user, :other_admin, :employee], ActiveRecord::Relation
+        it_should_behave_like "list of", :clients, [:client]
       end
       
       context "as client user" do
         let!(:project) { Factory(:project) }
         let!(:activity) { Factory(:activity, :project => project) }
         let!(:other_activity) { Factory(:activity) }
-        let!(:client_user) { Factory(:client_user, :client => project.client) }
+        let!(:user) { Factory(:client_user, :client => project.client) }
+        let(:activity_user) { activity.user }
         
-        before do
-          login_as(client_user)
-          
-          get :index
-        end
+        before { get :index }
         
         it_should_behave_like "filter", ActivityFilter, [:client_id, :project_id] 
         
         it "set filter fields" do
           var = assigns(:filter)
-          var.client_id.should eql(client_user.client.id)
+          var.client_id.should eql(user.client.id)
           var.project_id.should be_nil
         end
         
-        it "should set @projects" do
-          var = assigns(:projects)
-          var.size.should eql(1)
-          var.should include(project)
-        end
-        
-        it "should set @users" do
-          var = assigns(:users)
-          var.size.should eql(1)
-          var.should include(activity.user)
-        end
+        it_should_behave_like "list of", :projects, [:project]
+        it_should_behave_like "list of", :users, [:activity_user]
       end
     end
   end
@@ -133,100 +118,66 @@ describe ActivitiesController do
   end
   
   describe "search" do
-    let!(:my_activity) { Factory(:activity) }
+    let!(:activity) { Factory(:activity) }
     let!(:other_activity) { Factory(:activity) }
     
     context "regular user" do
-      before { login_as(my_activity.user) }
+      let!(:user) { activity.user }
+      
+      before { login_as(user) }
       
       context "when searching by my project" do
-        before do
-          post :search, :filter => {:project_id => my_activity.project.id}
-        end
+        before { post :search, :filter => {:project_id => activity.project.id} }
         
-        it "should return my activities" do
-          var = assigns(:activities)
-          var.size.should eql(1)
-          var.should include(my_activity)
-        end
+        it_should_behave_like "list of", :activities, [:activity]
       end
       
       context "when searching by others project" do
-        before do
-          post :search, :filter => {:project_id => other_activity.project.id}
-        end
+        before { post :search, :filter => {:project_id => other_activity.project.id} }
         
-        it "should not return any activities" do
-          assigns(:activities).should be_empty
-        end
+        it_should_behave_like "empty list", :activities
       end
     end
     
     context "client user" do
-      let!(:client_user) { Factory(:client_user, :client => my_activity.project.client) }
+      let!(:user) { Factory(:client_user, :client => activity.project.client) }
       
-      before { login_as(client_user) }
+      before { login_as(user) }
       
       context "when searching by my project" do
-        before do
-          post :search, :filter => {:project_id => my_activity.project.id}
-        end
+        before { post :search, :filter => {:project_id => activity.project.id} }
         
-        it "should return my activities" do
-          var = assigns(:activities)
-          var.size.should eql(1)
-          var.should include(my_activity)
-        end
+        it_should_behave_like "list of", :activities, [:activity]
       end
       
       context "when searching by others project" do
-        before do
-          post :search, :filter => {:project_id => other_activity.project.id}
-        end
+        before { post :search, :filter => {:project_id => other_activity.project.id} }
         
-        it "should not return any activities" do
-          assigns(:activities).should be_empty
-        end
+        it_should_behave_like "empty list", :activities
       end
     end
     
     context "admin user" do
-      before { login_as(:admin) }
+      let!(:user) { Factory(:admin) }
+      
+      before { login_as(user) }
       
       context "when searching by my project" do
-        before do
-          post :search, :filter => {:project_id => my_activity.project.id}
-        end
+        before { post :search, :filter => {:project_id => activity.project.id} }
         
-        it "should return my activities" do
-          var = assigns(:activities)
-          var.size.should eql(1)
-          var.should include(my_activity)
-        end
+        it_should_behave_like "list of", :activities, [:activity]
       end
       
       context "when searching by others project" do
-        before do
-          post :search, :filter => {:project_id => other_activity.project.id}
-        end
+        before { post :search, :filter => {:project_id => other_activity.project.id} }
         
-        it "should return other activities" do
-          var = assigns(:activities)
-          var.size.should eql(1)
-          var.should include(other_activity)
-        end
+        it_should_behave_like "list of", :activities, [:other_activity]
       end
       
       context "when searching by any project" do
-        before do
-          post :search, :filter => {}
-        end
+        before { post :search, :filter => {} }
         
-        it "should return all activities" do
-          var = assigns(:activities)
-          var.size.should eql(2)
-          var.should include(my_activity, other_activity)
-        end
+        it_should_behave_like "list of", :activities, [:activity, :other_activity]
       end
     end
   end
@@ -234,13 +185,13 @@ describe ActivitiesController do
   describe "calendar" do
     context "get" do
       context "for admin user" do
-        let!(:admin) { Factory(:admin) }
+        let!(:user) { Factory(:admin) }
         let!(:employee_1) { Factory(:user) }
         let!(:employee_2) { Factory(:user) }
-        let!(:my_activity) { Factory(:activity, :user => admin, :date => Date.current) }
+        let!(:activity) { Factory(:activity, :user => user, :date => Date.current) }
         
-        before do
-          login_as(admin)
+        before do 
+          login_as(user)
           
           get :calendar
         end
@@ -252,29 +203,27 @@ describe ActivitiesController do
         it "should set all employees as @users" do
           var = assigns(:users)
           var.size.should eql(3)
-          var.should include(admin, employee_1, employee_2)
+          var.should include(user, employee_1, employee_2)
         end
         
         it "should set my activities as @activities" do
           var = assigns(:activities)
           var.size.should eql(1)
-          var.should include(my_activity)
+          var.should include(activity)
         end
         
         it_should_behave_like "render template", :calendar
       end
       
       context "for client user" do
-        let!(:client_user) { Factory(:client_user) }
+        let!(:user) { Factory(:client_user) }
+        
+        before { login_as(user) }
         
         context "with no collaborators" do
-          before do
-            login_as(client_user)
+          before { get :calendar }
           
-            get :calendar
-          end
-          
-          it "should set first collaborator as @user" do
+          it "should set nil as @user" do
             assigns(:user).should be_nil 
           end
           
@@ -282,7 +231,7 @@ describe ActivitiesController do
             assigns(:users).should be_empty
           end
           
-          it "should set user activities as @activities" do
+          it "should set empty collection as @activities" do
             assigns(:activities).should be_empty
           end
         end
@@ -290,31 +239,15 @@ describe ActivitiesController do
         context "with any collaborators" do
           let!(:employee_1) { Factory(:user) }
           let!(:employee_2) { Factory(:user) }
-          let!(:project) { Factory(:project, :client => client_user.client) }
+          let!(:project) { Factory(:project, :client => user.client) }
           let!(:activity_1) { Factory(:activity, :user => employee_1, :project => project, :date => Date.current) }
           let!(:activity_2) { Factory(:activity, :user => employee_2, :project => project, :date => Date.current) }
-        
-          before do
-            login_as(client_user)
           
-            get :calendar
-          end
-        
-          it "should set first collaborator as @user" do
-            assigns(:user).should eql(employee_1) 
-          end
-        
-          it "should set all collaborators as @users" do
-            var = assigns(:users)
-            var.size.should eql(2)
-            var.should include(employee_1, employee_2)
-          end
-        
-          it "should set user activities as @activities" do
-            var = assigns(:activities)
-            var.size.should eql(1)
-            var.should include(activity_1)
-          end
+          before { get :calendar }
+          
+          it_should_behave_like "variable", :user, :employee_1
+          it_should_behave_like "list of", :users, [:employee_1, :employee_2]
+          it_should_behave_like "list of", :activities, [:activity_1], ActiveRecord::Relation
         end
       end
       
@@ -333,17 +266,8 @@ describe ActivitiesController do
           assigns(:user).should eql(subject.current_user) 
         end
         
-        it "should set collection with only this user as @users" do
-          var = assigns(:users)
-          var.size.should eql(1)
-          var.should include(user)
-        end
-        
-        it "should set user activities as @activities" do
-          var = assigns(:activities)
-          var.size.should eql(1)
-          var.should include(activity)
-        end
+        it_should_behave_like "list of", :users, [:user]
+        it_should_behave_like "list of", :activities, [:activity], ActiveRecord::Relation
         
         it "should set @days_off_hash" do
           var = assigns(:days_off_hash)
@@ -367,87 +291,49 @@ describe ActivitiesController do
     
     context "post" do
       context "for admin user" do
-        let!(:admin) { Factory(:admin) }
+        let!(:user) { Factory(:admin) }
         let!(:activity) { Factory(:activity, :date => Date.current) }
         let!(:employee) { activity.user }
         
+        before { login_as(user) }
+        
         context "when requested user exists" do
-          before do
-            login_as(admin)
+          before { post :calendar, :user_id => employee.id }
           
-            post :calendar, :user_id => employee.id
-          end
-        
-          it "should set requested user as @user" do
-            assigns(:user).should eql(employee)
-          end
-        
-          it "should set user's activities as @activities" do
-            var = assigns(:activities)
-            var.size.should eql(1)
-            var.should include(activity)
-          end
+          it_should_behave_like "variable", :user, :employee
+          it_should_behave_like "list of", :activities, [:activity], ActiveRecord::Relation
         end
         
         context "when requested user does not exists" do
-          before do
-            login_as(admin)
+          before { post :calendar, :user_id => 'xxx' }
           
-            post :calendar, :user_id => 'xxx'
-          end
-        
-          it "should set nil as @user" do
-            assigns(:user).should be_nil
-          end
-        
-          it "should set empty collection as @activities" do
-            assigns(:activities).should be_empty
-          end
+          it_should_behave_like "nil", :user
+          it_should_behave_like "empty list", :activities
         end
       end
       
       context "for client user" do
-        let!(:client_user) { Factory(:client_user) }
+        let!(:user) { Factory(:client_user) }
         let!(:my_employee) { Factory(:user) }
         let!(:other_employee) { Factory(:user) }
-        let!(:project) { Factory(:project, :client => client_user.client) }
+        let!(:project) { Factory(:project, :client => user.client) }
         let!(:activity_1) { Factory(:activity, :user => my_employee, :project => project, :date => Date.current) }
         let!(:activity_2) { Factory(:activity, :user => other_employee, :date => Date.current) }
         
+        before { login_as(user) }
+        
         context "when requested user is client's collaborator" do
-          before do
-            login_as(client_user)
-            
-            post :calendar, :user_id => my_employee.id
-          end
+          before { post :calendar, :user_id => my_employee.id }
           
-          it "should set my_employee as @user" do
-            assigns(:user).should eql(my_employee)
-          end
-          
-          it "should set all collaborators as @users" do
-            var = assigns(:users)
-            var.size.should eql(1)
-            var.should include(my_employee)
-          end
-          
-          it "should set user activities as @activities" do
-            var = assigns(:activities)
-            var.size.should eql(1)
-            var.should include(activity_1)
-          end
+          it_should_behave_like "variable", :user, :my_employee
+          it_should_behave_like "list of", :users, [:my_employee]
+          it_should_behave_like "list of", :activities, [:activity_1], ActiveRecord::Relation
         end
         
         context "when requested user is not client's collaborator" do
-          before do
-            login_as(client_user)
+          before { post :calendar, :user_id => other_employee.id }
           
-            post :calendar, :user_id => other_employee.id
-          end
-          
-          it "should set nil as @user" do
-            assigns(:user).should be_nil
-          end
+          it_should_behave_like "nil", :user
         end
       end
     end
@@ -475,12 +361,7 @@ describe ActivitiesController do
         get :missed
       end
       
-      it "should set all employees as @users" do
-        var = assigns(:users)
-        var.size.should eql(2)
-        var.should include(admin, employee)
-      end
-      
+      it_should_behave_like "list of", :users, [:admin, :employee], ActiveRecord::Relation
       it_should_behave_like "filter", MissedActivityFilter
     end
     
@@ -529,9 +410,7 @@ describe ActivitiesController do
       before { login_as(client_user) }
       
       context "when user_id is valid" do
-        before do
-          post :search_missed, :filter => {:user_id => my_employee.id}
-        end
+        before { post :search_missed, :filter => {:user_id => my_employee.id} }
         
         it "should set filter.user_id" do
           assigns(:filter).user_id.should eql(my_employee.id)
@@ -542,9 +421,7 @@ describe ActivitiesController do
       end
       
       context "when user_id is not valid" do
-        before do
-          post :search_missed, :filter => {:user_id => other_employee.id}
-        end
+        before { post :search_missed, :filter => {:user_id => other_employee.id} }
         
         it "should nullify filter.user_id" do
           assigns(:filter).user_id.should be_nil
@@ -555,18 +432,16 @@ describe ActivitiesController do
     end
     
     context "for regular user" do
-      let!(:employee) { Factory(:user) }
-      let!(:other_employee) { Factory(:user) }
+      let!(:user) { Factory(:user) }
+      let!(:other_user) { Factory(:user) }
       
-      before { login_as(employee) }
+      before { login_as(user) }
       
       context "when user_id is valid" do
-        before do
-          post :search_missed, :filter => {:user_id => employee.id}
-        end
+        before { post :search_missed, :filter => {:user_id => user.id} }
         
         it "should set filter.user_id" do
-          assigns(:filter).user_id.should eql(employee.id)
+          assigns(:filter).user_id.should eql(user.id)
         end
         
         it_should_behave_like "render template", "activities/missed/_results"
@@ -574,12 +449,10 @@ describe ActivitiesController do
       end
       
       context "when user_id is not valid" do
-        before do
-          post :search_missed, :filter => {:user_id => other_employee.id}
-        end
+        before { post :search_missed, :filter => {:user_id => other_user.id} }
         
         it "should set filter.user_id as loggen in user's id" do
-          assigns(:filter).user_id.should eql(employee.id)
+          assigns(:filter).user_id.should eql(user.id)
         end
         
         it_should_behave_like "filter", MissedActivityFilter, [:user_id]
@@ -598,29 +471,23 @@ describe ActivitiesController do
       end
       
       it_should_behave_like "render template", "_form"
-      it_should_behave_like "existing resource", :activity
+      it_should_behave_like "variable", :activity
     end
     
     context "for regular user" do
+      before { login_as(activity.user) }
+      
       context "his activity" do
-        before do
-          login_as(activity.user)
-          
-          get :edit, :id => activity.id
-        end
+        before { get :edit, :id => activity.id }
         
         it_should_behave_like "render template", "_form"
-        it_should_behave_like "existing resource", :activity
+        it_should_behave_like "variable", :activity
       end
       
       context "other user's activity" do
         let!(:other_activity) { Factory(:activity) }
         
-        before do
-          login_as(activity.user)
-          
-          get :edit, :id => other_activity.id
-        end
+        before { get :edit, :id => other_activity.id }
         
         it "should render nothing" do
           response.body.should be_blank
@@ -669,9 +536,7 @@ describe ActivitiesController do
       
       context "his activity" do
         context "valid data" do
-          before do
-            post :create, :activity => activity_data
-          end
+          before { post :create, :activity => activity_data }
           
           it "should create activity" do
             Activity.count.should eql(count + 1)
@@ -748,9 +613,7 @@ describe ActivitiesController do
       
       context "his activity" do
         context "valid data" do
-          before do
-            put :update, :id => activity.id, :activity => {:date => new_date}
-          end
+          before { put :update, :id => activity.id, :activity => {:date => new_date} }
           
           it "should update activity" do
             activity.reload.date.should eql(new_date)
@@ -758,9 +621,7 @@ describe ActivitiesController do
         end
         
         context "invalid data" do
-          before do
-            put :update, :id => activity.id, :activity => {:comments => ''}
-          end
+          before { put :update, :id => activity.id, :activity => {:comments => ''} }
           
           it "should not update activity" do
             activity.reload.date.should eql(old_date)
@@ -800,8 +661,6 @@ describe ActivitiesController do
     let!(:activity) { Factory(:activity) }
     
     context "for admin user" do
-      let!(:count) { Activity.count }
-      
       before do
         login_as(:admin)
         
@@ -809,7 +668,7 @@ describe ActivitiesController do
       end
       
       it "should delete activity" do
-        Activity.count.should eql(count - 1)
+        expect {activity.reload}.to raise_error(ActiveRecord::RecordNotFound)
       end
       
       it "should render json" do
@@ -827,27 +686,20 @@ describe ActivitiesController do
       before { login_as(activity.user) }
       
       context "his activity" do
-        let!(:count) { Activity.count }
-        
-        before do
-          delete :destroy, :id => activity.id
-        end
+        before { delete :destroy, :id => activity.id }
         
         it "should delete activity" do
-          Activity.count.should eql(count - 1)
+          expect {activity.reload}.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
       
       context "other user's activity" do
         let!(:other_activity) { Factory(:activity) }
-        let!(:count) { Activity.count }
         
-        before do
-          delete :destroy, :id => other_activity.id
-        end
+        before { delete :destroy, :id => other_activity.id }
         
         it "should not delete activity" do
-          Activity.count.should eql(count)
+          expect {activity.reload}.to_not raise_error(ActiveRecord::RecordNotFound)
         end
       end
     end
@@ -857,32 +709,206 @@ describe ActivitiesController do
     let!(:activity) { Factory(:activity) }
     let!(:client) { activity.project.client }
     let!(:other_activity) { Factory(:activity) }
-    let!(:hourly_rate) { Factory(:hourly_rate, :project => activity.project) }
+    let(:ids) { [activity.id] }
+    let(:name) { 'my invoice' }
     
     before { login_as(:admin) }
     
-    context "new" do
+    context "with hourly rate not defined" do
       let!(:count) { Invoice.count }
       
-      before do
-        post :invoice, :activity_ids => [activity.id], :invoice_name => 'my invoice'
-      end
-      
-      it "should create new invoice" do
-        Invoice.count.should eql(count + 1)
-      end
-    end
-    
-    context "existing" do
-      let!(:invoice) { Factory(:invoice) }
-      let!(:count) { Invoice.count }
-      
-      before do
-        post :invoice, :activity_ids => [activity.id], :invoice_id => invoice.id
-      end
+      before { post :invoice, :activity_ids => ids, :invoice_name => name }
       
       it "should not create new invoice" do
         Invoice.count.should eql(count)
+      end
+      
+      it "should render json" do
+        response.body.match(/"success":false,"error":"(.*)","bad_activities":\[#{activity.id}\]/).should_not be_nil
+      end
+    end
+    
+    context "with hourly rate defined" do
+      let!(:hourly_rate) { Factory(:hourly_rate, :project => activity.project) }
+      
+      context "new" do
+        let!(:count) { Invoice.count }
+        
+        before { post :invoice, :activity_ids => ids, :invoice_name => name }
+        
+        context "with activities belonging to one client" do
+          it "should create new invoice" do
+            Invoice.count.should eql(count + 1)
+          end
+          
+          it_should_behave_like "render json", /{"success":true}/
+          
+          it "should update activities" do
+            activity.reload
+            activity.invoice.should eql(assigns(:invoice))
+            activity.invoiced_at.should eql(Date.current)
+            activity.value.should eql(hourly_rate.value)
+            activity.currency.should eql(hourly_rate.currency)
+          end
+        end
+        
+        context "with activities belonging to many clients" do
+          let(:ids) { [activity.id, other_activity.id] }
+          
+          it "should not create new invoice" do
+            Invoice.count.should eql(count)
+          end
+          
+          it_should_behave_like "render json", /{"success":false,"error":"(.*)"}/
+        end
+      end
+      
+      context "existing" do
+        let!(:invoice) { Factory(:invoice) }
+        let!(:count) { Invoice.count }
+        
+        before { post :invoice, :activity_ids => ids, :invoice_id => invoice.id }
+        
+        it "should not create new invoice" do
+          Invoice.count.should eql(count)
+        end
+        
+        it_should_behave_like "render json", /{"success":true}/
+      end
+      
+      context "when not determined whether to create or update invoice" do
+        let!(:count) { Invoice.count }
+        
+        before { post :invoice, :activity_ids => ids }
+        
+        it "should not create new invoice" do
+          Invoice.count.should eql(count)
+        end
+        
+        it_should_behave_like "render json", /"success":false,"error":"(.*)"/
+      end
+    end
+  end
+  
+  describe "day_off" do
+    let(:date) { Date.current.to_s(:db) }
+    let!(:other_user) { Factory(:user) }
+    let!(:count) { FreeDay.count }
+    
+    context "admin" do
+      let!(:user) { Factory(:admin) }
+      
+      before do
+        login_as(user)
+        
+        post :day_off, :date => date, :user_id => other_user.id
+      end
+      
+      it "should create free day" do
+        FreeDay.count.should eql(count + 1)
+      end
+      
+      it "should assign free day to requested user" do
+        assigns(:free_day).user.should eql(other_user)
+      end
+      
+      it "should render json" do
+        response.body.match(/{"date":"#{date}"}/).should_not be_nil
+      end
+    end
+    
+    context "regular user" do
+      let!(:user) { Factory(:user) }
+      
+      before { login_as(user) }
+      
+      context "for other user" do
+        before { post :day_off, :date => date, :user_id => other_user.id }
+        
+        it "should create free day" do
+          FreeDay.count.should eql(count + 1)
+        end
+      
+        it "should assign free day to current user" do
+          assigns(:free_day).user.should eql(user)
+        end
+        
+        it "should render json" do
+          response.body.match(/{"date":"#{date}"}/).should_not be_nil
+        end
+      end
+      
+      context "without specifying user" do
+        before { post :day_off, :date => date }
+        
+        it "should create free day" do
+          FreeDay.count.should eql(count + 1)
+        end
+      
+        it "should assign free day to current user" do
+          assigns(:free_day).user.should eql(user)
+        end
+        
+        it "should render json" do
+          response.body.match(/{"date":"#{date}"}/).should_not be_nil
+        end
+      end
+    end
+  end
+  
+  describe "revert_day_off" do
+    let!(:free_day) { Factory(:free_day) }
+    
+    context "admin" do
+      let!(:user) { Factory(:admin) }
+      let(:date) { free_day.date.to_s(:db) }
+      
+      before do
+        login_as(user)
+        
+        post :revert_day_off, :date => date, :user_id => free_day.user.id
+      end
+      
+      it "should delete free day" do
+        expect {free_day.reload}.to raise_error(ActiveRecord::RecordNotFound)
+      end
+      
+      it "should render json" do
+        response.body.match(/{"date":"#{date}"}/).should_not be_nil
+      end
+    end
+    
+    context "regular user" do
+      let!(:my_free_day) { Factory(:free_day) }
+      let!(:count) { FreeDay.count }
+      let!(:user) { my_free_day.user }
+      let!(:my_count) { user.free_days.count }
+      let(:date) { my_free_day.date.to_date.to_s(:db) }
+      
+      before { login_as(user) }
+      
+      context "for other user" do
+        before { post :revert_day_off, :date => date, :user_id => free_day.user.id }
+        
+        it "should delete free day" do
+          expect {my_free_day.reload}.to raise_error(ActiveRecord::RecordNotFound)
+        end
+        
+        it "should render json" do
+          response.body.match(/{"date":"#{date}"}/).should_not be_nil
+        end
+      end
+      
+      context "without specifying user" do
+        before { post :revert_day_off, :date => date }
+        
+        it "should delete free day" do
+          expect {my_free_day.reload}.to raise_error(ActiveRecord::RecordNotFound)
+        end
+        
+        it "should render json" do
+          response.body.match(/{"date":"#{date}"}/).should_not be_nil
+        end
       end
     end
   end

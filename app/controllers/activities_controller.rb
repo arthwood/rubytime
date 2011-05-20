@@ -47,7 +47,6 @@ class ActivitiesController < ApplicationController
       @users = User.employees
     elsif current_user.client?
       @users = current_user.client.collaborators
-      # TODO: change to "@users.find" when collaborators can be used as collection
       @user = user_id.present? ? @users.detect {|i| i.id == user_id} : @users.first
     else
       @user = current_user
@@ -142,14 +141,14 @@ class ActivitiesController < ApplicationController
     invoice_id = params[:invoice_id]
     
     if invoice_name.blank? && invoice_id.blank?
-      render :json => {:error => %(either "invoice_name" or "invoice_id" is required)} and return
+      render :json => {:success => false, :error => %(either "invoice_name" or "invoice_id" is required)} and return
     end
     
     @activities = Activity.find(activity_ids, :include => [:project, :user])
     @projects = @activities.map(&:project).uniq
     @clients = @projects.map(&:client).uniq
     
-    render :json => {:error => "Activities belongs to many clients"} and return unless @clients.size == 1
+    render :json => {:success => false, :error => "Activities belongs to many clients"} and return unless @clients.size == 1
     
     @client = @clients.first
     date = Date.current

@@ -1,3 +1,5 @@
+require 'simplecov_helper' if ENV['rcov']
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
@@ -51,6 +53,12 @@ shared_examples_for "render template" do |type|
   end
 end
 
+shared_examples_for "render json" do |json|
+  it "should render json" do
+    response.body.match(json).should_not be_nil
+  end
+end
+
 shared_examples_for "new resource" do |type|
   it "should set @#{type} variable" do
     var = assigns(type)
@@ -59,17 +67,35 @@ shared_examples_for "new resource" do |type|
   end
 end
 
-shared_examples_for "existing resource" do |type|
+shared_examples_for "variable" do |type, resource = nil|
   it "should set proper @#{type} variable" do
-    assigns(type).should eql(method(type).call)
+    assigns(type).should eql(method(resource || type).call)
   end
 end
 
-shared_examples_for "list of" do |type, coll_type = Array, resource = nil|
+shared_examples_for "nil" do |type|
+  it "should set nil as @#{type} variable" do
+    assigns(type).should be_nil
+  end
+end
+
+shared_examples_for "empty list" do |type, coll_type = Array|
   it "@#{type}" do
     var = assigns(type)
     var.should be_an_instance_of(coll_type)
-    var.should include(method(resource).call) if resource.present?
+    var.should be_empty
+  end
+end
+
+shared_examples_for "list of" do |type, resources = nil, coll_type = Array|
+  it "@#{type}" do
+    var = assigns(type)
+    var.should be_an_instance_of(coll_type)
+    
+    if resources.present?
+      var.size.should eql(resources.size)
+      var.should include(*(resources.map {|i| method(i).call}))
+    end
   end
 end
 
@@ -91,8 +117,8 @@ shared_examples_for "login page redirection" do
   end
 end
 
-shared_examples_for "not setting a variable" do |var|
-  it "should not set #{var}" do
-    assigns(var).should be_nil
+shared_examples_for "success" do
+  it "should respond with success" do
+    response.should be_success
   end
 end

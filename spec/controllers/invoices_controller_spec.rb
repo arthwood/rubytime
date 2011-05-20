@@ -3,22 +3,24 @@ require 'spec_helper'
 include SharedMethods
 
 describe InvoicesController do
+  let!(:user) { Factory(:admin) }
+  
+  before { login_as(user) }
+  
   describe "index" do
     let!(:invoice) { Factory(:invoice) }
     
     before do
-      login_as(:admin)
       get :index
     end
     
     it_should_behave_like "new resource", :invoice
     it_should_behave_like "render template", :index
-    it_should_behave_like "list of", :invoices, Array, :invoice
+    it_should_behave_like "list of", :invoices, [:invoice]
   end
   
   describe "new" do
     before do
-      login_as(:admin)
       get :new
     end
     
@@ -26,15 +28,39 @@ describe InvoicesController do
     it_should_behave_like "render template", :form
   end
   
+  describe "show" do
+    let!(:client) { Factory(:client, :name => "microsoft") }
+    let!(:invoice) { Factory(:invoice, :client => client) }
+    let(:filename) { 'invoice_microsoft_2011_05_20' }
+    
+    before do
+      Date.stub!(:current).and_return(Date.parse('2011/05/20'))
+    end
+    
+    context "csv" do
+      before do
+        get :show, :id => invoice.id, :format => :csv
+      end
+      
+      it_should_behave_like "success"
+      it_should_behave_like "variable", :invoice
+      it_should_behave_like "variable", :filename
+    end
+    
+    context "pdf" do
+      before do
+        get :show, :id => invoice.id, :format => :pdf
+      end
+      
+      it_should_behave_like "success"
+      it_should_behave_like "variable", :invoice
+      it_should_behave_like "variable", :filename
+    end
+  end
+  
   describe "create" do
     let!(:client) { Factory(:client) }
     let!(:count) { Invoice.count }
-    let!(:admin) { Factory(:admin) }
-    
-    before do
-      login_as(:admin)
-      subject.stubs(:current_user).returns(admin)
-    end
     
     context "with valid data" do
       before do
@@ -51,7 +77,7 @@ describe InvoicesController do
       end
       
       it "should have current_user as an owner" do
-        assigns(:invoice).user.should eql(admin)
+        assigns(:invoice).user.should eql(user)
       end
       
       it_should_behave_like "flash info"
@@ -78,20 +104,15 @@ describe InvoicesController do
     let!(:invoice) { Factory(:invoice) }
     
     before do
-      login_as(:admin)
       get :edit, :id => invoice.id
     end
     
     it_should_behave_like "render template", :form
-    it_should_behave_like "existing resource", :invoice
+    it_should_behave_like "variable", :invoice
   end
   
   describe "update" do
     let!(:invoice) { Factory(:invoice) }
-    
-    before do
-      login_as(:admin)
-    end
     
     context "with valid data" do
       let(:name) { 'Invoice 7' }
@@ -120,7 +141,7 @@ describe InvoicesController do
       end
       
       it_should_behave_like "flash error"
-      it_should_behave_like "list of", :invoices, Array, :invoice
+      it_should_behave_like "list of", :invoices, [:invoice]
       it_should_behave_like "render template", :index
     end
   end
@@ -131,7 +152,6 @@ describe InvoicesController do
     let!(:invoice) { Factory(:invoice) }
     
     before do
-      login_as(:admin)
       delete :destroy, :id => invoice.id
     end
     

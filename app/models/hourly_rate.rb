@@ -1,4 +1,6 @@
 class HourlyRate < ActiveRecord::Base
+  validates_presence_of :project_id, :role_id, :currency_id
+  
   belongs_to :project
   belongs_to :role
   belongs_to :currency

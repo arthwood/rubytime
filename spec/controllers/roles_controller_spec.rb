@@ -3,22 +3,22 @@ require 'spec_helper'
 include SharedMethods
 
 describe RolesController do
+  before { login_as(:admin) }
+  
   describe "index" do
     let!(:role) { Factory(:developer) }
     
     before do
-      login_as(:admin)
       get :index
     end
     
     it_should_behave_like "new resource", :role
     it_should_behave_like "render template", :index
-    it_should_behave_like "list of", :roles, Array, :role
+    it_should_behave_like "list of", :roles, [:role]
   end
   
   describe "new" do
     before do
-      login_as(:admin)
       get :new
     end
     
@@ -28,8 +28,6 @@ describe RolesController do
   
   describe "create" do
     let!(:count) { Role.count }
-    
-    before { login_as(:admin) }
     
     context "with valid data" do
       before do
@@ -67,20 +65,15 @@ describe RolesController do
     let!(:role) { Factory(:developer) }
     
     before do
-      login_as(:admin)
       get :edit, :id => role.id
     end
     
     it_should_behave_like "render template", :form
-    it_should_behave_like "existing resource", :role
+    it_should_behave_like "variable", :role
   end
   
   describe "update" do
     let!(:role) { Factory(:developer) }
-    
-    before do
-      login_as(:admin)
-    end
     
     context "with valid data" do
       let(:name) { 'engineer' }
@@ -109,7 +102,7 @@ describe RolesController do
       end
       
       it_should_behave_like "flash error"
-      it_should_behave_like "list of", :roles, Array, :role
+      it_should_behave_like "list of", :roles, [:role]
       it_should_behave_like "render template", :index
     end
   end
@@ -120,7 +113,6 @@ describe RolesController do
     let!(:role) { Factory(:developer) }
     
     before do
-      login_as(:admin)
       delete :destroy, :id => role.id
     end
     

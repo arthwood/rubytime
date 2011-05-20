@@ -3,23 +3,23 @@ require 'spec_helper'
 include SharedMethods
 
 describe ClientsController do
+  before { login_as(:admin) }
+  
   describe "index" do
     let!(:client) { Factory(:client) }
     
     before do
-      login_as(:admin)
       get :index
     end
     
     it_should_behave_like "new resource", :client
     it_should_behave_like "new resource", :user
     it_should_behave_like "render template", :index
-    it_should_behave_like "list of", :clients, Array, :client
+    it_should_behave_like "list of", :clients, [:client]
   end
   
   describe "new" do
     before do
-      login_as(:admin)
       get :new
     end
     
@@ -31,8 +31,6 @@ describe ClientsController do
     let!(:admin) { Factory(:admin) }
     let!(:user_count) { User.count }
     let!(:client_count) { Client.count }
-    
-    before { login_as(admin) }
     
     context "with valid data" do
       before do
@@ -91,21 +89,16 @@ describe ClientsController do
     let!(:client) { Factory(:client) }
     
     before do
-      login_as(:admin)
       get :edit, :id => client.id
     end
     
     it_should_behave_like "render template", :form
-    it_should_behave_like "existing resource", :client
+    it_should_behave_like "variable", :client
   end
   
   describe "update" do
     let!(:client) { Factory(:client) }
     let!(:user) { Factory(:user, :client => client) }
-    
-    before do
-      login_as(:admin)
-    end
     
     context "with valid data" do
       let(:client_name) { 'Mike' }
@@ -146,7 +139,7 @@ describe ClientsController do
       end
       
       it_should_behave_like "flash error"
-      it_should_behave_like "list of", :clients, Array, :client
+      it_should_behave_like "list of", :clients, [:client]
       it_should_behave_like "render template", :index
     end
   end
@@ -158,7 +151,6 @@ describe ClientsController do
     let!(:user) { Factory(:user, :client => client) }
     
     before do
-      login_as(:admin)
       delete :destroy, :id => client.id
     end
     

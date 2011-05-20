@@ -2,6 +2,24 @@ require 'spec_helper'
 
 include SharedMethods
 
+shared_examples_for "destroyed user" do |collection|
+  it "should delete user" do
+    expect {user.reload}.to raise_error(ActiveRecord::RecordNotFound)
+  end
+      
+  it "should response with valid json" do
+    result = response.body
+        
+    match = result.match(/{"html":"(.*)","success":true}/)
+    html = match[1]
+      
+    match.should_not be_nil
+    html.should_not =~ /<td>#{user.name}<\/td>/
+    html.should include("No #{collection} found")
+  end
+end
+
+
 describe UsersController do
   describe "index" do
     let!(:admin) { Factory(:admin) }
@@ -9,15 +27,16 @@ describe UsersController do
     let!(:client_user) { Factory(:client_user) }
     
     before do
-      login_as(:admin)
+      login_as(admin)
+      
       get :index
     end
     
     it_should_behave_like "render template", :index
     it_should_behave_like "new resource", :user
-    it_should_behave_like "list of", :admins, ActiveRecord::Relation, :admin
-    it_should_behave_like "list of", :employees, ActiveRecord::Relation, :employee
-    it_should_behave_like "list of", :clients_users, ActiveRecord::Relation, :client_user
+    it_should_behave_like "list of", :admins, [:admin], ActiveRecord::Relation
+    it_should_behave_like "list of", :employees, [:employee], ActiveRecord::Relation
+    it_should_behave_like "list of", :clients_users, [:client_user], ActiveRecord::Relation
   end
   
   describe "new" do
@@ -73,7 +92,7 @@ describe UsersController do
       
       it_should_behave_like "flash error"
       it_should_behave_like "render template", :index
-      it_should_behave_like "list of", :admins, ActiveRecord::Relation
+      it_should_behave_like "list of", :admins, nil, ActiveRecord::Relation
     end
   end
   
@@ -86,7 +105,7 @@ describe UsersController do
     end
     
     it_should_behave_like "render template", :form
-    it_should_behave_like "existing resource", :user
+    it_should_behave_like "variable", :user
   end
   
   describe "update" do
@@ -127,7 +146,7 @@ describe UsersController do
       end
       
       it_should_behave_like "flash error"
-      it_should_behave_like "list of", :employees, ActiveRecord::Relation, :user
+      it_should_behave_like "list of", :employees, [:user], ActiveRecord::Relation
       it_should_behave_like "render template", :index
     end
   end
@@ -135,27 +154,28 @@ describe UsersController do
   describe "destroy" do
     render_views
     
-    let!(:developer) { Factory(:developer) }
-    let!(:user) { Factory(:user) }
+    let!(:role) { Factory(:developer) }
     
-    before do
-      login_as(:admin)
-      delete :destroy, :id => user.id
+    context "requested user is employee" do
+      let!(:user) { Factory(:user) }
+    
+      before do
+        login_as(:admin)
+        delete :destroy, :id => user.id
+      end
+    
+      it_should_behave_like "destroyed user", "employees"
     end
     
-    it "should delete user" do
-      expect {user.reload}.to raise_error(ActiveRecord::RecordNotFound)
-    end
-    
-    it "should response with valid json" do
-      result = response.body
+    context "requested user is client user" do
+      let!(:user) { Factory(:client_user) }
       
-      match = result.match(/{"html":"(.*)","success":true}/)
-      html = match[1]
+      before do
+        login_as(:admin)
+        delete :destroy, :id => user.id
+      end
       
-      match.should_not be_nil
-      html.should_not =~ /<td>#{user.name}<\/td>/
-      html.should include('No employees found')
+      it_should_behave_like "destroyed user", "client users"
     end
   end
 

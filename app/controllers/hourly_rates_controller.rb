@@ -13,12 +13,15 @@ class HourlyRatesController < ApplicationController
     @hourly_rate = @project.hourly_rates.create(params[:hourly_rate])
     @role = @hourly_rate.role
     
-    if @hourly_rate.valid?
+    success = @hourly_rate.valid?
+    json = {:success => success}
+    
+    if success
       @hourly_rates = @project.hourly_rates.with_role(@role)
       
-      render :json => {:html => render_to_string(:partial => 'list', :object => @hourly_rates), :success => true}
+      render :json => json.merge(:html => render_to_string(:partial => 'list', :object => @hourly_rates))
     else
-      render :json => {:html => render_to_string(:partial => 'form'), :success => false}
+      render :json => json.merge(:html => render_to_string(:partial => 'form'))
     end
   end
   
@@ -30,11 +33,13 @@ class HourlyRatesController < ApplicationController
   
   def update
     @hourly_rate = HourlyRate.find(params[:id])
-
-    if @hourly_rate.update_attributes(params[:hourly_rate])
-      render :json => {:hourly_rate => @hourly_rate.reload, :success => success}
+    success = @hourly_rate.update_attributes(params[:hourly_rate])
+    json = {:success => success}
+    
+    if success
+      render :json => json.merge(:hourly_rate => @hourly_rate.reload)
     else
-      render :json => {:html => render_to_string(:partial => 'form'), :success => success}
+      render :json => json.merge(:html => render_to_string(:partial => 'form'))
     end
   end
   
@@ -42,6 +47,6 @@ class HourlyRatesController < ApplicationController
     @hourly_rate = HourlyRate.find(params[:id])
     @hourly_rate.destroy
     
-    render :json => @hourly_rate.to_json, :success => true
+    render :json => {:success => true, :hourly_rate => @hourly_rate}
   end
 end

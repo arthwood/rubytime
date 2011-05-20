@@ -1,4 +1,6 @@
 class ActivityReport < Prawn::Document
+  include ActivityHelper
+  
   TABLE_OPTIONS = {
     :header => true, 
 #    :header_color => '86CFEF', 
@@ -13,13 +15,6 @@ class ActivityReport < Prawn::Document
   ACTIVITY_DATA_ROW_MAPPING = Proc.new do |i| 
     hr = i.hourly_rate
     [i.date, Rubytime::Util.format_time_spent_decimal(i.minutes), i.comments, i.invoiced_at, hr && Rubytime::Util.format_currency_hr(hr)]
-  end
-  
-  def my_box(title, size, width, left, top)
-    bounding_box([left, top], :width => width) do
-      text title, :size => size
-      yield
-    end
   end
   
   def to_pdf(activities, title, hide_users)
@@ -52,6 +47,15 @@ class ActivityReport < Prawn::Document
     render
   end
   
+  private
+  
+  def my_box(title, size, width, left, top)
+    bounding_box([left, top], :width => width) do
+      text title, :size => size
+      yield
+    end
+  end
+
   def render_items(items, grouping, &block)
     items.group_by(&grouping).each_pair(&block)
   end
@@ -61,7 +65,7 @@ class ActivityReport < Prawn::Document
       font_size 10
       data = [['Date', 'Time', 'Comments', 'Invoiced', 'Hourly rate']]
       data.concat(items.map(&ACTIVITY_DATA_ROW_MAPPING))
-      minutes = Activity.total_time(items)
+      minutes = total_time(items)
       data << ['Total:', Rubytime::Util.format_time_spent_decimal(minutes), nil, nil, total_value(items)]
       table data, TABLE_OPTIONS
     end
