@@ -9,11 +9,10 @@ class SessionsController < ApplicationController
     
     if @user.present?
       if @user.password == s[:password]
-        return_to = session[:return_to] 
+        redirect_back_or(root_url)
         reset_session
         self.current_user = @user
         flash[:info] = 'Logged in successfully'
-        redirect_back_or(return_to || root_url)
       else
         note_failed_signin('Invalid password')
         

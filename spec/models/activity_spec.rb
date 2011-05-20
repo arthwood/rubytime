@@ -49,6 +49,7 @@ describe Activity do
   describe ".search" do
     let!(:activity_1) { Factory(:activity) }
     let!(:activity_2) { Factory(:activity) }
+    let!(:activity_3) { Factory(:invoiced_activity) }
     
     context "when no filter is set" do
       let(:filter) do
@@ -57,8 +58,8 @@ describe Activity do
       
       it "should return both activity_1 and activity_2" do
         result = subject.class.search(filter)
-        result.size.should == 2
-        result.should include(activity_1, activity_2)
+        result.size.should == 3
+        result.should include(activity_1, activity_2, activity_3)
       end
     end
     
@@ -76,8 +77,8 @@ describe Activity do
       
       it "should return only one activity" do
         result = subject.class.search(filter)
-        result.size.should == 1
-        result.should include(activity_1)
+        result.size.should == 2
+        result.should include(activity_1, activity_3)
       end
     end
     
@@ -90,6 +91,44 @@ describe Activity do
         result = subject.class.search(filter)
         result.size.should == 1
         result.should include(activity_1)
+      end
+    end
+    
+    context "invoice filter" do
+      context 'all' do
+        let(:filter) do
+          ActivityFilter.new(:invoice_filter => :all)
+        end
+        
+        it "should return all activities" do
+          result = subject.class.search(filter)
+          result.size.should == 3
+          result.should include(activity_1, activity_2, activity_3)
+        end
+      end
+      
+      context 'invoiced' do
+        let(:filter) do
+          ActivityFilter.new(:invoice_filter => :invoiced)
+        end
+        
+        it "should return invoiced activities" do
+          result = subject.class.search(filter)
+          result.size.should == 1
+          result.should include(activity_3)
+        end
+      end
+      
+      context 'not_invoiced' do
+        let(:filter) do
+          ActivityFilter.new(:invoice_filter => :not_invoiced)
+        end
+        
+        it "should return invoiced activities" do
+          result = subject.class.search(filter)
+          result.size.should == 2
+          result.should include(activity_1, activity_2)
+        end
       end
     end
   end

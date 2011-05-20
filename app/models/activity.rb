@@ -59,11 +59,9 @@ class Activity < ActiveRecord::Base
     conditions[:project_id] = project_id if project_id.present?
     conditions[:user_id] = user_id if user_id.present?
     conditions['projects.client_id'] = client_id if client_id.present?
-    scope = invoice_filter.present? ? invoice_filter.to_sym : :all
     from, to = filter.from, filter.to
     from = from.present? ? Date.parse(from) : Date.parse
     to = to.present? ? Date.parse(to) : Date.current
-    
     conditions[:date] = Range.new(from, to)
     joins = %q{
       LEFT OUTER JOIN users ON (users.id = user_id)
@@ -73,15 +71,13 @@ class Activity < ActiveRecord::Base
     
     options = {:conditions => conditions, :joins => joins, :order => 'date DESC'}
     
-    case scope
-      when :all
-        all(options)
+    case invoice_filter.try(:to_sym)
       when :invoiced
         invoiced.all(options)
       when :not_invoiced
         not_invoiced.all(options)
       else
-        []
+        all(options)
     end
   end
   
