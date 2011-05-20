@@ -1,3 +1,5 @@
+require 'simplecov_helper' if ENV['rcov']
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
@@ -112,5 +114,11 @@ end
 shared_examples_for "login page redirection" do
   it "should redirect to login page" do
     response.should redirect_to(login_url)
+  end
+end
+
+shared_examples_for "success" do
+  it "should respond with success" do
+    response.should be_success
   end
 end

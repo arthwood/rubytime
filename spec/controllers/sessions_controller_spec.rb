@@ -2,6 +2,14 @@ require 'spec_helper'
 
 include SharedMethods
 
+shared_examples_for "successful login" do
+  it "should log in user" do
+    subject.current_user.should eql(user)
+  end
+
+  it_should_behave_like "flash info"
+end
+
 describe SessionsController do
   describe "create" do
     let(:password) { "asdf1234" }
@@ -30,14 +38,25 @@ describe SessionsController do
     end
     
     context "with valid data" do
-      before { get :create, :session => {:login => user.login, :password => password} }
-      
-      it "should log in user" do
-        subject.current_user.should eql(user)
+      context "without return_to" do
+        before do 
+          get :create, :session => {:login => user.login, :password => password}
+        end
+        
+        it_should_behave_like "successful login"
+        it_should_behave_like "root redirection"
       end
       
-      it_should_behave_like "flash info"
-      it_should_behave_like "root redirection"
+      context "with return_to" do
+        before do
+          session[:return_to] = '/activities/calendar'
+          
+          get :create, :session => {:login => user.login, :password => password}
+        end
+        
+        it_should_behave_like "successful login"
+        it_should_behave_like "redirection", '/activities/calendar'
+      end
     end
     
     context "with invalid data" do

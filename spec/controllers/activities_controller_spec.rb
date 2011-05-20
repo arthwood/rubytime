@@ -11,6 +11,19 @@ shared_examples_for "filter" do |klass, skip = []|
 end
 
 describe ActivitiesController do
+  describe "permissions" do
+    before do
+      get :calendar
+    end
+    
+    it "should store location"do
+      session[:return_to].should_not be_blank
+    end
+    
+    it_should_behave_like "flash error"
+    it_should_behave_like "root redirection"
+  end
+  
   describe "index" do
     context "when not logged in" do
       before do

@@ -14,7 +14,7 @@ class InvoicesController < ApplicationController
   
   def show
     @invoice = Invoice.find(params[:id])
-    @filename = "invoice_#{@invoice.client.name}_#{Rubytime::Util.format_date(Date.current)}"
+    @filename = "invoice_#{@invoice.client.name}_#{Rubytime::Util.format_date(Date.current, '_')}"
     
     respond_to do |format|
      format.csv {

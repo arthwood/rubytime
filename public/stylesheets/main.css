@@ -318,7 +318,7 @@ table.base td {
   height: 22px;
   padding: 0 4px;
 }
-table.base tr.even {
+table.base tr.odd {
   background: #eee;
 }
 table.base input[type=checkbox],

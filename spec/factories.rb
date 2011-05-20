@@ -100,6 +100,14 @@ FactoryGirl.define do
     prefix true
   end
   
+  factory :euro, :class => :currency do
+    id 3
+    name "euro"
+    plural "euros"
+    symbol "e"
+    prefix false
+  end
+  
   factory :hourly_rate do
     project
     role_id 1

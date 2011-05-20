@@ -24,7 +24,7 @@
     .label
       = i.label :period, 'Select period'
     .input
-      = i.select :period, daterange_options(@filter.period), :include_blank => 'Select...'
+      = i.select :period, daterange_options, :include_blank => 'Select...'
   .item.clearfix
     .label
       = i.label :from, 'from'

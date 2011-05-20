@@ -20,7 +20,7 @@ module ApplicationHelper
     :activities => [{:c => :activities}],
     :invoices => [{:c => :invoices}]
   }
-  ROW_CLASSES = %w(odd even)
+  ROW_CLASSES = %w(even odd)
   
   def section
     c = @c.to_sym
@@ -83,7 +83,7 @@ module ApplicationHelper
     end
   end
   
-  def daterange_options(selected = nil)
+  def daterange_options
     now = Date.current
     options_for_select [
       daterange('Today', now, now),
@@ -92,7 +92,7 @@ module ApplicationHelper
       daterange('Last Week', 1.week.ago.beginning_of_week, 1.week.ago.end_of_week),
       daterange('This Month', now.beginning_of_month, now.end_of_month),
       daterange('Last Month', 1.month.ago.beginning_of_month, 1.month.ago.end_of_month)
-    ], selected
+    ]
   end
   
   def daterange(label, from, to)

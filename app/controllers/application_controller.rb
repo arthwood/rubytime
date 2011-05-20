@@ -11,14 +11,14 @@ class ApplicationController < ActionController::Base
     @activity = Activity.new
   end
   
-  def redirect_back_or(default, options = {})
-    redirect_to(session[:return_to] || params[:return_to] || default)
+  def redirect_back_or(default)
+    redirect_to(session[:return_to] || default)
     
     session[:return_to] = nil
   end
   
-  def store_location(url = nil)
-    session[:return_to] = url || request.referer
+  def store_location
+    session[:return_to] = request.referer
   end
   
   def login_required
@@ -34,7 +34,9 @@ class ApplicationController < ActionController::Base
   end
   
   def unauthorized(path = root_path)
-    flash[:notice] = 'You need to sign in to perform this action.'
+    flash[:error] = 'You need to sign in to perform this action.'
+    
+    store_location
     
     redirect_to(path)
   end

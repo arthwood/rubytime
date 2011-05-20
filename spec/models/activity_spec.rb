@@ -203,4 +203,30 @@ describe Activity do
       subject.class.total_time([previous_activity, current_activity]).should == 900
     end
   end
+  
+  describe ".to_csv" do
+    let!(:currency) { Factory(:pound) }
+    let!(:role) { Factory(:developer) }
+    let!(:hourly_rate) { Factory(:hourly_rate) }
+    let!(:project) { hourly_rate.project }
+    let!(:activity) { Factory(:activity, :project => project) }
+    
+    it "should return proper value" do
+      result = subject.class.to_csv([activity])
+      result.should be_instance_of(String)
+      result.should_not be_blank
+    end
+  end
+  
+  describe ".to_pdf" do
+    let!(:activity) { Factory(:activity) }
+    let(:activities) { [activity] }
+    let(:title) { 'title' }
+    let(:hide_users) { false }
+    
+    it "should return proper value" do
+      ActivityReport.any_instance.should_receive(:to_pdf).once.with(activities, title, hide_users)
+      subject.class.to_pdf(activities, title, hide_users)
+    end
+  end
 end

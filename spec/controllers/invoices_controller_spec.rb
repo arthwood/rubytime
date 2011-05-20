@@ -28,6 +28,36 @@ describe InvoicesController do
     it_should_behave_like "render template", :form
   end
   
+  describe "show" do
+    let!(:client) { Factory(:client, :name => "microsoft") }
+    let!(:invoice) { Factory(:invoice, :client => client) }
+    let(:filename) { 'invoice_microsoft_2011_05_20' }
+    
+    before do
+      Date.stub!(:current).and_return(Date.parse('2011/05/20'))
+    end
+    
+    context "csv" do
+      before do
+        get :show, :id => invoice.id, :format => :csv
+      end
+      
+      it_should_behave_like "success"
+      it_should_behave_like "variable", :invoice
+      it_should_behave_like "variable", :filename
+    end
+    
+    context "pdf" do
+      before do
+        get :show, :id => invoice.id, :format => :pdf
+      end
+      
+      it_should_behave_like "success"
+      it_should_behave_like "variable", :invoice
+      it_should_behave_like "variable", :filename
+    end
+  end
+  
   describe "create" do
     let!(:client) { Factory(:client) }
     let!(:count) { Invoice.count }
