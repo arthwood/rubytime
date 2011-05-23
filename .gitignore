@@ -1,4 +1,7 @@
 .bundle
+coverage/*
 db/*.sqlite3
+idea/*
 log/*.log
 tmp/**/*
+
