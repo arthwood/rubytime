@@ -4,4 +4,4 @@
 # If you change this key, all old signed cookies will become invalid!
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
-Rubytime::Application.config.secret_token = '8bc5c369586f5c8de6ca8313a788cd0f32e64c4dbac06af0d39d274ea080baf70898942f63ea9d9c4c665926a0299303279a7ee5ecfe38fddd61f31f7f2c5964'
+Rubytime::Application.config.secret_token = '9ad562baa9fe60842a38425c1c3f1788f220e73c3493f44b366b72623611f8c1aef03878ec421b08152314ff3ad82b28f616b8556ae5fd7a32ebd79bcaf426e0'
